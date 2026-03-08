@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm install:*)",
+      "Bash(node:*)",
+      "Bash(npm install:*)",
+      "Bash(pnpm synth:*)",
+      "Bash(ls:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm:*)",
+      "Bash(python:*)",
+      "Bash(where python:*)",
+      "Bash(\"C:/Users/dldls/AppData/Local/Microsoft/WindowsApps/python.exe\":*)",
+      "Bash(where:*)",
+      "Bash(py:*)",
+      "Bash(pip install:*)",
+      "Bash(python3:*)",
+      "Read(//c/Users/dldls/AppData/Local/Programs/Python//**)",
+      "Bash(ls /c/Python*)",
+      "Read(//c/Users/dldls/AppData/Local/Microsoft/WindowsApps/**)",
+      "Bash(/c/Users/dldls/AppData/Local/Programs/Python/Python311/python.exe:*)",
+      "Bash($PYTHON:*)"
+    ]
+  }
+}

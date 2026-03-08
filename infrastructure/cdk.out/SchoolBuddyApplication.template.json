@@ -1,0 +1,1950 @@
+{
+ "Description": "School Buddy — Lambda Functions, API Gateway, SQS, SNS, Cognito",
+ "Resources": {
+  "SafeRolePolicy68EAB430": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "sqs:ChangeMessageVisibility",
+        "sqs:DeleteMessage",
+        "sqs:GetQueueAttributes",
+        "sqs:GetQueueUrl",
+        "sqs:ReceiveMessage"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "NoticeQueue73F1DBE0",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "SafeRolePolicy68EAB430",
+    "Roles": [
+     "SafeRole-hanyang-pj-1"
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/SafeRole/Policy/Resource"
+   }
+  },
+  "UserPool6BA7E5F2": {
+   "Type": "AWS::Cognito::UserPool",
+   "Properties": {
+    "AccountRecoverySetting": {
+     "RecoveryMechanisms": [
+      {
+       "Name": "verified_email",
+       "Priority": 1
+      }
+     ]
+    },
+    "AdminCreateUserConfig": {
+     "AllowAdminCreateUserOnly": false
+    },
+    "AutoVerifiedAttributes": [
+     "email"
+    ],
+    "EmailVerificationMessage": "The verification code to your new account is {####}",
+    "EmailVerificationSubject": "Verify your new account",
+    "Policies": {
+     "PasswordPolicy": {
+      "MinimumLength": 8,
+      "RequireLowercase": true,
+      "RequireNumbers": true,
+      "RequireSymbols": false,
+      "RequireUppercase": true
+     }
+    },
+    "Schema": [
+     {
+      "Mutable": true,
+      "Name": "email",
+      "Required": true
+     }
+    ],
+    "SmsVerificationMessage": "The verification code to your new account is {####}",
+    "UserPoolName": "school-buddy-user-pool-dev",
+    "UserPoolTags": {
+     "Environment": "dev",
+     "Project": "school-buddy"
+    },
+    "UsernameAttributes": [
+     "email"
+    ],
+    "VerificationMessageTemplate": {
+     "DefaultEmailOption": "CONFIRM_WITH_CODE",
+     "EmailMessage": "The verification code to your new account is {####}",
+     "EmailSubject": "Verify your new account",
+     "SmsMessage": "The verification code to your new account is {####}"
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/UserPool/Resource"
+   }
+  },
+  "UserPoolMobileClient046093C2": {
+   "Type": "AWS::Cognito::UserPoolClient",
+   "Properties": {
+    "AllowedOAuthFlows": [
+     "code"
+    ],
+    "AllowedOAuthFlowsUserPoolClient": true,
+    "AllowedOAuthScopes": [
+     "email",
+     "openid",
+     "profile"
+    ],
+    "CallbackURLs": [
+     "schoolbuddy://auth/callback"
+    ],
+    "ClientName": "school-buddy-mobile-dev",
+    "ExplicitAuthFlows": [
+     "ALLOW_USER_SRP_AUTH",
+     "ALLOW_REFRESH_TOKEN_AUTH"
+    ],
+    "LogoutURLs": [
+     "schoolbuddy://auth/logout"
+    ],
+    "PreventUserExistenceErrors": "ENABLED",
+    "SupportedIdentityProviders": [
+     "COGNITO"
+    ],
+    "UserPoolId": {
+     "Ref": "UserPool6BA7E5F2"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/UserPool/MobileClient/Resource"
+   }
+  },
+  "NoticeDLQA7E8F4C0": {
+   "Type": "AWS::SQS::Queue",
+   "Properties": {
+    "MessageRetentionPeriod": 1209600,
+    "QueueName": "school-buddy-notice-dlq-dev",
+    "SqsManagedSseEnabled": true,
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/NoticeDLQ/Resource"
+   }
+  },
+  "NoticeQueue73F1DBE0": {
+   "Type": "AWS::SQS::Queue",
+   "Properties": {
+    "MessageRetentionPeriod": 345600,
+    "QueueName": "school-buddy-notice-queue-dev",
+    "RedrivePolicy": {
+     "deadLetterTargetArn": {
+      "Fn::GetAtt": [
+       "NoticeDLQA7E8F4C0",
+       "Arn"
+      ]
+     },
+     "maxReceiveCount": 3
+    },
+    "SqsManagedSseEnabled": true,
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ],
+    "VisibilityTimeout": 300
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/NoticeQueue/Resource"
+   }
+  },
+  "NotificationDLQCDA15FAF": {
+   "Type": "AWS::SQS::Queue",
+   "Properties": {
+    "MessageRetentionPeriod": 1209600,
+    "QueueName": "school-buddy-notification-dlq-dev",
+    "SqsManagedSseEnabled": true,
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/NotificationDLQ/Resource"
+   }
+  },
+  "NotificationQueue36610CC1": {
+   "Type": "AWS::SQS::Queue",
+   "Properties": {
+    "QueueName": "school-buddy-notification-queue-dev",
+    "RedrivePolicy": {
+     "deadLetterTargetArn": {
+      "Fn::GetAtt": [
+       "NotificationDLQCDA15FAF",
+       "Arn"
+      ]
+     },
+     "maxReceiveCount": 3
+    },
+    "SqsManagedSseEnabled": true,
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ],
+    "VisibilityTimeout": 60
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/NotificationQueue/Resource"
+   }
+  },
+  "NoticeTopic73EA1121": {
+   "Type": "AWS::SNS::Topic",
+   "Properties": {
+    "DisplayName": "School Buddy — New Notice",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ],
+    "TopicName": "school-buddy-notice-topic-dev"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/NoticeTopic/Resource"
+   }
+  },
+  "SchoolCrawler991D9322": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
+     },
+     "S3Key": "6c00af8b245a424a8d2bc9cb078c7cfd66958a46499688e6cfcb3934e6823b8f.zip"
+    },
+    "Description": "학교 홈페이지 크롤링 → notice-queue 발행",
+    "Environment": {
+     "Variables": {
+      "ENVIRONMENT": "dev",
+      "REGION": "us-east-1",
+      "USERS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefUsersTable9725E9C857961836"
+      },
+      "CHILDREN_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChildrenTable379D0D63D900E6E9"
+      },
+      "SCHOOLS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefSchoolsTableCCE3029AD8045BD7"
+      },
+      "NOTICES_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefNoticesTable095FDDACA4419C28"
+      },
+      "NOTIFICATIONS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefNotificationsTable76DCFC6C32DE73EE"
+      },
+      "CHAT_HISTORY_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
+      },
+      "KB_DOCUMENTS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKBDocumentsTable83946FE724D9FE6B"
+      },
+      "TRANSLATION_CACHE_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
+      },
+      "DOCUMENTS_BUCKET": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefDocumentsBucket9EC9DEB9131399C0"
+      },
+      "KB_SOURCE_BUCKET": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKbSourceBucketF3D74AC434DD4B50"
+      },
+      "NOTICE_QUEUE_URL": {
+       "Ref": "NoticeQueue73F1DBE0"
+      },
+      "NOTIFICATION_QUEUE_URL": {
+       "Ref": "NotificationQueue36610CC1"
+      },
+      "NOTICE_TOPIC_ARN": {
+       "Ref": "NoticeTopic73EA1121"
+      },
+      "APP_SECRETS_NAME": "school-buddy/app-secrets",
+      "SQS_QUEUE_URL": {
+       "Ref": "NoticeQueue73F1DBE0"
+      },
+      "SNS_ALARM_TOPIC_ARN": {
+       "Ref": "NoticeTopic73EA1121"
+      }
+     }
+    },
+    "FunctionName": "school-buddy-crawler-dev",
+    "Handler": "handler.handler",
+    "MemorySize": 512,
+    "Role": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":iam::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":role/SafeRole-hanyang-pj-1"
+      ]
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ],
+    "Timeout": 300
+   },
+   "DependsOn": [
+    "SafeRolePolicy68EAB430"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/SchoolCrawler/Resource",
+    "aws:asset:path": "asset.6c00af8b245a424a8d2bc9cb078c7cfd66958a46499688e6cfcb3934e6823b8f",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "NoticeProcessor9D7ED85C": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
+     },
+     "S3Key": "82602e3941654ea0fa24ac260a53b0df418dded2c99279a298b2cad082e1b65e.zip"
+    },
+    "Description": "공지 중복 제거 → DynamoDB 저장 → Bedrock 번역 → SNS 발행",
+    "Environment": {
+     "Variables": {
+      "ENVIRONMENT": "dev",
+      "REGION": "us-east-1",
+      "USERS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefUsersTable9725E9C857961836"
+      },
+      "CHILDREN_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChildrenTable379D0D63D900E6E9"
+      },
+      "SCHOOLS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefSchoolsTableCCE3029AD8045BD7"
+      },
+      "NOTICES_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefNoticesTable095FDDACA4419C28"
+      },
+      "NOTIFICATIONS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefNotificationsTable76DCFC6C32DE73EE"
+      },
+      "CHAT_HISTORY_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
+      },
+      "KB_DOCUMENTS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKBDocumentsTable83946FE724D9FE6B"
+      },
+      "TRANSLATION_CACHE_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
+      },
+      "DOCUMENTS_BUCKET": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefDocumentsBucket9EC9DEB9131399C0"
+      },
+      "KB_SOURCE_BUCKET": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKbSourceBucketF3D74AC434DD4B50"
+      },
+      "NOTICE_QUEUE_URL": {
+       "Ref": "NoticeQueue73F1DBE0"
+      },
+      "NOTIFICATION_QUEUE_URL": {
+       "Ref": "NotificationQueue36610CC1"
+      },
+      "NOTICE_TOPIC_ARN": {
+       "Ref": "NoticeTopic73EA1121"
+      },
+      "APP_SECRETS_NAME": "school-buddy/app-secrets",
+      "BEDROCK_MODEL_ID": "anthropic.claude-sonnet-4-20250514-v1:0",
+      "MAX_TOKENS_SUMMARY": "500",
+      "MAX_TOKENS_TRANSLATION": "800"
+     }
+    },
+    "FunctionName": "school-buddy-processor-dev",
+    "Handler": "handler.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":iam::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":role/SafeRole-hanyang-pj-1"
+      ]
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ],
+    "Timeout": 180
+   },
+   "DependsOn": [
+    "SafeRolePolicy68EAB430"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/NoticeProcessor/Resource",
+    "aws:asset:path": "asset.82602e3941654ea0fa24ac260a53b0df418dded2c99279a298b2cad082e1b65e",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "NoticeProcessorSqsEventSourceSchoolBuddyApplicationNoticeQueue38ED482613ED1924": {
+   "Type": "AWS::Lambda::EventSourceMapping",
+   "Properties": {
+    "BatchSize": 10,
+    "EventSourceArn": {
+     "Fn::GetAtt": [
+      "NoticeQueue73F1DBE0",
+      "Arn"
+     ]
+    },
+    "FunctionName": {
+     "Ref": "NoticeProcessor9D7ED85C"
+    },
+    "FunctionResponseTypes": [
+     "ReportBatchItemFailures"
+    ],
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/NoticeProcessor/SqsEventSource:SchoolBuddyApplicationNoticeQueue38ED4826/Resource"
+   }
+  },
+  "NotificationSenderDDE68198": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
+     },
+     "S3Key": "cc8d6c5527122005274ecc7aa0ca7c3a45ea172b671810ddc7a71c4859828243.zip"
+    },
+    "Description": "FCM / APNs 푸시 알림 발송",
+    "Environment": {
+     "Variables": {
+      "ENVIRONMENT": "dev",
+      "REGION": "us-east-1",
+      "USERS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefUsersTable9725E9C857961836"
+      },
+      "CHILDREN_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChildrenTable379D0D63D900E6E9"
+      },
+      "SCHOOLS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefSchoolsTableCCE3029AD8045BD7"
+      },
+      "NOTICES_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefNoticesTable095FDDACA4419C28"
+      },
+      "NOTIFICATIONS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefNotificationsTable76DCFC6C32DE73EE"
+      },
+      "CHAT_HISTORY_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
+      },
+      "KB_DOCUMENTS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKBDocumentsTable83946FE724D9FE6B"
+      },
+      "TRANSLATION_CACHE_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
+      },
+      "DOCUMENTS_BUCKET": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefDocumentsBucket9EC9DEB9131399C0"
+      },
+      "KB_SOURCE_BUCKET": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKbSourceBucketF3D74AC434DD4B50"
+      },
+      "NOTICE_QUEUE_URL": {
+       "Ref": "NoticeQueue73F1DBE0"
+      },
+      "NOTIFICATION_QUEUE_URL": {
+       "Ref": "NotificationQueue36610CC1"
+      },
+      "NOTICE_TOPIC_ARN": {
+       "Ref": "NoticeTopic73EA1121"
+      },
+      "APP_SECRETS_NAME": "school-buddy/app-secrets",
+      "FCM_SECRETS_NAME": "school-buddy/fcm-service-account"
+     }
+    },
+    "FunctionName": "school-buddy-notifier-dev",
+    "Handler": "handler.handler",
+    "MemorySize": 128,
+    "Role": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":iam::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":role/SafeRole-hanyang-pj-1"
+      ]
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ],
+    "Timeout": 60
+   },
+   "DependsOn": [
+    "SafeRolePolicy68EAB430"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/NotificationSender/Resource",
+    "aws:asset:path": "asset.cc8d6c5527122005274ecc7aa0ca7c3a45ea172b671810ddc7a71c4859828243",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "NotificationSenderAllowInvokeSchoolBuddyApplicationNoticeTopicDEE583F4E45B239E": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "NotificationSenderDDE68198",
+      "Arn"
+     ]
+    },
+    "Principal": "sns.amazonaws.com",
+    "SourceArn": {
+     "Ref": "NoticeTopic73EA1121"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/NotificationSender/AllowInvoke:SchoolBuddyApplicationNoticeTopicDEE583F4"
+   }
+  },
+  "NotificationSenderNoticeTopic48F99C24": {
+   "Type": "AWS::SNS::Subscription",
+   "Properties": {
+    "Endpoint": {
+     "Fn::GetAtt": [
+      "NotificationSenderDDE68198",
+      "Arn"
+     ]
+    },
+    "Protocol": "lambda",
+    "TopicArn": {
+     "Ref": "NoticeTopic73EA1121"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/NotificationSender/NoticeTopic/Resource"
+   }
+  },
+  "DocumentAnalyzerE9442148": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
+     },
+     "S3Key": "0006ec3e26b39b65abef23e2621cdfec384e4e195933e9bbdef2de3c4d50d65e.zip"
+    },
+    "Description": "이미지/PDF OCR → Bedrock 분류·임베딩 → Vector Store 인덱싱",
+    "Environment": {
+     "Variables": {
+      "ENVIRONMENT": "dev",
+      "REGION": "us-east-1",
+      "USERS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefUsersTable9725E9C857961836"
+      },
+      "CHILDREN_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChildrenTable379D0D63D900E6E9"
+      },
+      "SCHOOLS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefSchoolsTableCCE3029AD8045BD7"
+      },
+      "NOTICES_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefNoticesTable095FDDACA4419C28"
+      },
+      "NOTIFICATIONS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefNotificationsTable76DCFC6C32DE73EE"
+      },
+      "CHAT_HISTORY_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
+      },
+      "KB_DOCUMENTS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKBDocumentsTable83946FE724D9FE6B"
+      },
+      "TRANSLATION_CACHE_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
+      },
+      "DOCUMENTS_BUCKET": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefDocumentsBucket9EC9DEB9131399C0"
+      },
+      "KB_SOURCE_BUCKET": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKbSourceBucketF3D74AC434DD4B50"
+      },
+      "NOTICE_QUEUE_URL": {
+       "Ref": "NoticeQueue73F1DBE0"
+      },
+      "NOTIFICATION_QUEUE_URL": {
+       "Ref": "NotificationQueue36610CC1"
+      },
+      "NOTICE_TOPIC_ARN": {
+       "Ref": "NoticeTopic73EA1121"
+      },
+      "APP_SECRETS_NAME": "school-buddy/app-secrets",
+      "BEDROCK_MODEL_ID": "anthropic.claude-sonnet-4-20250514-v1:0",
+      "MAX_TOKENS_SUMMARY": "500"
+     }
+    },
+    "FunctionName": "school-buddy-analyzer-dev",
+    "Handler": "handler.handler",
+    "MemorySize": 512,
+    "Role": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":iam::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":role/SafeRole-hanyang-pj-1"
+      ]
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ],
+    "Timeout": 300
+   },
+   "DependsOn": [
+    "SafeRolePolicy68EAB430"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/DocumentAnalyzer/Resource",
+    "aws:asset:path": "asset.0006ec3e26b39b65abef23e2621cdfec384e4e195933e9bbdef2de3c4d50d65e",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "RagQueryHandler37DE29B7": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
+     },
+     "S3Key": "6e1545d3dad355a2695e1c0ee41bbc84807c414be03043ace6b3bbb123e41948.zip"
+    },
+    "Description": "질문 임베딩 → Vector Search → Bedrock 답변 생성",
+    "Environment": {
+     "Variables": {
+      "ENVIRONMENT": "dev",
+      "REGION": "us-east-1",
+      "USERS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefUsersTable9725E9C857961836"
+      },
+      "CHILDREN_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChildrenTable379D0D63D900E6E9"
+      },
+      "SCHOOLS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefSchoolsTableCCE3029AD8045BD7"
+      },
+      "NOTICES_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefNoticesTable095FDDACA4419C28"
+      },
+      "NOTIFICATIONS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefNotificationsTable76DCFC6C32DE73EE"
+      },
+      "CHAT_HISTORY_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
+      },
+      "KB_DOCUMENTS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKBDocumentsTable83946FE724D9FE6B"
+      },
+      "TRANSLATION_CACHE_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
+      },
+      "DOCUMENTS_BUCKET": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefDocumentsBucket9EC9DEB9131399C0"
+      },
+      "KB_SOURCE_BUCKET": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKbSourceBucketF3D74AC434DD4B50"
+      },
+      "NOTICE_QUEUE_URL": {
+       "Ref": "NoticeQueue73F1DBE0"
+      },
+      "NOTIFICATION_QUEUE_URL": {
+       "Ref": "NotificationQueue36610CC1"
+      },
+      "NOTICE_TOPIC_ARN": {
+       "Ref": "NoticeTopic73EA1121"
+      },
+      "APP_SECRETS_NAME": "school-buddy/app-secrets",
+      "BEDROCK_MODEL_ID": "anthropic.claude-sonnet-4-20250514-v1:0",
+      "MAX_TOKENS_QA": "1000"
+     }
+    },
+    "FunctionName": "school-buddy-rag-dev",
+    "Handler": "handler.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":iam::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":role/SafeRole-hanyang-pj-1"
+      ]
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ],
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "SafeRolePolicy68EAB430"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/RagQueryHandler/Resource",
+    "aws:asset:path": "asset.6e1545d3dad355a2695e1c0ee41bbc84807c414be03043ace6b3bbb123e41948",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "UserManager2108E726": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
+     },
+     "S3Key": "c1ce1850c4e46825f6774e44d141c163dc03525ef3e3bf3b16f2d9e33ba5ea89.zip"
+    },
+    "Description": "사용자 및 자녀 정보 CRUD",
+    "Environment": {
+     "Variables": {
+      "ENVIRONMENT": "dev",
+      "REGION": "us-east-1",
+      "USERS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefUsersTable9725E9C857961836"
+      },
+      "CHILDREN_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChildrenTable379D0D63D900E6E9"
+      },
+      "SCHOOLS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefSchoolsTableCCE3029AD8045BD7"
+      },
+      "NOTICES_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefNoticesTable095FDDACA4419C28"
+      },
+      "NOTIFICATIONS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefNotificationsTable76DCFC6C32DE73EE"
+      },
+      "CHAT_HISTORY_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
+      },
+      "KB_DOCUMENTS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKBDocumentsTable83946FE724D9FE6B"
+      },
+      "TRANSLATION_CACHE_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
+      },
+      "DOCUMENTS_BUCKET": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefDocumentsBucket9EC9DEB9131399C0"
+      },
+      "KB_SOURCE_BUCKET": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKbSourceBucketF3D74AC434DD4B50"
+      },
+      "NOTICE_QUEUE_URL": {
+       "Ref": "NoticeQueue73F1DBE0"
+      },
+      "NOTIFICATION_QUEUE_URL": {
+       "Ref": "NotificationQueue36610CC1"
+      },
+      "NOTICE_TOPIC_ARN": {
+       "Ref": "NoticeTopic73EA1121"
+      },
+      "APP_SECRETS_NAME": "school-buddy/app-secrets"
+     }
+    },
+    "FunctionName": "school-buddy-user-dev",
+    "Handler": "src/index.handler",
+    "MemorySize": 128,
+    "Role": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":iam::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":role/SafeRole-hanyang-pj-1"
+      ]
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ],
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "SafeRolePolicy68EAB430"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/UserManager/Resource",
+    "aws:asset:path": "asset.c1ce1850c4e46825f6774e44d141c163dc03525ef3e3bf3b16f2d9e33ba5ea89",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "SchoolRegistryB6F838D8": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
+     },
+     "S3Key": "ffb10e47d06615617a2df8c99f2381f5cf9c37d4c58debcdb496be804c02048b.zip"
+    },
+    "Description": "학교 등록 및 크롤 설정 관리 CRUD",
+    "Environment": {
+     "Variables": {
+      "ENVIRONMENT": "dev",
+      "REGION": "us-east-1",
+      "USERS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefUsersTable9725E9C857961836"
+      },
+      "CHILDREN_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChildrenTable379D0D63D900E6E9"
+      },
+      "SCHOOLS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefSchoolsTableCCE3029AD8045BD7"
+      },
+      "NOTICES_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefNoticesTable095FDDACA4419C28"
+      },
+      "NOTIFICATIONS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefNotificationsTable76DCFC6C32DE73EE"
+      },
+      "CHAT_HISTORY_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
+      },
+      "KB_DOCUMENTS_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKBDocumentsTable83946FE724D9FE6B"
+      },
+      "TRANSLATION_CACHE_TABLE": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
+      },
+      "DOCUMENTS_BUCKET": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefDocumentsBucket9EC9DEB9131399C0"
+      },
+      "KB_SOURCE_BUCKET": {
+       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKbSourceBucketF3D74AC434DD4B50"
+      },
+      "NOTICE_QUEUE_URL": {
+       "Ref": "NoticeQueue73F1DBE0"
+      },
+      "NOTIFICATION_QUEUE_URL": {
+       "Ref": "NotificationQueue36610CC1"
+      },
+      "NOTICE_TOPIC_ARN": {
+       "Ref": "NoticeTopic73EA1121"
+      },
+      "APP_SECRETS_NAME": "school-buddy/app-secrets"
+     }
+    },
+    "FunctionName": "school-buddy-school-dev",
+    "Handler": "src/index.handler",
+    "MemorySize": 128,
+    "Role": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":iam::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":role/SafeRole-hanyang-pj-1"
+      ]
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ],
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "SafeRolePolicy68EAB430"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/SchoolRegistry/Resource",
+    "aws:asset:path": "asset.ffb10e47d06615617a2df8c99f2381f5cf9c37d4c58debcdb496be804c02048b",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "CrawlerSchedule67099426": {
+   "Type": "AWS::Events::Rule",
+   "Properties": {
+    "Description": "school-crawler Lambda 30분 주기 트리거",
+    "Name": "school-buddy-crawler-schedule-dev",
+    "ScheduleExpression": "rate(30 minutes)",
+    "State": "ENABLED",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ],
+    "Targets": [
+     {
+      "Arn": {
+       "Fn::GetAtt": [
+        "SchoolCrawler991D9322",
+        "Arn"
+       ]
+      },
+      "Id": "Target0"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/CrawlerSchedule/Resource"
+   }
+  },
+  "CrawlerScheduleAllowEventRuleSchoolBuddyApplicationSchoolCrawler155BE49DAB3E3005": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "SchoolCrawler991D9322",
+      "Arn"
+     ]
+    },
+    "Principal": "events.amazonaws.com",
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "CrawlerSchedule67099426",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/CrawlerSchedule/AllowEventRuleSchoolBuddyApplicationSchoolCrawler155BE49D"
+   }
+  },
+  "HttpApiF5A9A8A7": {
+   "Type": "AWS::ApiGatewayV2::Api",
+   "Properties": {
+    "CorsConfiguration": {
+     "AllowHeaders": [
+      "Authorization",
+      "Content-Type"
+     ],
+     "AllowMethods": [
+      "*"
+     ],
+     "AllowOrigins": [
+      "*"
+     ],
+     "MaxAge": 86400
+    },
+    "Description": "School Buddy REST API",
+    "Name": "school-buddy-api-dev",
+    "ProtocolType": "HTTP",
+    "Tags": {
+     "Environment": "dev",
+     "Project": "school-buddy"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/Resource"
+   }
+  },
+  "HttpApiDefaultStage3EEB07D6": {
+   "Type": "AWS::ApiGatewayV2::Stage",
+   "Properties": {
+    "ApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    },
+    "AutoDeploy": true,
+    "StageName": "$default",
+    "Tags": {
+     "Environment": "dev",
+     "Project": "school-buddy"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/DefaultStage/Resource"
+   }
+  },
+  "HttpApiPOSTusersUserIntegrationBA15457A": {
+   "Type": "AWS::ApiGatewayV2::Integration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    },
+    "IntegrationType": "AWS_PROXY",
+    "IntegrationUri": {
+     "Fn::GetAtt": [
+      "UserManager2108E726",
+      "Arn"
+     ]
+    },
+    "PayloadFormatVersion": "2.0"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/POST--users/UserIntegration/Resource"
+   }
+  },
+  "HttpApiPOSTusersUserIntegrationPermission53993D57": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "UserManager2108E726",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/*/*/users"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/POST--users/UserIntegration-Permission"
+   }
+  },
+  "HttpApiPOSTusersB710C2AE": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    },
+    "AuthorizationType": "NONE",
+    "RouteKey": "POST /users",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "HttpApiPOSTusersUserIntegrationBA15457A"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/POST--users/Resource"
+   }
+  },
+  "HttpApiGETusersuserIdUserIntegrationPermission22B40C9A": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "UserManager2108E726",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/*/*/users/{userId}"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/GET--users--{userId}/UserIntegration-Permission"
+   }
+  },
+  "HttpApiGETusersuserIdE92030E0": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    },
+    "AuthorizationType": "NONE",
+    "RouteKey": "GET /users/{userId}",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "HttpApiPOSTusersUserIntegrationBA15457A"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/GET--users--{userId}/Resource"
+   }
+  },
+  "HttpApiPUTusersuserIdUserIntegrationPermissionF2912116": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "UserManager2108E726",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/*/*/users/{userId}"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/PUT--users--{userId}/UserIntegration-Permission"
+   }
+  },
+  "HttpApiPUTusersuserIdE7A4A5AE": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    },
+    "AuthorizationType": "NONE",
+    "RouteKey": "PUT /users/{userId}",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "HttpApiPOSTusersUserIntegrationBA15457A"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/PUT--users--{userId}/Resource"
+   }
+  },
+  "HttpApiDELETEusersuserIdUserIntegrationPermission951D16AC": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "UserManager2108E726",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/*/*/users/{userId}"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/DELETE--users--{userId}/UserIntegration-Permission"
+   }
+  },
+  "HttpApiDELETEusersuserId0A8B6946": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    },
+    "AuthorizationType": "NONE",
+    "RouteKey": "DELETE /users/{userId}",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "HttpApiPOSTusersUserIntegrationBA15457A"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/DELETE--users--{userId}/Resource"
+   }
+  },
+  "HttpApiGETschoolsSchoolIntegration3213929E": {
+   "Type": "AWS::ApiGatewayV2::Integration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    },
+    "IntegrationType": "AWS_PROXY",
+    "IntegrationUri": {
+     "Fn::GetAtt": [
+      "SchoolRegistryB6F838D8",
+      "Arn"
+     ]
+    },
+    "PayloadFormatVersion": "2.0"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/GET--schools/SchoolIntegration/Resource"
+   }
+  },
+  "HttpApiGETschoolsSchoolIntegrationPermission4AA582AD": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "SchoolRegistryB6F838D8",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/*/*/schools"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/GET--schools/SchoolIntegration-Permission"
+   }
+  },
+  "HttpApiGETschools55FD8737": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    },
+    "AuthorizationType": "NONE",
+    "RouteKey": "GET /schools",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "HttpApiGETschoolsSchoolIntegration3213929E"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/GET--schools/Resource"
+   }
+  },
+  "HttpApiPOSTschoolsSchoolIntegrationPermission6DF7EDE7": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "SchoolRegistryB6F838D8",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/*/*/schools"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/POST--schools/SchoolIntegration-Permission"
+   }
+  },
+  "HttpApiPOSTschools8BFB4236": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    },
+    "AuthorizationType": "NONE",
+    "RouteKey": "POST /schools",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "HttpApiGETschoolsSchoolIntegration3213929E"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/POST--schools/Resource"
+   }
+  },
+  "HttpApiGETschoolsschoolIdSchoolIntegrationPermission73010C2B": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "SchoolRegistryB6F838D8",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/*/*/schools/{schoolId}"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/GET--schools--{schoolId}/SchoolIntegration-Permission"
+   }
+  },
+  "HttpApiGETschoolsschoolIdC11AAABB": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    },
+    "AuthorizationType": "NONE",
+    "RouteKey": "GET /schools/{schoolId}",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "HttpApiGETschoolsSchoolIntegration3213929E"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/GET--schools--{schoolId}/Resource"
+   }
+  },
+  "HttpApiPUTschoolsschoolIdSchoolIntegrationPermission441CEFDA": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "SchoolRegistryB6F838D8",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/*/*/schools/{schoolId}"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/PUT--schools--{schoolId}/SchoolIntegration-Permission"
+   }
+  },
+  "HttpApiPUTschoolsschoolId4054E430": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    },
+    "AuthorizationType": "NONE",
+    "RouteKey": "PUT /schools/{schoolId}",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "HttpApiGETschoolsSchoolIntegration3213929E"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/PUT--schools--{schoolId}/Resource"
+   }
+  },
+  "HttpApiPOSTragqueryRagIntegrationB661FE21": {
+   "Type": "AWS::ApiGatewayV2::Integration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    },
+    "IntegrationType": "AWS_PROXY",
+    "IntegrationUri": {
+     "Fn::GetAtt": [
+      "RagQueryHandler37DE29B7",
+      "Arn"
+     ]
+    },
+    "PayloadFormatVersion": "2.0"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/POST--rag--query/RagIntegration/Resource"
+   }
+  },
+  "HttpApiPOSTragqueryRagIntegrationPermissionCEE60933": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "RagQueryHandler37DE29B7",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/*/*/rag/query"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/POST--rag--query/RagIntegration-Permission"
+   }
+  },
+  "HttpApiPOSTragquery84817BD9": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    },
+    "AuthorizationType": "NONE",
+    "RouteKey": "POST /rag/query",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "HttpApiPOSTragqueryRagIntegrationB661FE21"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/POST--rag--query/Resource"
+   }
+  },
+  "HttpApiPOSTdocumentsanalyzeAnalyzerIntegration1B1B582A": {
+   "Type": "AWS::ApiGatewayV2::Integration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    },
+    "IntegrationType": "AWS_PROXY",
+    "IntegrationUri": {
+     "Fn::GetAtt": [
+      "DocumentAnalyzerE9442148",
+      "Arn"
+     ]
+    },
+    "PayloadFormatVersion": "2.0"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/POST--documents--analyze/AnalyzerIntegration/Resource"
+   }
+  },
+  "HttpApiPOSTdocumentsanalyzeAnalyzerIntegrationPermission0EDC7259": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "DocumentAnalyzerE9442148",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "HttpApiF5A9A8A7"
+       },
+       "/*/*/documents/analyze"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/POST--documents--analyze/AnalyzerIntegration-Permission"
+   }
+  },
+  "HttpApiPOSTdocumentsanalyze2ACB322D": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "HttpApiF5A9A8A7"
+    },
+    "AuthorizationType": "NONE",
+    "RouteKey": "POST /documents/analyze",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "HttpApiPOSTdocumentsanalyzeAnalyzerIntegration1B1B582A"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/POST--documents--analyze/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/22P0W7CMAxFv4X34EHhBwBt2h6msXZ7RmnwKkObZLUDQlH+fUo7EJr2dI/vtS27gGI5h9lEn3lq9sdpSzXESrQ5qhLZhd6g0mfeRdIdxK1ryVzU5suOlJRxjSVxED8Z+61zbQ5vfIVNS2jlPhqdpPibIb4HDJjTAZJiyxA/nCeTzRGqULPpyQs5m937OqlWd/VeQ3wK1lw7bvx4QivV8Mur9p5sk+P/3S32HTEPS3mx08woDKssihewDuaIstaMCvM8QyxDO9yeNSntqdGCZ305FRCfRfzKU46z5LIS3Qz9I2SrdEFGerGCTa+vH/wph76U1HBNHv+9+S2ID5KUdXuEAz+ciiXMFzCbHJho2gcr1CGUo/4ABT3kl/EBAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "ApiEndpoint": {
+   "Description": "HTTP API Endpoint URL",
+   "Value": {
+    "Fn::GetAtt": [
+     "HttpApiF5A9A8A7",
+     "ApiEndpoint"
+    ]
+   },
+   "Export": {
+    "Name": "school-buddy-api-endpoint-dev"
+   }
+  },
+  "UserPoolId": {
+   "Value": {
+    "Ref": "UserPool6BA7E5F2"
+   },
+   "Export": {
+    "Name": "school-buddy-user-pool-id-dev"
+   }
+  },
+  "UserPoolClientId": {
+   "Value": {
+    "Ref": "UserPoolMobileClient046093C2"
+   },
+   "Export": {
+    "Name": "school-buddy-user-pool-client-id-dev"
+   }
+  },
+  "NoticeQueueUrl": {
+   "Value": {
+    "Ref": "NoticeQueue73F1DBE0"
+   },
+   "Export": {
+    "Name": "school-buddy-notice-queue-url-dev"
+   }
+  },
+  "NoticeTopicArn": {
+   "Value": {
+    "Ref": "NoticeTopic73EA1121"
+   },
+   "Export": {
+    "Name": "school-buddy-notice-topic-arn-dev"
+   }
+  },
+  "ExportsOutputRefSchoolCrawler991D93225E3BB50A": {
+   "Value": {
+    "Ref": "SchoolCrawler991D9322"
+   },
+   "Export": {
+    "Name": "school-buddy-app-dev:ExportsOutputRefSchoolCrawler991D93225E3BB50A"
+   }
+  },
+  "ExportsOutputRefNoticeProcessor9D7ED85CF537707C": {
+   "Value": {
+    "Ref": "NoticeProcessor9D7ED85C"
+   },
+   "Export": {
+    "Name": "school-buddy-app-dev:ExportsOutputRefNoticeProcessor9D7ED85CF537707C"
+   }
+  },
+  "ExportsOutputRefNotificationSenderDDE681988DF19973": {
+   "Value": {
+    "Ref": "NotificationSenderDDE68198"
+   },
+   "Export": {
+    "Name": "school-buddy-app-dev:ExportsOutputRefNotificationSenderDDE681988DF19973"
+   }
+  },
+  "ExportsOutputRefDocumentAnalyzerE944214827B5D6F8": {
+   "Value": {
+    "Ref": "DocumentAnalyzerE9442148"
+   },
+   "Export": {
+    "Name": "school-buddy-app-dev:ExportsOutputRefDocumentAnalyzerE944214827B5D6F8"
+   }
+  },
+  "ExportsOutputRefRagQueryHandler37DE29B78D168B9B": {
+   "Value": {
+    "Ref": "RagQueryHandler37DE29B7"
+   },
+   "Export": {
+    "Name": "school-buddy-app-dev:ExportsOutputRefRagQueryHandler37DE29B78D168B9B"
+   }
+  },
+  "ExportsOutputRefUserManager2108E7267345475C": {
+   "Value": {
+    "Ref": "UserManager2108E726"
+   },
+   "Export": {
+    "Name": "school-buddy-app-dev:ExportsOutputRefUserManager2108E7267345475C"
+   }
+  },
+  "ExportsOutputRefSchoolRegistryB6F838D8C7828CBB": {
+   "Value": {
+    "Ref": "SchoolRegistryB6F838D8"
+   },
+   "Export": {
+    "Name": "school-buddy-app-dev:ExportsOutputRefSchoolRegistryB6F838D8C7828CBB"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

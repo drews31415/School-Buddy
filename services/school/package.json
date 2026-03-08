@@ -1,0 +1,24 @@
+{
+  "name": "@school-buddy/school",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@school-buddy/shared-types": "workspace:*",
+    "@school-buddy/shared-utils": "workspace:*",
+    "@aws-sdk/client-dynamodb": "^3.0.0",
+    "@aws-sdk/lib-dynamodb": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.0",
+    "@types/jest": "^29.5.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.4.0"
+  }
+}

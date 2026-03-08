@@ -1,0 +1,787 @@
+{
+ "Description": "School Buddy — DynamoDB Tables & S3 Buckets",
+ "Resources": {
+  "UsersTable9725E9C8": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "userId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "userId",
+      "KeyType": "HASH"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "SSEEnabled": true
+    },
+    "TableName": "school-buddy-users-dev",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyStorage/UsersTable/Resource"
+   }
+  },
+  "ChildrenTable379D0D63": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "childId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "userId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "userId-index",
+      "KeySchema": [
+       {
+        "AttributeName": "userId",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "childId",
+      "KeyType": "HASH"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "SSEEnabled": true
+    },
+    "TableName": "school-buddy-children-dev",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyStorage/ChildrenTable/Resource"
+   }
+  },
+  "SchoolsTableCCE3029A": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "schoolId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "schoolId",
+      "KeyType": "HASH"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "SSEEnabled": true
+    },
+    "TableName": "school-buddy-schools-dev",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyStorage/SchoolsTable/Resource"
+   }
+  },
+  "NoticesTable095FDDAC": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "schoolId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "createdAt",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "noticeId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "noticeId-index",
+      "KeySchema": [
+       {
+        "AttributeName": "noticeId",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "schoolId",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "createdAt",
+      "KeyType": "RANGE"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "SSEEnabled": true
+    },
+    "TableName": "school-buddy-notices-dev",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyStorage/NoticesTable/Resource"
+   }
+  },
+  "NotificationsTable76DCFC6C": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "userId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "createdAt",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "userId",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "createdAt",
+      "KeyType": "RANGE"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "SSEEnabled": true
+    },
+    "TableName": "school-buddy-notifications-dev",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ],
+    "TimeToLiveSpecification": {
+     "AttributeName": "expiresAt",
+     "Enabled": true
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyStorage/NotificationsTable/Resource"
+   }
+  },
+  "ChatHistoryTableA22BA13C": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "userId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "sessionId#createdAt",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "userId",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "sessionId#createdAt",
+      "KeyType": "RANGE"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "SSEEnabled": true
+    },
+    "TableName": "school-buddy-chat-history-dev",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ],
+    "TimeToLiveSpecification": {
+     "AttributeName": "expiresAt",
+     "Enabled": true
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyStorage/ChatHistoryTable/Resource"
+   }
+  },
+  "KBDocumentsTable83946FE7": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "docId",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "docId",
+      "KeyType": "HASH"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "SSEEnabled": true
+    },
+    "TableName": "school-buddy-kb-documents-dev",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyStorage/KBDocumentsTable/Resource"
+   }
+  },
+  "TranslationCacheTable12FAE693": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "cacheKey",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "cacheKey",
+      "KeyType": "HASH"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "SSEEnabled": true
+    },
+    "TableName": "school-buddy-translation-cache-dev",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ],
+    "TimeToLiveSpecification": {
+     "AttributeName": "expiresAt",
+     "Enabled": true
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyStorage/TranslationCacheTable/Resource"
+   }
+  },
+  "DocumentsBucket9EC9DEB9": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketEncryption": {
+     "ServerSideEncryptionConfiguration": [
+      {
+       "ServerSideEncryptionByDefault": {
+        "SSEAlgorithm": "AES256"
+       }
+      }
+     ]
+    },
+    "BucketName": "hanyang-pj-1-documents-dev",
+    "LifecycleConfiguration": {
+     "Rules": [
+      {
+       "ExpirationInDays": 7,
+       "Id": "expire-user-uploads",
+       "Prefix": "uploads/",
+       "Status": "Enabled"
+      }
+     ]
+    },
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    },
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyStorage/DocumentsBucket/Resource"
+   }
+  },
+  "DocumentsBucketPolicy1F991BD4": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "DocumentsBucket9EC9DEB9"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:*",
+       "Condition": {
+        "Bool": {
+         "aws:SecureTransport": "false"
+        }
+       },
+       "Effect": "Deny",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "DocumentsBucket9EC9DEB9",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "DocumentsBucket9EC9DEB9",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyStorage/DocumentsBucket/Policy/Resource"
+   }
+  },
+  "KbSourceBucketF3D74AC4": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketEncryption": {
+     "ServerSideEncryptionConfiguration": [
+      {
+       "ServerSideEncryptionByDefault": {
+        "SSEAlgorithm": "AES256"
+       }
+      }
+     ]
+    },
+    "BucketName": "hanyang-pj-1-kb-source-dev",
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    },
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "dev"
+     },
+     {
+      "Key": "Project",
+      "Value": "school-buddy"
+     }
+    ],
+    "VersioningConfiguration": {
+     "Status": "Enabled"
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyStorage/KbSourceBucket/Resource"
+   }
+  },
+  "KbSourceBucketPolicy0D126654": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "KbSourceBucketF3D74AC4"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:*",
+       "Condition": {
+        "Bool": {
+         "aws:SecureTransport": "false"
+        }
+       },
+       "Effect": "Deny",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "KbSourceBucketF3D74AC4",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "KbSourceBucketF3D74AC4",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyStorage/KbSourceBucket/Policy/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/0WMSw7CIBRF19I5PFvaFegCNNW54WdCodD0gU1D2LuxmDg6557BZcCGDtqGb0ilstQZAfkeubSEb/jMavd8DkpAfnDhNLm8/CGFYA/5nKTV8Rt/VnELzsj9n+suhYwaQ1rlcXNNcUmxEB+UhglPbzZA10PbTGgMXZOPZtYwVn4AZK7WxKcAAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyStorage/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "UsersTableName": {
+   "Value": {
+    "Ref": "UsersTable9725E9C8"
+   },
+   "Export": {
+    "Name": "school-buddy-users-table-dev"
+   }
+  },
+  "ChildrenTableName": {
+   "Value": {
+    "Ref": "ChildrenTable379D0D63"
+   },
+   "Export": {
+    "Name": "school-buddy-children-table-dev"
+   }
+  },
+  "SchoolsTableName": {
+   "Value": {
+    "Ref": "SchoolsTableCCE3029A"
+   },
+   "Export": {
+    "Name": "school-buddy-schools-table-dev"
+   }
+  },
+  "NoticesTableName": {
+   "Value": {
+    "Ref": "NoticesTable095FDDAC"
+   },
+   "Export": {
+    "Name": "school-buddy-notices-table-dev"
+   }
+  },
+  "NotificationsTableName": {
+   "Value": {
+    "Ref": "NotificationsTable76DCFC6C"
+   },
+   "Export": {
+    "Name": "school-buddy-notifications-table-dev"
+   }
+  },
+  "ChatHistoryTableName": {
+   "Value": {
+    "Ref": "ChatHistoryTableA22BA13C"
+   },
+   "Export": {
+    "Name": "school-buddy-chat-history-table-dev"
+   }
+  },
+  "KBDocumentsTableName": {
+   "Value": {
+    "Ref": "KBDocumentsTable83946FE7"
+   },
+   "Export": {
+    "Name": "school-buddy-kb-documents-table-dev"
+   }
+  },
+  "TranslationCacheTableName": {
+   "Value": {
+    "Ref": "TranslationCacheTable12FAE693"
+   },
+   "Export": {
+    "Name": "school-buddy-translation-cache-table-dev"
+   }
+  },
+  "DocumentsBucketName": {
+   "Value": {
+    "Ref": "DocumentsBucket9EC9DEB9"
+   },
+   "Export": {
+    "Name": "school-buddy-documents-bucket-dev"
+   }
+  },
+  "KbSourceBucketName": {
+   "Value": {
+    "Ref": "KbSourceBucketF3D74AC4"
+   },
+   "Export": {
+    "Name": "school-buddy-kb-source-bucket-dev"
+   }
+  },
+  "ExportsOutputRefUsersTable9725E9C857961836": {
+   "Value": {
+    "Ref": "UsersTable9725E9C8"
+   },
+   "Export": {
+    "Name": "school-buddy-storage-dev:ExportsOutputRefUsersTable9725E9C857961836"
+   }
+  },
+  "ExportsOutputRefChildrenTable379D0D63D900E6E9": {
+   "Value": {
+    "Ref": "ChildrenTable379D0D63"
+   },
+   "Export": {
+    "Name": "school-buddy-storage-dev:ExportsOutputRefChildrenTable379D0D63D900E6E9"
+   }
+  },
+  "ExportsOutputRefSchoolsTableCCE3029AD8045BD7": {
+   "Value": {
+    "Ref": "SchoolsTableCCE3029A"
+   },
+   "Export": {
+    "Name": "school-buddy-storage-dev:ExportsOutputRefSchoolsTableCCE3029AD8045BD7"
+   }
+  },
+  "ExportsOutputRefNoticesTable095FDDACA4419C28": {
+   "Value": {
+    "Ref": "NoticesTable095FDDAC"
+   },
+   "Export": {
+    "Name": "school-buddy-storage-dev:ExportsOutputRefNoticesTable095FDDACA4419C28"
+   }
+  },
+  "ExportsOutputRefNotificationsTable76DCFC6C32DE73EE": {
+   "Value": {
+    "Ref": "NotificationsTable76DCFC6C"
+   },
+   "Export": {
+    "Name": "school-buddy-storage-dev:ExportsOutputRefNotificationsTable76DCFC6C32DE73EE"
+   }
+  },
+  "ExportsOutputRefChatHistoryTableA22BA13C5B671E77": {
+   "Value": {
+    "Ref": "ChatHistoryTableA22BA13C"
+   },
+   "Export": {
+    "Name": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
+   }
+  },
+  "ExportsOutputRefKBDocumentsTable83946FE724D9FE6B": {
+   "Value": {
+    "Ref": "KBDocumentsTable83946FE7"
+   },
+   "Export": {
+    "Name": "school-buddy-storage-dev:ExportsOutputRefKBDocumentsTable83946FE724D9FE6B"
+   }
+  },
+  "ExportsOutputRefTranslationCacheTable12FAE6937472A533": {
+   "Value": {
+    "Ref": "TranslationCacheTable12FAE693"
+   },
+   "Export": {
+    "Name": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
+   }
+  },
+  "ExportsOutputRefDocumentsBucket9EC9DEB9131399C0": {
+   "Value": {
+    "Ref": "DocumentsBucket9EC9DEB9"
+   },
+   "Export": {
+    "Name": "school-buddy-storage-dev:ExportsOutputRefDocumentsBucket9EC9DEB9131399C0"
+   }
+  },
+  "ExportsOutputRefKbSourceBucketF3D74AC434DD4B50": {
+   "Value": {
+    "Ref": "KbSourceBucketF3D74AC4"
+   },
+   "Export": {
+    "Name": "school-buddy-storage-dev:ExportsOutputRefKbSourceBucketF3D74AC434DD4B50"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

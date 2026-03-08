@@ -1,0 +1,113 @@
+{
+ "Description": "School Buddy — CloudWatch Dashboards & Alarms",
+ "Resources": {
+  "Dashboard9E4231ED": {
+   "Type": "AWS::CloudWatch::Dashboard",
+   "Properties": {
+    "DashboardBody": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"widgets\":[{\"type\":\"metric\",\"width\":24,\"height\":6,\"x\":0,\"y\":0,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Lambda Errors\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"",
+       {
+        "Fn::ImportValue": "school-buddy-app-dev:ExportsOutputRefSchoolCrawler991D93225E3BB50A"
+       },
+       "\",{\"label\":\"crawler\",\"stat\":\"Sum\"}],[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"",
+       {
+        "Fn::ImportValue": "school-buddy-app-dev:ExportsOutputRefNoticeProcessor9D7ED85CF537707C"
+       },
+       "\",{\"label\":\"processor\",\"stat\":\"Sum\"}],[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"",
+       {
+        "Fn::ImportValue": "school-buddy-app-dev:ExportsOutputRefNotificationSenderDDE681988DF19973"
+       },
+       "\",{\"label\":\"notifier\",\"stat\":\"Sum\"}],[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"",
+       {
+        "Fn::ImportValue": "school-buddy-app-dev:ExportsOutputRefDocumentAnalyzerE944214827B5D6F8"
+       },
+       "\",{\"label\":\"analyzer\",\"stat\":\"Sum\"}],[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"",
+       {
+        "Fn::ImportValue": "school-buddy-app-dev:ExportsOutputRefRagQueryHandler37DE29B78D168B9B"
+       },
+       "\",{\"label\":\"rag\",\"stat\":\"Sum\"}],[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"",
+       {
+        "Fn::ImportValue": "school-buddy-app-dev:ExportsOutputRefUserManager2108E7267345475C"
+       },
+       "\",{\"label\":\"user\",\"stat\":\"Sum\"}],[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"",
+       {
+        "Fn::ImportValue": "school-buddy-app-dev:ExportsOutputRefSchoolRegistryB6F838D8C7828CBB"
+       },
+       "\",{\"label\":\"school\",\"stat\":\"Sum\"}]],\"yAxis\":{}}},{\"type\":\"metric\",\"width\":24,\"height\":6,\"x\":0,\"y\":6,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Lambda Duration (ms)\",\"region\":\"",
+       {
+        "Ref": "AWS::Region"
+       },
+       "\",\"metrics\":[[\"AWS/Lambda\",\"Duration\",\"FunctionName\",\"",
+       {
+        "Fn::ImportValue": "school-buddy-app-dev:ExportsOutputRefSchoolCrawler991D93225E3BB50A"
+       },
+       "\",{\"label\":\"crawler\"}],[\"AWS/Lambda\",\"Duration\",\"FunctionName\",\"",
+       {
+        "Fn::ImportValue": "school-buddy-app-dev:ExportsOutputRefNoticeProcessor9D7ED85CF537707C"
+       },
+       "\",{\"label\":\"processor\"}],[\"AWS/Lambda\",\"Duration\",\"FunctionName\",\"",
+       {
+        "Fn::ImportValue": "school-buddy-app-dev:ExportsOutputRefRagQueryHandler37DE29B78D168B9B"
+       },
+       "\",{\"label\":\"rag\"}]],\"yAxis\":{}}}]}"
+      ]
+     ]
+    },
+    "DashboardName": "school-buddy-dev"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyMonitoring/Dashboard/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/z3HsQ2AIBAAwFns4VV0A51ABzAPaAAVEh+kMOxuYWJ1OQGib6GpMBNXeueHlfDMEdXOMNOijpB0xqgMPCOSkQEvzYbN/ymF+aBXcFTfooe2g6ZyZC2/ko/2XGH6fAFQuJ4VaQAAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyMonitoring/CDKMetadata/Default"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
