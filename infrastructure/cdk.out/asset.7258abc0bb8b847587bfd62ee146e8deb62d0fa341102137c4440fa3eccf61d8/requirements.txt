@@ -1,0 +1,3 @@
+# document-analyzer Lambda 의존성
+# boto3는 Lambda Python 3.12 런타임에 기본 포함 (별도 설치 불필요)
+# 추가 pip 패키지 없음 — shared-utils/bedrock.py는 CDK 번들링 시 포함

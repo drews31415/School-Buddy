@@ -1,10 +1,11 @@
-import { LanguageCode } from "./enums";
+import { LanguageCode, NoticeImportance } from "./enums";
 export interface User {
     userId: string;
     languageCode: LanguageCode;
     children: Child[];
     notificationSettings: NotificationSettings;
-    fcmToken: string;
+    fcmToken?: string;
+    fcmTokenWeb?: string;
     createdAt: string;
 }
 export interface Child {
@@ -20,6 +21,6 @@ export interface NotificationSettings {
     quietHoursStart?: string;
     /** 알림 허용 시간대 종료 (예: "22:00") */
     quietHoursEnd?: string;
-    importanceThreshold: "LOW" | "MEDIUM" | "HIGH";
+    importanceThreshold: NoticeImportance;
 }
 //# sourceMappingURL=user.d.ts.map

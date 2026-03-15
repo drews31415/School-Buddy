@@ -56,7 +56,9 @@ export class StorageStack extends cdk.Stack {
     });
 
     // ──────────────────────────────────────────────────────
-    // 2. Children — PK: childId  (GSI: userId로 자녀 목록 조회)
+    // 2. Children — PK: childId
+    //    GSI1: userId-index  (내 자녀 목록 조회)
+    //    GSI2: schoolId-index (학교 구독자 조회 — notification-sender 사용)
     // ──────────────────────────────────────────────────────
     this.childrenTable = new dynamodb.Table(this, "ChildrenTable", {
       ...commonTableProps,
@@ -66,6 +68,11 @@ export class StorageStack extends cdk.Stack {
     this.childrenTable.addGlobalSecondaryIndex({
       indexName: "userId-index",
       partitionKey: { name: "userId", type: dynamodb.AttributeType.STRING },
+    });
+    this.childrenTable.addGlobalSecondaryIndex({
+      indexName: "schoolId-index",
+      partitionKey: { name: "schoolId", type: dynamodb.AttributeType.STRING },
+      projectionType: dynamodb.ProjectionType.KEYS_ONLY,  // userId만 필요
     });
 
     // ──────────────────────────────────────────────────────
@@ -159,6 +166,8 @@ export class StorageStack extends cdk.Stack {
     });
 
     // Bedrock Knowledge Base 원본 교육 문서 (버전 관리 활성화)
+    // eventBridgeEnabled: EventBridge를 통해 ApplicationStack의 kb-sync Lambda 트리거
+    // (ApplicationStack에서 직접 addEventNotification 시 순환 참조 발생 → EventBridge 우회)
     this.kbSourceBucket = new s3.Bucket(this, "KbSourceBucket", {
       bucketName: `hanyang-pj-1-kb-source-${environment}`,
       encryption: s3.BucketEncryption.S3_MANAGED,
@@ -166,6 +175,7 @@ export class StorageStack extends cdk.Stack {
       enforceSSL: true,
       removalPolicy: cdk.RemovalPolicy.RETAIN,
       versioned: true,
+      eventBridgeEnabled: true,   // S3 → EventBridge → kb-sync Lambda
     });
 
     // ──────────────────────────────────────────────────────

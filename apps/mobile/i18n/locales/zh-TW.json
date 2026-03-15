@@ -1,0 +1,11 @@
+{
+  "common": { "loading": "載入中...", "error": "發生錯誤", "retry": "重試", "cancel": "取消", "confirm": "確認", "save": "儲存", "close": "關閉", "back": "返回" },
+  "auth": { "loginTitle": "登入", "registerTitle": "註冊", "email": "電子郵件", "password": "密碼", "loginBtn": "登入", "registerBtn": "註冊", "googleLogin": "使用 Google 登入", "appleLogin": "使用 Apple 登入", "noAccount": "還沒有帳號？", "haveAccount": "已有帳號？", "emailRequired": "請輸入電子郵件", "passwordRequired": "請輸入密碼", "loginFailed": "登入失敗，請確認您的資訊" },
+  "languageSelect": { "title": "選擇語言", "subtitle": "學校通知將翻譯成您選擇的語言", "startBtn": "開始使用", "selected": "已選擇" },
+  "tabs": { "home": "通知", "chat": "問答", "documents": "文件", "settings": "設定" },
+  "home": { "title": "學校通知", "greeting": "您好，{{name}}！", "noChild": "尚未登記孩子", "noNotices": "目前沒有通知", "viewDetail": "查看詳情", "unreadCount": "{{count}} 則新通知", "culturalTip": "文化提示", "importance": { "HIGH": "重要", "MEDIUM": "普通", "LOW": "參考" } },
+  "chat": { "title": "AI 助手", "placeholder": "請輸入您的問題...", "send": "傳送", "emptyHistory": "請諮詢關於孩子學校的問題", "thinking": "思考中...", "linkedNotice": "詢問關於此通知", "quickQuestion1": "今天的學校午餐是什麼？", "quickQuestion2": "本月有哪些學校活動？", "quickQuestion3": "需要準備哪些材料？" },
+  "documents": { "title": "文件分析", "uploadPhoto": "拍攝文件", "uploadFile": "從相簿選擇", "analyzing": "分析中...", "result": "分析結果", "noFile": "未選擇文件" },
+  "settings": { "title": "設定", "language": "語言", "notifications": "推播通知", "notificationsDesc": "學校有新通知時接收提醒", "logout": "登出", "logoutConfirm": "確定要登出嗎？" },
+  "notice": { "summary": "摘要", "original": "原文", "showOriginal": "查看原文", "hideOriginal": "隱藏原文", "materials": "需要準備", "schedule": "行程", "checklist": "待辦事項", "checklistProgress": "{{done}}/{{total}} 完成", "culturalTip": "文化說明", "askMore": "進一步詢問此通知" }
+}

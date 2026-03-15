@@ -35,6 +35,7 @@ const monitoringStack = new MonitoringStack(app, "SchoolBuddyMonitoring", {
   env,
   environment,
   application: applicationStack,
+  storage:     storageStack,
   stackName: `school-buddy-monitoring-${environment}`,
   description: "School Buddy — CloudWatch Dashboards & Alarms",
 });

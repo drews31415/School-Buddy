@@ -1,16 +1,16 @@
 {
   "version": "52.0.0",
   "files": {
-    "5d1568e418acdb979b9631ef4700fc1d74aa056be2818af868f9ff486067110c": {
+    "1150184b465b536d8812f97ad35079df1b01498c1badb927c68af80e7a277073": {
       "displayName": "school-buddy-monitoring-dev Template",
       "source": {
         "path": "SchoolBuddyMonitoring.template.json",
         "packaging": "file"
       },
       "destinations": {
-        "current_account-us-east-1-d06d0531": {
+        "current_account-us-east-1-b47d5916": {
           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1",
-          "objectKey": "5d1568e418acdb979b9631ef4700fc1d74aa056be2818af868f9ff486067110c.json",
+          "objectKey": "1150184b465b536d8812f97ad35079df1b01498c1badb927c68af80e7a277073.json",
           "region": "us-east-1",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-us-east-1"
         }

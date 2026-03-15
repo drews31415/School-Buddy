@@ -1,0 +1,54 @@
+version: "3.8"
+
+services:
+  # ── DynamoDB Local ─────────────────────────────────────────
+  # DynamoDB 8개 테이블 에뮬레이션 (TranslationCache 포함 — ElastiCache 대체)
+  dynamodb-local:
+    image: amazon/dynamodb-local:2.3.0
+    container_name: school-buddy-dynamodb
+    ports:
+      - "8000:8000"
+    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-inMemory"]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:8000/shell/ > /dev/null && echo ok"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # ── LocalStack (S3, SQS, SNS) ─────────────────────────────
+  # Redis/ElastiCache 불필요 — DynamoDB Local로 TranslationCache 에뮬레이션
+  localstack:
+    image: localstack/localstack:3.3
+    container_name: school-buddy-localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3,sqs,sns
+      - DEFAULT_REGION=us-east-1
+      - DEBUG=0
+      - PERSISTENCE=0
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:4566/_localstack/health | grep -q '\"s3\": \"running\"'"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # ── DynamoDB Admin UI (선택) ────────────────────────────────
+  # http://localhost:8001 에서 DynamoDB 테이블 브라우징 가능
+  dynamodb-admin:
+    image: aaronshaf/dynamodb-admin:latest
+    container_name: school-buddy-dynamodb-admin
+    ports:
+      - "8001:8001"
+    environment:
+      - DYNAMO_ENDPOINT=http://dynamodb-local:8000
+      - AWS_ACCESS_KEY_ID=local
+      - AWS_SECRET_ACCESS_KEY=local
+      - AWS_REGION=us-east-1
+    depends_on:
+      dynamodb-local:
+        condition: service_healthy
+    profiles:
+      - admin  # make setup-admin 으로만 시작 (기본 실행 제외)

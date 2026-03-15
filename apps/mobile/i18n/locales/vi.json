@@ -1,0 +1,92 @@
+{
+  "common": {
+    "loading": "Đang tải...",
+    "error": "Có lỗi xảy ra",
+    "retry": "Thử lại",
+    "cancel": "Hủy",
+    "confirm": "Xác nhận",
+    "save": "Lưu",
+    "close": "Đóng",
+    "back": "Quay lại"
+  },
+  "auth": {
+    "loginTitle": "Đăng nhập",
+    "registerTitle": "Đăng ký",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "loginBtn": "Đăng nhập",
+    "registerBtn": "Đăng ký",
+    "googleLogin": "Đăng nhập bằng Google",
+    "appleLogin": "Đăng nhập bằng Apple",
+    "noAccount": "Chưa có tài khoản?",
+    "haveAccount": "Đã có tài khoản?",
+    "emailRequired": "Vui lòng nhập email",
+    "passwordRequired": "Vui lòng nhập mật khẩu",
+    "loginFailed": "Đăng nhập thất bại. Vui lòng kiểm tra lại."
+  },
+  "languageSelect": {
+    "title": "Chọn ngôn ngữ",
+    "subtitle": "Thông báo trường học sẽ được dịch sang ngôn ngữ bạn chọn",
+    "startBtn": "Bắt đầu",
+    "selected": "Đã chọn"
+  },
+  "tabs": {
+    "home": "Thông báo",
+    "chat": "Hỏi đáp",
+    "documents": "Tài liệu",
+    "settings": "Cài đặt"
+  },
+  "home": {
+    "title": "Thông báo trường",
+    "greeting": "Xin chào, {{name}}!",
+    "noChild": "Chưa đăng ký con",
+    "noNotices": "Chưa có thông báo nào",
+    "viewDetail": "Xem chi tiết",
+    "unreadCount": "{{count}} thông báo mới",
+    "culturalTip": "Ghi chú văn hóa",
+    "importance": {
+      "HIGH": "Quan trọng",
+      "MEDIUM": "Bình thường",
+      "LOW": "Tham khảo"
+    }
+  },
+  "chat": {
+    "title": "Hỏi đáp AI",
+    "placeholder": "Nhập câu hỏi của bạn...",
+    "send": "Gửi",
+    "emptyHistory": "Hãy đặt câu hỏi về trường học của con bạn",
+    "thinking": "Đang suy nghĩ...",
+    "linkedNotice": "Hỏi về thông báo này",
+    "quickQuestion1": "Bữa ăn trường hôm nay là gì?",
+    "quickQuestion2": "Sự kiện tháng này của trường là gì?",
+    "quickQuestion3": "Cần chuẩn bị gì cho buổi học?"
+  },
+  "documents": {
+    "title": "Phân tích tài liệu",
+    "uploadPhoto": "Chụp ảnh tài liệu",
+    "uploadFile": "Chọn từ thư viện",
+    "analyzing": "Đang phân tích...",
+    "result": "Kết quả phân tích",
+    "noFile": "Chưa chọn tài liệu"
+  },
+  "settings": {
+    "title": "Cài đặt",
+    "language": "Ngôn ngữ",
+    "notifications": "Thông báo đẩy",
+    "notificationsDesc": "Nhận thông báo khi có thông báo mới từ trường",
+    "logout": "Đăng xuất",
+    "logoutConfirm": "Bạn có chắc muốn đăng xuất không?"
+  },
+  "notice": {
+    "summary": "Tóm tắt",
+    "original": "Nội dung gốc",
+    "showOriginal": "Xem nội dung gốc",
+    "hideOriginal": "Ẩn nội dung gốc",
+    "materials": "Cần chuẩn bị",
+    "schedule": "Lịch trình",
+    "checklist": "Danh sách cần làm",
+    "checklistProgress": "{{done}}/{{total}} hoàn thành",
+    "culturalTip": "Ghi chú văn hóa",
+    "askMore": "Hỏi thêm về thông báo này"
+  }
+}

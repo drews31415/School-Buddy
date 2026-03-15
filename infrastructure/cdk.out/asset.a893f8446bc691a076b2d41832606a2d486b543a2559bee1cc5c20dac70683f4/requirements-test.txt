@@ -1,0 +1,4 @@
+-r requirements.txt
+moto[dynamodb,secretsmanager]==5.0.14
+pytest==8.2.2
+pytest-cov==5.0.0

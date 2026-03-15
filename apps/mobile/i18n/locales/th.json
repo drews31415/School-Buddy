@@ -1,0 +1,11 @@
+{
+  "common": { "loading": "กำลังโหลด...", "error": "เกิดข้อผิดพลาด", "retry": "ลองอีกครั้ง", "cancel": "ยกเลิก", "confirm": "ยืนยัน", "save": "บันทึก", "close": "ปิด", "back": "กลับ" },
+  "auth": { "loginTitle": "เข้าสู่ระบบ", "registerTitle": "สมัครสมาชิก", "email": "อีเมล", "password": "รหัสผ่าน", "loginBtn": "เข้าสู่ระบบ", "registerBtn": "สมัครสมาชิก", "googleLogin": "เข้าสู่ระบบด้วย Google", "appleLogin": "เข้าสู่ระบบด้วย Apple", "noAccount": "ยังไม่มีบัญชี?", "haveAccount": "มีบัญชีแล้ว?", "emailRequired": "กรุณากรอกอีเมล", "passwordRequired": "กรุณากรอกรหัสผ่าน", "loginFailed": "เข้าสู่ระบบไม่สำเร็จ กรุณาตรวจสอบข้อมูล" },
+  "languageSelect": { "title": "เลือกภาษา", "subtitle": "ประกาศโรงเรียนจะถูกแปลเป็นภาษาที่คุณเลือก", "startBtn": "เริ่มต้นใช้งาน", "selected": "เลือกแล้ว" },
+  "tabs": { "home": "ประกาศ", "chat": "ถาม-ตอบ", "documents": "เอกสาร", "settings": "ตั้งค่า" },
+  "home": { "title": "ประกาศโรงเรียน", "greeting": "สวัสดี, {{name}}!", "noChild": "ยังไม่ได้ลงทะเบียนบุตรหลาน", "noNotices": "ยังไม่มีประกาศ", "viewDetail": "ดูรายละเอียด", "unreadCount": "{{count}} ประกาศใหม่", "culturalTip": "เคล็ดลับวัฒนธรรม", "importance": { "HIGH": "สำคัญมาก", "MEDIUM": "ปกติ", "LOW": "ข้อมูล" } },
+  "chat": { "title": "AI ผู้ช่วย", "placeholder": "พิมพ์คำถามของคุณ...", "send": "ส่ง", "emptyHistory": "ถามเกี่ยวกับโรงเรียนของลูกคุณได้เลย", "thinking": "กำลังคิด...", "linkedNotice": "ถามเกี่ยวกับประกาศนี้", "quickQuestion1": "อาหารกลางวันวันนี้คืออะไร?", "quickQuestion2": "กิจกรรมของโรงเรียนเดือนนี้มีอะไร?", "quickQuestion3": "ต้องเตรียมอะไรบ้าง?" },
+  "documents": { "title": "วิเคราะห์เอกสาร", "uploadPhoto": "ถ่ายภาพเอกสาร", "uploadFile": "เลือกจากคลัง", "analyzing": "กำลังวิเคราะห์...", "result": "ผลการวิเคราะห์", "noFile": "ยังไม่ได้เลือกเอกสาร" },
+  "settings": { "title": "การตั้งค่า", "language": "ภาษา", "notifications": "การแจ้งเตือน", "notificationsDesc": "รับการแจ้งเตือนเมื่อมีประกาศใหม่จากโรงเรียน", "logout": "ออกจากระบบ", "logoutConfirm": "คุณแน่ใจว่าต้องการออกจากระบบ?" },
+  "notice": { "summary": "สรุป", "original": "ต้นฉบับ", "showOriginal": "ดูต้นฉบับ", "hideOriginal": "ซ่อนต้นฉบับ", "materials": "สิ่งที่ต้องเตรียม", "schedule": "กำหนดการ", "checklist": "รายการที่ต้องทำ", "checklistProgress": "{{done}}/{{total}} เสร็จแล้ว", "culturalTip": "หมายเหตุทางวัฒนธรรม", "askMore": "ถามเพิ่มเติมเกี่ยวกับประกาศนี้" }
+}

@@ -1,0 +1,382 @@
+# =============================================================================
+# School Buddy — CI 파이프라인 (코드 품질 검사 전용)
+#
+# ⚠️  배포 없음: Access Key 발급 불가 → 실제 AWS 배포는 Cloud9에서 수동 진행
+# ⚠️  CDK synth는 더미 자격증명 사용 (실제 AWS 호출 없음)
+#
+# 트리거: PR 생성·업데이트 (main, dev 브랜치 대상)
+# =============================================================================
+name: CI
+
+on:
+  pull_request:
+    branches: [main, dev]
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [dev]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # CDK synth 전용 더미 자격증명 (실제 배포에 사용 불가)
+  AWS_DEFAULT_REGION: us-east-1
+  CDK_DEFAULT_ACCOUNT: "123456789012"
+  CDK_DEFAULT_REGION: us-east-1
+  # Python
+  PYTHON_VERSION: "3.11"
+  # Node
+  NODE_VERSION: "20"
+  PNPM_VERSION: "9"
+
+jobs:
+  # ────────────────────────────────────────────────────────────────────────────
+  # Job 1: Python 서비스 테스트 (pytest + 커버리지)
+  # ────────────────────────────────────────────────────────────────────────────
+  test-python:
+    name: Python Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install test dependencies (all Python services)
+        run: |
+          pip install --upgrade pip
+          for svc in crawler processor notifier analyzer rag; do
+            if [ -f "services/$svc/requirements-test.txt" ]; then
+              pip install -r "services/$svc/requirements-test.txt"
+            fi
+          done
+
+      - name: Run pytest with coverage
+        id: pytest
+        run: |
+          # 각 서비스 테스트 실행 후 커버리지 합산
+          COVERAGE_FILES=""
+          for svc in crawler processor notifier analyzer rag; do
+            if [ -d "services/$svc/tests" ]; then
+              echo "::group::services/$svc"
+              cd "services/$svc"
+              python -m pytest \
+                --tb=short \
+                --cov=. \
+                --cov-report=xml:coverage.xml \
+                --cov-report=term-missing \
+                -q \
+                2>&1 || { echo "::error::services/$svc 테스트 실패"; exit 1; }
+              cd "$GITHUB_WORKSPACE"
+              COVERAGE_FILES="$COVERAGE_FILES services/$svc/coverage.xml"
+              echo "::endgroup::"
+            fi
+          done
+          echo "coverage_files=$COVERAGE_FILES" >> "$GITHUB_OUTPUT"
+
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: python-coverage
+          path: services/*/coverage.xml
+          retention-days: 7
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # Job 2: Node.js 서비스 테스트 (jest)
+  # ────────────────────────────────────────────────────────────────────────────
+  test-node:
+    name: Node.js Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Set up Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared packages
+        run: |
+          cd packages/shared-types && npx tsc
+          cd ../../packages/shared-utils && npx tsc || true
+
+      - name: Run jest (user, school services)
+        run: |
+          for svc in user school; do
+            echo "::group::services/$svc"
+            (cd "services/$svc" && pnpm test --passWithNoTests --coverage 2>&1) \
+              || { echo "::error::services/$svc 테스트 실패"; exit 1; }
+            echo "::endgroup::"
+          done
+
+      - name: Upload jest coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: node-coverage
+          path: services/*/coverage/lcov.info
+          retention-days: 7
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # Job 3: TypeScript 타입 체크
+  # ────────────────────────────────────────────────────────────────────────────
+  typecheck:
+    name: TypeScript Type Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Set up Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared-types (downstream 의존성)
+        run: cd packages/shared-types && npx tsc
+
+      - name: Type check — infrastructure
+        run: cd infrastructure && npx tsc --noEmit
+
+      - name: Type check — services/user
+        run: cd services/user && npx tsc --noEmit
+
+      - name: Type check — services/school
+        run: cd services/school && npx tsc --noEmit
+
+      - name: Type check — apps/mobile
+        run: cd apps/mobile && npx tsc --noEmit
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # Job 4: CDK synth (실제 배포 없음, 더미 자격증명)
+  # ────────────────────────────────────────────────────────────────────────────
+  cdk-synth:
+    name: CDK Synth (dry-run)
+    runs-on: ubuntu-latest
+    needs: typecheck   # 타입 체크 통과 후 실행
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Set up Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared-types
+        run: cd packages/shared-types && npx tsc
+
+      # 더미 AWS 자격증명 설정 (synth는 실제 API 호출 없음)
+      - name: Configure dummy AWS credentials for CDK synth
+        run: |
+          aws configure set aws_access_key_id     AKIAIOSFODNN7EXAMPLE
+          aws configure set aws_secret_access_key wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+          aws configure set region                us-east-1
+
+      - name: CDK synth — dev
+        run: |
+          cd infrastructure
+          npx cdk synth \
+            -c environment=dev \
+            --quiet \
+            2>&1
+        env:
+          CDK_DEFAULT_ACCOUNT: "123456789012"
+          CDK_DEFAULT_REGION: us-east-1
+
+      - name: Upload synthesized templates
+        uses: actions/upload-artifact@v4
+        with:
+          name: cdk-templates
+          path: infrastructure/cdk.out/*.template.json
+          retention-days: 7
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # Job 5: 커버리지 리포트 PR 코멘트 게시
+  # ────────────────────────────────────────────────────────────────────────────
+  coverage-report:
+    name: Coverage Report
+    runs-on: ubuntu-latest
+    needs: [test-python, test-node]
+    if: github.event_name == 'pull_request'
+    permissions:
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Python coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: python-coverage
+          path: coverage/python
+        continue-on-error: true
+
+      - name: Download Node coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: node-coverage
+          path: coverage/node
+        continue-on-error: true
+
+      - name: Set up Python for coverage parsing
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Parse coverage and build report
+        id: report
+        run: |
+          python3 - <<'EOF'
+          import os, xml.etree.ElementTree as ET, glob, json
+
+          def parse_xml_coverage(pattern):
+              files = glob.glob(pattern, recursive=True)
+              if not files:
+                  return None
+              total_stmts = total_hit = 0
+              for path in files:
+                  try:
+                      root = ET.parse(path).getroot()
+                      for pkg in root.iter('package'):
+                          for cls in pkg.iter('class'):
+                              for line in cls.iter('line'):
+                                  total_stmts += 1
+                                  if line.get('hits', '0') != '0':
+                                      total_hit += 1
+                  except Exception:
+                      continue
+              if total_stmts == 0:
+                  return None
+              return round(total_hit / total_stmts * 100, 1)
+
+          py_cov  = parse_xml_coverage('coverage/python/**/coverage.xml')
+          # Node lcov: 간단히 파일 존재 여부만 확인
+          node_files = glob.glob('coverage/node/**/*.info', recursive=True)
+          node_note  = f"{len(node_files)}개 서비스 커버리지 수집됨" if node_files else "N/A"
+
+          lines = [
+              "## 📊 테스트 커버리지 리포트",
+              "",
+              "| 구분 | 커버리지 |",
+              "|------|----------|",
+              f"| Python (pytest) | {'**' + str(py_cov) + '%**' if py_cov else 'N/A'} |",
+              f"| Node.js (jest)  | {node_note} |",
+              "",
+          ]
+
+          if py_cov and py_cov < 80:
+              lines.append(f"> ⚠️ **Python 커버리지 {py_cov}%** — 목표: 80% 이상 (CLAUDE.md)")
+          elif py_cov:
+              lines.append(f"> ✅ Python 커버리지 {py_cov}% — 목표 달성")
+
+          lines += [
+              "",
+              "<details><summary>커버리지 상세 파일</summary>",
+              "",
+              "```",
+              "\n".join(
+                  glob.glob('coverage/**/*.xml', recursive=True) +
+                  glob.glob('coverage/**/*.info', recursive=True)
+              ) or "(파일 없음)",
+              "```",
+              "</details>",
+          ]
+
+          report = "\n".join(lines)
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              # 멀티라인 output
+              f.write("report<<EOF_REPORT\n")
+              f.write(report + "\n")
+              f.write("EOF_REPORT\n")
+          print(report)
+          EOF
+
+      - name: Post coverage comment to PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const report = `${{ steps.report.outputs.report }}`;
+            const marker = '<!-- school-buddy-coverage -->';
+            const body   = marker + '\n' + report;
+
+            // 기존 커버리지 코멘트 찾아서 업데이트 (중복 방지)
+            const { data: comments } = await github.rest.issues.listComments({
+              owner:      context.repo.owner,
+              repo:       context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c => c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner:      context.repo.owner,
+                repo:       context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner:        context.repo.owner,
+                repo:         context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # Job 6: CI 최종 상태 집계 (PR 머지 조건)
+  # ────────────────────────────────────────────────────────────────────────────
+  ci-status:
+    name: CI Status
+    runs-on: ubuntu-latest
+    needs: [test-python, test-node, typecheck, cdk-synth]
+    if: always()
+
+    steps:
+      - name: Check all jobs passed
+        run: |
+          results='${{ toJSON(needs) }}'
+          echo "$results" | python3 - <<'EOF'
+          import json, sys
+          data = json.load(sys.stdin)
+          failed = [k for k, v in data.items() if v.get('result') not in ('success', 'skipped')]
+          if failed:
+              print(f"실패한 Job: {failed}")
+              sys.exit(1)
+          print("모든 CI 체크 통과")
+          EOF

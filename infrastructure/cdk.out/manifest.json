@@ -22,7 +22,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-us-east-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/ebbabef95ce5ee3ff00feb3723bfb2731197093f5ae5d30d864dd5fac7d91677.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/6efdcc5217697dd100baa960c2a9c9e64dc4db761d99ee5d46b38ff12f8fb9fa.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -190,6 +190,30 @@
             "data": "KbSourceBucketPolicy0D126654"
           }
         ],
+        "/SchoolBuddyStorage/KbSourceBucket/Notifications/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "KbSourceBucketNotifications77691FC0"
+          }
+        ],
+        "/SchoolBuddyStorage/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC"
+          }
+        ],
+        "/SchoolBuddyStorage/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36"
+          }
+        ],
+        "/SchoolBuddyStorage/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691"
+          }
+        ],
         "/SchoolBuddyStorage/UsersTableName": [
           {
             "type": "aws:cdk:logicalId",
@@ -316,6 +340,12 @@
             "data": "ExportsOutputRefKbSourceBucketF3D74AC434DD4B50"
           }
         ],
+        "/SchoolBuddyStorage/Exports/Output{\"Fn::GetAtt\":[\"KbSourceBucketF3D74AC4\",\"Arn\"]}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputFnGetAttKbSourceBucketF3D74AC4Arn585E0266"
+          }
+        ],
         "/SchoolBuddyStorage/BootstrapVersion": [
           {
             "type": "aws:cdk:logicalId",
@@ -352,7 +382,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-us-east-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/79be62537b317a2985d9a13dfa8b071e89258b110cf3c2523f427715ccb8290e.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/32238f0165190e2378d809c496831a214fa0b49d53431464a69668f9e617e337.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -397,10 +427,28 @@
             "data": "UserPool6BA7E5F2"
           }
         ],
+        "/SchoolBuddyApplication/UserPool/Domain/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UserPoolDomainD0EA232A"
+          }
+        ],
         "/SchoolBuddyApplication/UserPool/MobileClient/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "UserPoolMobileClient046093C2"
+          }
+        ],
+        "/SchoolBuddyApplication/GoogleProvider/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "GoogleProvider566D8493"
+          }
+        ],
+        "/SchoolBuddyApplication/AppleProvider/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AppleProviderC04D9F31"
           }
         ],
         "/SchoolBuddyApplication/NoticeDLQ/Resource": [
@@ -505,6 +553,12 @@
             "data": "CrawlerScheduleAllowEventRuleSchoolBuddyApplicationSchoolCrawler155BE49DAB3E3005"
           }
         ],
+        "/SchoolBuddyApplication/ApiAccessLogs/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiAccessLogsE9DF007D"
+          }
+        ],
         "/SchoolBuddyApplication/HttpApi/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -517,148 +571,238 @@
             "data": "HttpApiDefaultStage3EEB07D6"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/POST--users/UserIntegration/Resource": [
+        "/SchoolBuddyApplication/HttpApi/POST--auth--register/UserInt/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiPOSTusersUserIntegrationBA15457A"
+            "data": "HttpApiPOSTauthregisterUserInt78049B47"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/POST--users/UserIntegration-Permission": [
+        "/SchoolBuddyApplication/HttpApi/POST--auth--register/UserInt-Permission": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiPOSTusersUserIntegrationPermission53993D57"
+            "data": "HttpApiPOSTauthregisterUserIntPermissionD54BB315"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/POST--users/Resource": [
+        "/SchoolBuddyApplication/HttpApi/POST--auth--register/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiPOSTusersB710C2AE"
+            "data": "HttpApiPOSTauthregisterBB9BB35F"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/GET--users--{userId}/UserIntegration-Permission": [
+        "/SchoolBuddyApplication/HttpApi/GET--users--me/UserInt-Permission": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiGETusersuserIdUserIntegrationPermission22B40C9A"
+            "data": "HttpApiGETusersmeUserIntPermissionA07AAAF9"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/GET--users--{userId}/Resource": [
+        "/SchoolBuddyApplication/HttpApi/GET--users--me/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiGETusersuserIdE92030E0"
+            "data": "HttpApiGETusersmeC3BF7291"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/PUT--users--{userId}/UserIntegration-Permission": [
+        "/SchoolBuddyApplication/HttpApi/CognitoAuthorizer/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiPUTusersuserIdUserIntegrationPermissionF2912116"
+            "data": "HttpApiCognitoAuthorizer935FA0F6"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/PUT--users--{userId}/Resource": [
+        "/SchoolBuddyApplication/HttpApi/PUT--users--me/UserInt-Permission": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiPUTusersuserIdE7A4A5AE"
+            "data": "HttpApiPUTusersmeUserIntPermissionC50FA462"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/DELETE--users--{userId}/UserIntegration-Permission": [
+        "/SchoolBuddyApplication/HttpApi/PUT--users--me/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiDELETEusersuserIdUserIntegrationPermission951D16AC"
+            "data": "HttpApiPUTusersme70129477"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/DELETE--users--{userId}/Resource": [
+        "/SchoolBuddyApplication/HttpApi/POST--children/UserInt-Permission": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiDELETEusersuserId0A8B6946"
+            "data": "HttpApiPOSTchildrenUserIntPermission263F9DDF"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/GET--schools/SchoolIntegration/Resource": [
+        "/SchoolBuddyApplication/HttpApi/POST--children/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiGETschoolsSchoolIntegration3213929E"
+            "data": "HttpApiPOSTchildren9849EABF"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/GET--schools/SchoolIntegration-Permission": [
+        "/SchoolBuddyApplication/HttpApi/GET--children/UserInt-Permission": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiGETschoolsSchoolIntegrationPermission4AA582AD"
+            "data": "HttpApiGETchildrenUserIntPermission62F1DA35"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/GET--schools/Resource": [
+        "/SchoolBuddyApplication/HttpApi/GET--children/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiGETschools55FD8737"
+            "data": "HttpApiGETchildrenBEF93C2C"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/POST--schools/SchoolIntegration-Permission": [
+        "/SchoolBuddyApplication/HttpApi/GET--schools--search/SchoolInt/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiPOSTschoolsSchoolIntegrationPermission6DF7EDE7"
+            "data": "HttpApiGETschoolssearchSchoolInt6D525D8A"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/POST--schools/Resource": [
+        "/SchoolBuddyApplication/HttpApi/GET--schools--search/SchoolInt-Permission": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiPOSTschools8BFB4236"
+            "data": "HttpApiGETschoolssearchSchoolIntPermissionDA40953F"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/GET--schools--{schoolId}/SchoolIntegration-Permission": [
+        "/SchoolBuddyApplication/HttpApi/GET--schools--search/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiGETschoolsschoolIdSchoolIntegrationPermission73010C2B"
+            "data": "HttpApiGETschoolssearchD912C359"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/GET--schools--{schoolId}/Resource": [
+        "/SchoolBuddyApplication/HttpApi/POST--schools--subscribe/SchoolInt-Permission": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiGETschoolsschoolIdC11AAABB"
+            "data": "HttpApiPOSTschoolssubscribeSchoolIntPermission66F13A95"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/PUT--schools--{schoolId}/SchoolIntegration-Permission": [
+        "/SchoolBuddyApplication/HttpApi/POST--schools--subscribe/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiPUTschoolsschoolIdSchoolIntegrationPermission441CEFDA"
+            "data": "HttpApiPOSTschoolssubscribe6AB59B45"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/PUT--schools--{schoolId}/Resource": [
+        "/SchoolBuddyApplication/HttpApi/GET--notices/SchoolInt-Permission": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiPUTschoolsschoolId4054E430"
+            "data": "HttpApiGETnoticesSchoolIntPermission68127D67"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/POST--rag--query/RagIntegration/Resource": [
+        "/SchoolBuddyApplication/HttpApi/GET--notices/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiPOSTragqueryRagIntegrationB661FE21"
+            "data": "HttpApiGETnoticesFFC7E768"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/POST--rag--query/RagIntegration-Permission": [
+        "/SchoolBuddyApplication/HttpApi/GET--notices--{noticeId}/SchoolInt-Permission": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiPOSTragqueryRagIntegrationPermissionCEE60933"
+            "data": "HttpApiGETnoticesnoticeIdSchoolIntPermission6F580198"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/POST--rag--query/Resource": [
+        "/SchoolBuddyApplication/HttpApi/GET--notices--{noticeId}/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiPOSTragquery84817BD9"
+            "data": "HttpApiGETnoticesnoticeIdC3D3C69B"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/POST--documents--analyze/AnalyzerIntegration/Resource": [
+        "/SchoolBuddyApplication/HttpApi/POST--documents--analyze/AnalyzerInt/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiPOSTdocumentsanalyzeAnalyzerIntegration1B1B582A"
+            "data": "HttpApiPOSTdocumentsanalyzeAnalyzerInt010B0129"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/POST--documents--analyze/AnalyzerIntegration-Permission": [
+        "/SchoolBuddyApplication/HttpApi/POST--documents--analyze/AnalyzerInt-Permission": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiPOSTdocumentsanalyzeAnalyzerIntegrationPermission0EDC7259"
+            "data": "HttpApiPOSTdocumentsanalyzeAnalyzerIntPermission17A4CF29"
           }
         ],
         "/SchoolBuddyApplication/HttpApi/POST--documents--analyze/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "HttpApiPOSTdocumentsanalyze2ACB322D"
+          }
+        ],
+        "/SchoolBuddyApplication/HttpApi/POST--chat/RagInt/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiPOSTchatRagInt8709C9C6"
+          }
+        ],
+        "/SchoolBuddyApplication/HttpApi/POST--chat/RagInt-Permission": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiPOSTchatRagIntPermission5E4E8694"
+          }
+        ],
+        "/SchoolBuddyApplication/HttpApi/POST--chat/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiPOSTchat1EBFAE30"
+          }
+        ],
+        "/SchoolBuddyApplication/HttpApi/GET--chat--history/RagInt-Permission": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiGETchathistoryRagIntPermission920FA36A"
+          }
+        ],
+        "/SchoolBuddyApplication/HttpApi/GET--chat--history/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HttpApiGETchathistoryCDF24518"
+          }
+        ],
+        "/SchoolBuddyApplication/KbEncryptionPolicy": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "KbEncryptionPolicy"
+          }
+        ],
+        "/SchoolBuddyApplication/KbNetworkPolicy": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "KbNetworkPolicy"
+          }
+        ],
+        "/SchoolBuddyApplication/KbDataAccessPolicy": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "KbDataAccessPolicy"
+          }
+        ],
+        "/SchoolBuddyApplication/KbCollection": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "KbCollection"
+          }
+        ],
+        "/SchoolBuddyApplication/KnowledgeBase": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "KnowledgeBase"
+          }
+        ],
+        "/SchoolBuddyApplication/KbDataSource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "KbDataSource"
+          }
+        ],
+        "/SchoolBuddyApplication/KbIdParam/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "KbIdParam4D3A9394"
+          }
+        ],
+        "/SchoolBuddyApplication/KbSync/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "KbSyncAF0B0A4E"
+          }
+        ],
+        "/SchoolBuddyApplication/KbSyncRule/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "KbSyncRule6676B8AD"
+          }
+        ],
+        "/SchoolBuddyApplication/KbSyncRule/AllowEventRuleSchoolBuddyApplicationKbSyncFDEFEB21": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "KbSyncRuleAllowEventRuleSchoolBuddyApplicationKbSyncFDEFEB21A96AAE04"
           }
         ],
         "/SchoolBuddyApplication/ApiEndpoint": [
@@ -679,6 +823,12 @@
             "data": "UserPoolClientId"
           }
         ],
+        "/SchoolBuddyApplication/CognitoDomain": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CognitoDomain"
+          }
+        ],
         "/SchoolBuddyApplication/NoticeQueueUrl": [
           {
             "type": "aws:cdk:logicalId",
@@ -691,6 +841,18 @@
             "data": "NoticeTopicArn"
           }
         ],
+        "/SchoolBuddyApplication/KnowledgeBaseId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "KnowledgeBaseId"
+          }
+        ],
+        "/SchoolBuddyApplication/KbCollectionArn": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "KbCollectionArn"
+          }
+        ],
         "/SchoolBuddyApplication/CDKMetadata/Default": [
           {
             "type": "aws:cdk:logicalId",
@@ -701,6 +863,18 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ExportsOutputRefSchoolCrawler991D93225E3BB50A"
+          }
+        ],
+        "/SchoolBuddyApplication/Exports/Output{\"Fn::GetAtt\":[\"NoticeDLQA7E8F4C0\",\"QueueName\"]}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputFnGetAttNoticeDLQA7E8F4C0QueueNameBB203A35"
+          }
+        ],
+        "/SchoolBuddyApplication/Exports/Output{\"Ref\":\"HttpApiF5A9A8A7\"}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputRefHttpApiF5A9A8A7F70B5BDD"
           }
         ],
         "/SchoolBuddyApplication/Exports/Output{\"Ref\":\"NoticeProcessor9D7ED85C\"}": [
@@ -739,6 +913,18 @@
             "data": "ExportsOutputRefSchoolRegistryB6F838D8C7828CBB"
           }
         ],
+        "/SchoolBuddyApplication/Exports/Output{\"Ref\":\"KbSyncAF0B0A4E\"}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputRefKbSyncAF0B0A4EDC366D76"
+          }
+        ],
+        "/SchoolBuddyApplication/Exports/Output{\"Fn::GetAtt\":[\"NoticeQueue73F1DBE0\",\"QueueName\"]}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ExportsOutputFnGetAttNoticeQueue73F1DBE0QueueName81D42EAB"
+          }
+        ],
         "/SchoolBuddyApplication/BootstrapVersion": [
           {
             "type": "aws:cdk:logicalId",
@@ -775,7 +961,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-us-east-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/5d1568e418acdb979b9631ef4700fc1d74aa056be2818af868f9ff486067110c.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/1150184b465b536d8812f97ad35079df1b01498c1badb927c68af80e7a277073.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -790,6 +976,7 @@
       },
       "dependencies": [
         "SchoolBuddyApplication",
+        "SchoolBuddyStorage",
         "SchoolBuddyMonitoring.assets"
       ],
       "metadata": {
@@ -808,10 +995,70 @@
             ]
           }
         ],
+        "/SchoolBuddyMonitoring/AlarmTopic/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AlarmTopicD01E77F9"
+          }
+        ],
+        "/SchoolBuddyMonitoring/AlarmTopic/ops@school-buddy.example.com/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AlarmTopicopsschoolbuddyexamplecomBDC8995A"
+          }
+        ],
+        "/SchoolBuddyMonitoring/CrawlerErrorRateAlarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CrawlerErrorRateAlarm8CC3FEB1"
+          }
+        ],
+        "/SchoolBuddyMonitoring/ProcessorDLQDepthAlarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ProcessorDLQDepthAlarm790F1EF7"
+          }
+        ],
+        "/SchoolBuddyMonitoring/APILatencyP99Alarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "APILatencyP99Alarm028F29DC"
+          }
+        ],
+        "/SchoolBuddyMonitoring/BedrockThrottlingAlarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BedrockThrottlingAlarm709CDF3A"
+          }
+        ],
+        "/SchoolBuddyMonitoring/DynamoDBErrorAlarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DynamoDBErrorAlarm0BDE577A"
+          }
+        ],
         "/SchoolBuddyMonitoring/Dashboard/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "Dashboard9E4231ED"
+          }
+        ],
+        "/SchoolBuddyMonitoring/SamplingRule": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SamplingRule"
+          }
+        ],
+        "/SchoolBuddyMonitoring/AlarmTopicArn": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AlarmTopicArn"
+          }
+        ],
+        "/SchoolBuddyMonitoring/DashboardUrl": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DashboardUrl"
           }
         ],
         "/SchoolBuddyMonitoring/CDKMetadata/Default": [

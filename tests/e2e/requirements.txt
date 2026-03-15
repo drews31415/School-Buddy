@@ -1,0 +1,5 @@
+pytest>=8.3
+pytest-timeout>=2.3
+boto3>=1.35
+requests>=2.32
+langdetect>=1.0.9

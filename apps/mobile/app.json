@@ -1,0 +1,62 @@
+{
+  "expo": {
+    "name": "School Buddy",
+    "slug": "school-buddy",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "schoolbuddy",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1A5276"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.schoolbuddy.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "학교 공지 문서 촬영에 사용됩니다.",
+        "NSPhotoLibraryUsageDescription": "학교 공지 문서 첨부에 사용됩니다.",
+        "UIBackgroundModes": ["remote-notification"]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1A5276"
+      },
+      "package": "com.schoolbuddy.app",
+      "googleServicesFile": "./google-services.json",
+      "permissions": ["CAMERA", "READ_EXTERNAL_STORAGE"]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#1A5276",
+          "defaultChannel": "school-buddy"
+        }
+      ],
+      [
+        "expo-camera",
+        { "cameraPermission": "학교 공지 문서 촬영에 카메라가 필요합니다." }
+      ],
+      [
+        "expo-image-picker",
+        { "photosPermission": "학교 공지 문서 첨부를 위해 사진 접근이 필요합니다." }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

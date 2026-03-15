@@ -1,0 +1,92 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "close": "Close",
+    "back": "Back"
+  },
+  "auth": {
+    "loginTitle": "Sign In",
+    "registerTitle": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "loginBtn": "Sign In",
+    "registerBtn": "Sign Up",
+    "googleLogin": "Sign in with Google",
+    "appleLogin": "Sign in with Apple",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "emailRequired": "Please enter your email",
+    "passwordRequired": "Please enter your password",
+    "loginFailed": "Sign in failed. Please check your credentials."
+  },
+  "languageSelect": {
+    "title": "Select Language",
+    "subtitle": "School notices will be translated to your selected language",
+    "startBtn": "Get Started",
+    "selected": "Selected"
+  },
+  "tabs": {
+    "home": "Notices",
+    "chat": "Q&A",
+    "documents": "Documents",
+    "settings": "Settings"
+  },
+  "home": {
+    "title": "School Notices",
+    "greeting": "Hello, {{name}}!",
+    "noChild": "No child registered",
+    "noNotices": "No notices yet",
+    "viewDetail": "View Details",
+    "unreadCount": "{{count}} new notices",
+    "culturalTip": "Cultural tip",
+    "importance": {
+      "HIGH": "Important",
+      "MEDIUM": "Normal",
+      "LOW": "Info"
+    }
+  },
+  "chat": {
+    "title": "AI Assistant",
+    "placeholder": "Ask about your child's school...",
+    "send": "Send",
+    "emptyHistory": "Ask any question about your child's school",
+    "thinking": "Thinking...",
+    "linkedNotice": "Ask about this notice",
+    "quickQuestion1": "What is today's school lunch menu?",
+    "quickQuestion2": "What school events are this month?",
+    "quickQuestion3": "What materials do I need to prepare?"
+  },
+  "documents": {
+    "title": "Document Analysis",
+    "uploadPhoto": "Take a Photo",
+    "uploadFile": "Choose from Library",
+    "analyzing": "Analyzing...",
+    "result": "Analysis Result",
+    "noFile": "No document selected"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "notifications": "Push Notifications",
+    "notificationsDesc": "Receive alerts when new school notices arrive",
+    "logout": "Sign Out",
+    "logoutConfirm": "Are you sure you want to sign out?"
+  },
+  "notice": {
+    "summary": "Summary",
+    "original": "Original Text",
+    "showOriginal": "Show original",
+    "hideOriginal": "Hide original",
+    "materials": "Materials Needed",
+    "schedule": "Schedule",
+    "checklist": "Checklist",
+    "checklistProgress": "{{done}}/{{total}} done",
+    "culturalTip": "Cultural Note",
+    "askMore": "Ask more about this notice"
+  }
+}

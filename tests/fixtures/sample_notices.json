@@ -1,0 +1,92 @@
+[
+  {
+    "noticeId": "sample-notice-000",
+    "schoolId": "sample-school-001",
+    "title": "3월 현장학습 안내",
+    "content": "3월 25일 현장학습이 예정되어 있습니다. 준비물: 도시락, 물통, 운동화. 비용: 15,000원.",
+    "importance": "HIGH",
+    "publishedAt": "2026-03-01T09:00:00Z",
+    "status": "PROCESSED"
+  },
+  {
+    "noticeId": "sample-notice-001",
+    "schoolId": "sample-school-001",
+    "title": "급식 메뉴 변경 안내",
+    "content": "3월 20일 급식 메뉴가 변경되었습니다. 알레르기 정보를 확인하세요.",
+    "importance": "MEDIUM",
+    "publishedAt": "2026-03-02T09:00:00Z",
+    "status": "PROCESSED"
+  },
+  {
+    "noticeId": "sample-notice-002",
+    "schoolId": "sample-school-001",
+    "title": "돌봄교실 신청 안내",
+    "content": "4월 돌봄교실 신청을 받습니다. 신청 기간: 3월 15일~3월 22일.",
+    "importance": "HIGH",
+    "publishedAt": "2026-03-03T09:00:00Z",
+    "status": "PROCESSED"
+  },
+  {
+    "noticeId": "sample-notice-003",
+    "schoolId": "sample-school-001",
+    "title": "학부모 공개수업 안내",
+    "content": "4월 5일 학부모 공개수업이 있습니다. 참관을 원하시는 분은 신청서를 제출해주세요.",
+    "importance": "MEDIUM",
+    "publishedAt": "2026-03-04T09:00:00Z",
+    "status": "PROCESSED"
+  },
+  {
+    "noticeId": "sample-notice-004",
+    "schoolId": "sample-school-001",
+    "title": "봄 소풍 안내",
+    "content": "4월 15일 봄 소풍이 예정되어 있습니다. 목적지: 서울 어린이공원.",
+    "importance": "MEDIUM",
+    "publishedAt": "2026-03-05T09:00:00Z",
+    "status": "PROCESSED"
+  },
+  {
+    "noticeId": "sample-notice-005",
+    "schoolId": "sample-school-001",
+    "title": "예방접종 안내",
+    "content": "4월 중 독감 예방접종이 실시됩니다. 동의서를 3월 28일까지 제출해주세요.",
+    "importance": "HIGH",
+    "publishedAt": "2026-03-06T09:00:00Z",
+    "status": "PROCESSED"
+  },
+  {
+    "noticeId": "sample-notice-006",
+    "schoolId": "sample-school-001",
+    "title": "도서관 이용 안내",
+    "content": "학교 도서관이 리모델링 후 재개관합니다. 4월 1일부터 이용 가능합니다.",
+    "importance": "LOW",
+    "publishedAt": "2026-03-07T09:00:00Z",
+    "status": "PROCESSED"
+  },
+  {
+    "noticeId": "sample-notice-007",
+    "schoolId": "sample-school-001",
+    "title": "방과후 수업 신청 안내",
+    "content": "1학기 방과후 수업 신청을 받습니다. 신청: 3월 20일~3월 25일.",
+    "importance": "MEDIUM",
+    "publishedAt": "2026-03-08T09:00:00Z",
+    "status": "PROCESSED"
+  },
+  {
+    "noticeId": "sample-notice-008",
+    "schoolId": "sample-school-001",
+    "title": "학교폭력 예방 교육 안내",
+    "content": "4월 10일 학교폭력 예방 교육이 실시됩니다. 전 학년 참여 필수입니다.",
+    "importance": "LOW",
+    "publishedAt": "2026-03-09T09:00:00Z",
+    "status": "PROCESSED"
+  },
+  {
+    "noticeId": "sample-notice-009",
+    "schoolId": "sample-school-001",
+    "title": "1학기 학부모 상담 안내",
+    "content": "4월 20일~4월 24일 학부모 상담 주간입니다. 신청서를 4월 10일까지 제출해주세요.",
+    "importance": "MEDIUM",
+    "publishedAt": "2026-03-10T09:00:00Z",
+    "status": "PROCESSED"
+  }
+]

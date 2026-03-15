@@ -1,0 +1,11 @@
+{
+  "common": { "loading": "読み込み中...", "error": "エラーが発生しました", "retry": "再試行", "cancel": "キャンセル", "confirm": "確認", "save": "保存", "close": "閉じる", "back": "戻る" },
+  "auth": { "loginTitle": "ログイン", "registerTitle": "新規登録", "email": "メールアドレス", "password": "パスワード", "loginBtn": "ログイン", "registerBtn": "新規登録", "googleLogin": "Googleでログイン", "appleLogin": "Appleでログイン", "noAccount": "アカウントをお持ちでない方", "haveAccount": "すでにアカウントをお持ちの方", "emailRequired": "メールアドレスを入力してください", "passwordRequired": "パスワードを入力してください", "loginFailed": "ログインに失敗しました。入力内容をご確認ください" },
+  "languageSelect": { "title": "言語を選択", "subtitle": "学校のお知らせが選択した言語に翻訳されます", "startBtn": "はじめる", "selected": "選択済み" },
+  "tabs": { "home": "お知らせ", "chat": "Q&A", "documents": "書類", "settings": "設定" },
+  "home": { "title": "学校からのお知らせ", "greeting": "こんにちは、{{name}}さん！", "noChild": "お子さんが未登録です", "noNotices": "お知らせはまだありません", "viewDetail": "詳細を見る", "unreadCount": "{{count}}件の新着", "culturalTip": "文化メモ", "importance": { "HIGH": "重要", "MEDIUM": "通常", "LOW": "参考" } },
+  "chat": { "title": "AIアシスタント", "placeholder": "質問を入力してください...", "send": "送信", "emptyHistory": "お子さんの学校について質問してください", "thinking": "考え中...", "linkedNotice": "このお知らせについて質問", "quickQuestion1": "今日の給食は何ですか？", "quickQuestion2": "今月の学校行事は何がありますか？", "quickQuestion3": "準備するものは何ですか？" },
+  "documents": { "title": "書類分析", "uploadPhoto": "書類を撮影", "uploadFile": "ライブラリから選択", "analyzing": "分析中...", "result": "分析結果", "noFile": "書類が選択されていません" },
+  "settings": { "title": "設定", "language": "言語", "notifications": "プッシュ通知", "notificationsDesc": "学校から新しいお知らせが届いたときに通知を受け取ります", "logout": "ログアウト", "logoutConfirm": "ログアウトしてもよろしいですか？" },
+  "notice": { "summary": "要約", "original": "原文", "showOriginal": "原文を見る", "hideOriginal": "原文を隠す", "materials": "準備するもの", "schedule": "スケジュール", "checklist": "チェックリスト", "checklistProgress": "{{done}}/{{total}} 完了", "culturalTip": "文化的なメモ", "askMore": "このお知らせについてもっと聞く" }
+}
