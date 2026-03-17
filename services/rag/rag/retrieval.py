@@ -1,8 +1,12 @@
 """
-Bedrock Knowledge Base RetrieveAndGenerate 래퍼.
+Bedrock Knowledge Base Retrieve + Claude Sonnet 직접 호출.
 
-bedrock-agent-runtime 클라이언트를 사용하여 RAG 답변을 생성한다.
-ThrottlingException 발생 시 지수 백오프로 최대 3회 재시도.
+변경 내역 (S3 Vectors 전환):
+  이전: RetrieveAndGenerate API (단일 호출, Bedrock이 컨텍스트 조립)
+  이후: Retrieve API (청크 검색) → Claude converse API (답변 생성) 분리
+
+cold start 시 SSM Parameter Store에서 KB ID를 조회한다.
+ThrottlingException / ServiceUnavailableException 발생 시 지수 백오프 최대 3회 재시도.
 """
 from __future__ import annotations
 
@@ -18,24 +22,46 @@ from .models import ChatResponse, SourceCitation
 
 logger = logging.getLogger(__name__)
 
+# ── 상수 ──────────────────────────────────────────────────────────────────────
 _REGION           = os.environ.get("REGION", "us-east-1")
-KNOWLEDGE_BASE_ID = os.environ.get("KNOWLEDGE_BASE_ID", "")
-BEDROCK_MODEL_ARN = (
-    f"arn:aws:bedrock:{_REGION}::foundation-model/"
-    "anthropic.claude-sonnet-4-20250514-v1:0"
+_BEDROCK_MODEL_ID = os.environ.get("BEDROCK_MODEL_ID", "anthropic.claude-sonnet-4-5")
+_KB_ID_PARAM_NAME = os.environ.get(
+    "KB_ID_PARAM_NAME", f"/school-buddy/dev/kb-id"
 )
 
-_RETRIEVAL_RESULTS = 5      # 검색할 문서 수
+_RETRIEVAL_RESULTS = 5      # 검색할 청크 수
 _MAX_TOKENS        = 1000   # Q&A 최대 토큰 (CLAUDE.md 규정)
 _MAX_RETRIES       = 3
 
+# ── AWS 클라이언트 (cold start 최적화) ───────────────────────────────────────
+_ssm              = boto3.client("ssm",                  region_name=_REGION)
 _bedrock_agent_rt = boto3.client("bedrock-agent-runtime", region_name=_REGION)
+_bedrock_rt       = boto3.client("bedrock-runtime",       region_name=_REGION)
 
 _PROMPT_PATH = os.path.join(os.path.dirname(__file__), "../prompts/rag_system.txt")
 
 
-def _load_prompt_template() -> str:
-    """rag_system.txt에서 [SYSTEM]~[USER] 사이 시스템 프롬프트를 로드."""
+# ── cold start: SSM에서 KB ID 조회 ────────────────────────────────────────────
+def _load_kb_id() -> str:
+    """
+    SSM Parameter Store에서 Knowledge Base ID를 조회.
+    환경변수 KNOWLEDGE_BASE_ID가 있으면 SSM 호출 생략 (로컬 테스트 편의).
+    """
+    direct = os.environ.get("KNOWLEDGE_BASE_ID", "")
+    if direct:
+        return direct
+    resp = _ssm.get_parameter(Name=_KB_ID_PARAM_NAME)
+    kb_id = resp["Parameter"]["Value"]
+    logger.info({"message": "KB ID loaded from SSM", "paramName": _KB_ID_PARAM_NAME})
+    return kb_id
+
+
+KNOWLEDGE_BASE_ID: str = _load_kb_id()
+
+
+# ── 프롬프트 로더 ─────────────────────────────────────────────────────────────
+def _load_system_prompt() -> str:
+    """rag_system.txt 에서 [SYSTEM]~[USER] 사이 시스템 프롬프트를 로드."""
     with open(_PROMPT_PATH, encoding="utf-8") as f:
         content = f.read()
     m = re.search(r"\[SYSTEM\](.*?)\[USER\]", content, re.DOTALL)
@@ -44,22 +70,95 @@ def _load_prompt_template() -> str:
     return m.group(1).strip()
 
 
-def _extract_sources(citations: list[dict]) -> list[SourceCitation]:
-    """Bedrock citations 배열에서 출처 목록을 추출."""
-    sources: list[SourceCitation] = []
-    seen: set[str] = set()
-    for citation in citations:
-        for ref in citation.get("retrievedReferences", []):
-            content  = ref.get("content", {}).get("text", "")[:200]
-            location = ref.get("location", {})
-            s3_loc   = location.get("s3Location", {})
-            uri      = s3_loc.get("uri", "")
-            if uri and uri not in seen:
-                seen.add(uri)
-                sources.append(SourceCitation(content=content, location=uri))
-    return sources
+# ── KB 검색 ───────────────────────────────────────────────────────────────────
+def _retrieve_chunks(query: str) -> list[dict]:
+    """
+    Bedrock Knowledge Base Retrieve API 호출.
+    반환: [{"text": str, "uri": str, "score": float}, ...]
+    """
+    for attempt in range(_MAX_RETRIES):
+        try:
+            resp = _bedrock_agent_rt.retrieve(
+                knowledgeBaseId=KNOWLEDGE_BASE_ID,
+                retrievalQuery={"text": query},
+                retrievalConfiguration={
+                    "vectorSearchConfiguration": {
+                        "numberOfResults": _RETRIEVAL_RESULTS,
+                    }
+                },
+            )
+            break
+        except Exception as e:
+            _code = _err_code(e)
+            if _code not in ("ThrottlingException", "ServiceUnavailableException") \
+                    or attempt == _MAX_RETRIES - 1:
+                logger.error({"message": "KB retrieve 실패", "error": str(e)})
+                raise
+            wait = 2 ** attempt
+            logger.warning({"message": f"KB retrieve 재시도 {attempt + 1}", "wait_sec": wait})
+            time.sleep(wait)
+
+    chunks = []
+    for result in resp.get("retrievalResults", []):
+        text     = result.get("content", {}).get("text", "")
+        location = result.get("location", {})
+        uri      = location.get("s3Location", {}).get("uri", "") \
+                   or location.get("type", "")
+        score    = result.get("score", 0.0)
+        if text:
+            chunks.append({"text": text, "uri": uri, "score": score})
+    return chunks
 
 
+# ── 컨텍스트 조립 ─────────────────────────────────────────────────────────────
+def _build_context(chunks: list[dict]) -> str:
+    """검색된 청크를 번호 붙인 텍스트 블록으로 조합."""
+    if not chunks:
+        return "(관련 문서를 찾을 수 없습니다.)"
+    lines = []
+    for i, chunk in enumerate(chunks, 1):
+        lines.append(f"[문서 {i}]\n{chunk['text']}")
+    return "\n\n".join(lines)
+
+
+# ── Claude 호출 ───────────────────────────────────────────────────────────────
+def _invoke_claude(
+    system_prompt: str,
+    user_message: str,
+) -> str:
+    """
+    Bedrock converse API로 Claude Sonnet 4.5에 직접 요청.
+    재시도: ThrottlingException / ServiceUnavailableException
+    """
+    for attempt in range(_MAX_RETRIES):
+        try:
+            resp = _bedrock_rt.converse(
+                modelId=_BEDROCK_MODEL_ID,
+                system=[{"text": system_prompt}],
+                messages=[{
+                    "role":    "user",
+                    "content": [{"text": user_message}],
+                }],
+                inferenceConfig={
+                    "maxTokens":   _MAX_TOKENS,
+                    "temperature": 0.1,
+                },
+            )
+            break
+        except Exception as e:
+            _code = _err_code(e)
+            if _code not in ("ThrottlingException", "ServiceUnavailableException") \
+                    or attempt == _MAX_RETRIES - 1:
+                logger.error({"message": "Claude converse 실패", "error": str(e)})
+                raise
+            wait = 2 ** attempt
+            logger.warning({"message": f"Claude 재시도 {attempt + 1}", "wait_sec": wait})
+            time.sleep(wait)
+
+    return resp["output"]["message"]["content"][0]["text"]
+
+
+# ── 공개 인터페이스 ───────────────────────────────────────────────────────────
 def retrieve_and_generate(
     question: str,
     language_name: str,
@@ -67,91 +166,54 @@ def retrieve_and_generate(
     notice_context: Optional[str] = None,
 ) -> ChatResponse:
     """
-    Bedrock Knowledge Base RetrieveAndGenerate 호출.
+    KB 검색 → 컨텍스트 조립 → Claude 직접 호출 방식의 RAG 답변 생성.
 
     Parameters
     ----------
     question      : 사용자 질문 (다국어 가능)
     language_name : 답변 언어명 (예: "Tiếng Việt")
-    session_id    : Bedrock 네이티브 세션 ID (None이면 새 세션)
+    session_id    : 세션 ID (응답에 그대로 반환, 세션 관리는 호출자 담당)
     notice_context: 공지 연계 모드 — 해당 공지 요약 텍스트 (None이면 일반 모드)
     """
-    # 프롬프트 템플릿 렌더링
-    system_prompt = _load_prompt_template()
+    # 1. 시스템 프롬프트 로드 + 언어 치환
+    system_prompt = _load_system_prompt()
     system_prompt = system_prompt.replace("{language_name}", language_name)
 
-    # 공지 컨텍스트가 있으면 질문 앞에 추가
-    user_text = question
+    # 2. KB 검색
+    chunks = _retrieve_chunks(question)
+    context_text = _build_context(chunks)
+
+    # 3. 사용자 메시지 조합
+    #    공지 컨텍스트가 있으면 앞에 추가
+    parts: list[str] = []
     if notice_context:
-        user_text = (
-            f"[관련 공지 요약]\n{notice_context}\n\n"
-            f"[질문]\n{question}"
-        )
-    system_prompt = system_prompt.replace("{user_question}", user_text)
+        parts.append(f"[관련 공지 요약]\n{notice_context}")
+    parts.append(f"[참고 문서]\n{context_text}")
+    parts.append(f"[질문]\n{question}")
+    user_message = "\n\n".join(parts)
 
-    request: dict = {
-        "input":  {"text": user_text},
-        "retrieveAndGenerateConfiguration": {
-            "type": "KNOWLEDGE_BASE",
-            "knowledgeBaseConfiguration": {
-                "knowledgeBaseId": KNOWLEDGE_BASE_ID,
-                "modelArn":        BEDROCK_MODEL_ARN,
-                "retrievalConfiguration": {
-                    "vectorSearchConfiguration": {
-                        "numberOfResults": _RETRIEVAL_RESULTS,
-                    }
-                },
-                "generationConfiguration": {
-                    "promptTemplate": {
-                        "textPromptTemplate": system_prompt,
-                    },
-                    "inferenceConfig": {
-                        "textInferenceConfig": {
-                            "maxTokens":   _MAX_TOKENS,
-                            "temperature": 0.1,
-                        }
-                    },
-                },
-            },
-        },
-    }
+    # 4. Claude 직접 호출
+    answer = _invoke_claude(system_prompt, user_message)
 
-    # 기존 세션 연속 시 sessionId 추가
-    if session_id:
-        request["sessionId"] = session_id
+    # 5. 출처 목록 구성 (score 기준 상위 5개)
+    sources = [
+        SourceCitation(content=c["text"][:200], location=c["uri"])
+        for c in chunks
+        if c.get("uri")
+    ]
 
-    # 재시도 루프 (ThrottlingException / ServiceUnavailableException)
-    for attempt in range(_MAX_RETRIES):
-        try:
-            response = _bedrock_agent_rt.retrieve_and_generate(**request)
-            break
-        except Exception as e:
-            err_name = type(e).__name__
-            err_code = getattr(getattr(e, "response", {}), "get", lambda *_: "")(
-                "Error", {}
-            ).get("Code", err_name)
-            retryable = err_code in ("ThrottlingException", "ServiceUnavailableException")
-            if not retryable or attempt == _MAX_RETRIES - 1:
-                logger.error(
-                    {"message": "retrieve_and_generate 실패", "error": str(e), "attempt": attempt}
-                )
-                raise
-            wait = 2 ** attempt
-            logger.warning(
-                {"message": f"재시도 {attempt + 1}/{_MAX_RETRIES}", "wait_sec": wait}
-            )
-            time.sleep(wait)
+    new_session = session_id or ""
+    logger.info({
+        "message":   "RAG 답변 생성 완료",
+        "sessionId": new_session,
+        "chunks":    len(chunks),
+        "sources":   len(sources),
+    })
+    return ChatResponse(answer=answer, session_id=new_session, sources=sources)
 
-    answer     = response.get("output", {}).get("text", "")
-    new_sess   = response.get("sessionId", session_id or "")
-    citations  = response.get("citations", [])
-    sources    = _extract_sources(citations)
 
-    logger.info(
-        {
-            "message":  "RAG 답변 생성 완료",
-            "sessionId": new_sess,
-            "sources":   len(sources),
-        }
-    )
-    return ChatResponse(answer=answer, session_id=new_sess, sources=sources)
+# ── 내부 유틸 ─────────────────────────────────────────────────────────────────
+def _err_code(exc: Exception) -> str:
+    """boto3 예외에서 error code 문자열 추출."""
+    response = getattr(exc, "response", None) or {}
+    return response.get("Error", {}).get("Code", type(exc).__name__)

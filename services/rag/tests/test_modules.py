@@ -140,78 +140,86 @@ class TestDb:
 
 # ── retrieval.py ──────────────────────────────────────────────
 
-MOCK_RAG_RESPONSE = {
-    "output": {"text": "돌봄교실 신청은 학교 홈페이지에서 하실 수 있습니다."},
-    "sessionId": "bedrock-session-001",
-    "citations": [
+# Retrieve API mock (bedrock-agent-runtime)
+MOCK_RETRIEVE_RESPONSE = {
+    "retrievalResults": [
         {
-            "retrievedReferences": [
-                {
-                    "content":  {"text": "돌봄교실 관련 안내 문서"},
-                    "location": {"s3Location": {"uri": "s3://kb-source/dolbom.pdf"}},
-                }
-            ]
+            "content":  {"text": "돌봄교실은 학교에서 운영하는 방과후 돌봄 프로그램입니다."},
+            "location": {"s3Location": {"uri": "s3://kb-source/dolbom.pdf"}},
+            "score":    0.95,
         }
-    ],
+    ]
+}
+
+# converse API mock (bedrock-runtime)
+MOCK_CONVERSE_RESPONSE = {
+    "output": {
+        "message": {
+            "content": [{"text": "돌봄교실 신청은 학교 홈페이지에서 하실 수 있습니다."}]
+        }
+    }
 }
 
 
 class TestRetrieval:
-    def test_retrieve_and_generate_success(self):
+    def _call(self, **kwargs):
+        """공통 패치 컨텍스트로 retrieve_and_generate 호출."""
         from rag.retrieval import retrieve_and_generate
 
-        with patch("rag.retrieval._bedrock_agent_rt") as mock_client:
-            mock_client.retrieve_and_generate.return_value = MOCK_RAG_RESPONSE
-            result = retrieve_and_generate(
-                question="돌봄교실 어떻게 신청해요?",
-                language_name="한국어",
-            )
+        with patch("rag.retrieval._bedrock_agent_rt") as mock_agent, \
+             patch("rag.retrieval._bedrock_rt") as mock_rt:
+            mock_agent.retrieve.return_value = MOCK_RETRIEVE_RESPONSE
+            mock_rt.converse.return_value    = MOCK_CONVERSE_RESPONSE
+            result = retrieve_and_generate(**kwargs)
+            return result, mock_agent, mock_rt
 
+    def test_retrieve_and_generate_success(self):
+        result, _, _ = self._call(question="돌봄교실 어떻게 신청해요?", language_name="한국어")
         assert "돌봄교실" in result.answer
-        assert result.session_id == "bedrock-session-001"
         assert len(result.sources) == 1
         assert "dolbom.pdf" in result.sources[0].location
 
-    def test_retrieve_passes_session_id(self):
+    def test_session_id_returned_in_response(self):
+        result, _, _ = self._call(
+            question="질문", language_name="English", session_id="my-session-001"
+        )
+        assert result.session_id == "my-session-001"
+
+    def test_no_session_id_returns_empty_string(self):
+        result, _, _ = self._call(question="질문", language_name="English", session_id=None)
+        assert result.session_id == ""
+
+    def test_retrieve_uses_kb_id(self):
+        _, mock_agent, _ = self._call(question="질문", language_name="English")
+        call_kwargs = mock_agent.retrieve.call_args[1]
+        assert call_kwargs["knowledgeBaseId"] == "test-kb-id"  # conftest 환경변수
+
+    def test_notice_context_prepended_in_user_message(self):
+        _, _, mock_rt = self._call(
+            question="비용은 얼마예요?",
+            language_name="Tiếng Việt",
+            notice_context="현장학습 비용 15,000원",
+        )
+        user_text = mock_rt.converse.call_args[1]["messages"][0]["content"][0]["text"]
+        assert "현장학습 비용 15,000원" in user_text
+        assert "비용은 얼마예요?" in user_text
+
+    def test_system_prompt_contains_language_name(self):
+        _, _, mock_rt = self._call(question="질문", language_name="Tiếng Việt")
+        system_text = mock_rt.converse.call_args[1]["system"][0]["text"]
+        assert "Tiếng Việt" in system_text
+
+    def test_empty_chunks_uses_fallback_context(self):
         from rag.retrieval import retrieve_and_generate
 
-        with patch("rag.retrieval._bedrock_agent_rt") as mock_client:
-            mock_client.retrieve_and_generate.return_value = MOCK_RAG_RESPONSE
-            retrieve_and_generate(
-                question="질문",
-                language_name="English",
-                session_id="existing-session",
-            )
-            call_kwargs = mock_client.retrieve_and_generate.call_args[1]
-            assert call_kwargs.get("sessionId") == "existing-session"
+        with patch("rag.retrieval._bedrock_agent_rt") as mock_agent, \
+             patch("rag.retrieval._bedrock_rt") as mock_rt:
+            mock_agent.retrieve.return_value = {"retrievalResults": []}
+            mock_rt.converse.return_value    = MOCK_CONVERSE_RESPONSE
+            retrieve_and_generate(question="질문", language_name="English")
 
-    def test_retrieve_no_session_id_omits_key(self):
-        from rag.retrieval import retrieve_and_generate
-
-        with patch("rag.retrieval._bedrock_agent_rt") as mock_client:
-            mock_client.retrieve_and_generate.return_value = MOCK_RAG_RESPONSE
-            retrieve_and_generate(
-                question="질문",
-                language_name="English",
-                session_id=None,
-            )
-            call_kwargs = mock_client.retrieve_and_generate.call_args[1]
-            assert "sessionId" not in call_kwargs
-
-    def test_retrieve_notice_context_prepended(self):
-        from rag.retrieval import retrieve_and_generate
-
-        with patch("rag.retrieval._bedrock_agent_rt") as mock_client:
-            mock_client.retrieve_and_generate.return_value = MOCK_RAG_RESPONSE
-            retrieve_and_generate(
-                question="비용은 얼마예요?",
-                language_name="Tiếng Việt",
-                notice_context="현장학습 비용 15,000원",
-            )
-            call_kwargs = mock_client.retrieve_and_generate.call_args[1]
-            input_text = call_kwargs["input"]["text"]
-            assert "현장학습 비용 15,000원" in input_text
-            assert "비용은 얼마예요?" in input_text
+        user_text = mock_rt.converse.call_args[1]["messages"][0]["content"][0]["text"]
+        assert "관련 문서를 찾을 수 없습니다" in user_text
 
     def test_retrieve_throttling_retry(self):
         from rag.retrieval import retrieve_and_generate
@@ -224,52 +232,43 @@ class TestRetrieval:
                 exc = Exception("ThrottlingException")
                 exc.response = {"Error": {"Code": "ThrottlingException"}}
                 raise exc
-            return MOCK_RAG_RESPONSE
+            return MOCK_RETRIEVE_RESPONSE
 
-        with patch("rag.retrieval._bedrock_agent_rt") as mock_client, \
+        with patch("rag.retrieval._bedrock_agent_rt") as mock_agent, \
+             patch("rag.retrieval._bedrock_rt") as mock_rt, \
              patch("rag.retrieval.time.sleep"):
-            mock_client.retrieve_and_generate.side_effect = side_effect
-            result = retrieve_and_generate(
-                question="질문",
-                language_name="English",
-            )
+            mock_agent.retrieve.side_effect = side_effect
+            mock_rt.converse.return_value   = MOCK_CONVERSE_RESPONSE
+            result = retrieve_and_generate(question="질문", language_name="English")
 
         assert call_count == 2
         assert result.answer != ""
 
-    def test_retrieve_extracts_multiple_sources(self):
+    def test_claude_throttling_retry(self):
         from rag.retrieval import retrieve_and_generate
 
-        response_multi_src = {
-            "output": {"text": "답변"},
-            "sessionId": "s",
-            "citations": [
-                {
-                    "retrievedReferences": [
-                        {"content": {"text": "문서1"}, "location": {"s3Location": {"uri": "s3://kb/doc1.pdf"}}},
-                        {"content": {"text": "문서2"}, "location": {"s3Location": {"uri": "s3://kb/doc2.pdf"}}},
-                    ]
-                },
-                {
-                    "retrievedReferences": [
-                        {"content": {"text": "문서1 중복"}, "location": {"s3Location": {"uri": "s3://kb/doc1.pdf"}}},
-                    ]
-                },
-            ],
-        }
+        call_count = 0
+        def side_effect(**kwargs):
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
+                exc = Exception("ThrottlingException")
+                exc.response = {"Error": {"Code": "ThrottlingException"}}
+                raise exc
+            return MOCK_CONVERSE_RESPONSE
 
-        with patch("rag.retrieval._bedrock_agent_rt") as mock_client:
-            mock_client.retrieve_and_generate.return_value = response_multi_src
+        with patch("rag.retrieval._bedrock_agent_rt") as mock_agent, \
+             patch("rag.retrieval._bedrock_rt") as mock_rt, \
+             patch("rag.retrieval.time.sleep"):
+            mock_agent.retrieve.return_value = MOCK_RETRIEVE_RESPONSE
+            mock_rt.converse.side_effect     = side_effect
             result = retrieve_and_generate(question="질문", language_name="English")
 
-        # 중복 URI는 제거되어야 함
-        assert len(result.sources) == 2
-        uris = [s.location for s in result.sources]
-        assert len(set(uris)) == 2
+        assert call_count == 2
+        assert result.answer != ""
 
-    def test_load_prompt_template_contains_search_results(self):
-        from rag.retrieval import _load_prompt_template
+    def test_load_system_prompt_contains_language_placeholder(self):
+        from rag.retrieval import _load_system_prompt
 
-        template = _load_prompt_template()
-        assert "$search_results$" in template
-        assert "{language_name}" in template
+        prompt = _load_system_prompt()
+        assert "{language_name}" in prompt

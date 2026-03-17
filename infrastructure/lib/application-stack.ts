@@ -13,8 +13,6 @@ import * as apigwv2Integrations from "aws-cdk-lib/aws-apigatewayv2-integrations"
 import * as apigwv2Auth from "aws-cdk-lib/aws-apigatewayv2-authorizers";
 import * as cognito from "aws-cdk-lib/aws-cognito";
 import * as logs from "aws-cdk-lib/aws-logs";
-import * as opensearchserverless from "aws-cdk-lib/aws-opensearchserverless";
-import * as bedrock from "aws-cdk-lib/aws-bedrock";
 import * as ssm from "aws-cdk-lib/aws-ssm";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import { Construct } from "constructs";
@@ -358,8 +356,10 @@ export class ApplicationStack extends cdk.Stack {
       description: "질문 임베딩 → Vector Search → Bedrock 답변 생성",
       environment: {
         ...commonEnv,
-        BEDROCK_MODEL_ID: "anthropic.claude-sonnet-4-20250514-v1:0",
+        BEDROCK_MODEL_ID: "anthropic.claude-sonnet-4-5",
         MAX_TOKENS_QA:    "1000",
+        // SSM 파라미터 이름 — Lambda가 cold start 시 KB ID를 직접 조회
+        KB_ID_PARAM_NAME: `/school-buddy/${environment}/kb-id`,
       },
     });
 
@@ -497,168 +497,27 @@ export class ApplicationStack extends cdk.Stack {
     }
 
     // ──────────────────────────────────────────────────────
-    // Bedrock Knowledge Base (RAG Q&A 기반 교육 제도 문서)
+    // Knowledge Base — SSM Parameter Store에서 KB ID 조회
+    // (담당자가 외부에서 S3 Vectors KB를 직접 생성 후 SSM에 등록)
+    //
+    // ⚠️ 배포 전 SSM에 다음 값을 등록해야 함:
+    //   aws ssm put-parameter \
+    //     --name /school-buddy/{env}/kb-id \
+    //     --value <BEDROCK_KB_ID> --type String --region us-east-1
+    //   aws ssm put-parameter \
+    //     --name /school-buddy/{env}/kb-data-source-id \
+    //     --value <DATA_SOURCE_ID> --type String --region us-east-1
     // ──────────────────────────────────────────────────────
 
-    // ── 1. OpenSearch Serverless 보안·데이터 접근 정책 ──────────────────
-    // CDK 2.241: CfnSecurityPolicy가 encryption/network를 모두 담당한다
-    const collectionName = `school-buddy-kb-${environment}`;
-
-    const kbEncryptionPolicy = new opensearchserverless.CfnSecurityPolicy(
-      this, "KbEncryptionPolicy",
-      {
-        name:   `sb-kb-enc-${environment}`,   // 최대 32자
-        type:   "encryption",
-        policy: JSON.stringify({
-          Rules: [
-            { Resource: [`collection/${collectionName}`], ResourceType: "collection" },
-          ],
-          AWSOwnedKey: true,
-        }),
-      }
+    // CDK CloudFormation 동적 참조 — deploy 시점에 SSM에서 값을 읽음
+    const kbId = ssm.StringParameter.valueForStringParameter(
+      this, `/school-buddy/${environment}/kb-id`
+    );
+    const kbDataSourceId = ssm.StringParameter.valueForStringParameter(
+      this, `/school-buddy/${environment}/kb-data-source-id`
     );
 
-    const kbNetworkPolicy = new opensearchserverless.CfnSecurityPolicy(
-      this, "KbNetworkPolicy",
-      {
-        name:   `sb-kb-net-${environment}`,
-        type:   "network",
-        policy: JSON.stringify([
-          {
-            Rules: [
-              { Resource: [`collection/${collectionName}`], ResourceType: "collection" },
-              { Resource: [`collection/${collectionName}`], ResourceType: "dashboard" },
-            ],
-            AllowFromPublic: true,
-          },
-        ]),
-      }
-    );
-
-    // SafeRole이 컬렉션·인덱스에 풀 액세스
-    const kbDataAccessPolicy = new opensearchserverless.CfnAccessPolicy(
-      this, "KbDataAccessPolicy",
-      {
-        name:   `sb-kb-access-${environment}`,
-        type:   "data",
-        policy: JSON.stringify([
-          {
-            Rules: [
-              {
-                Resource:     [`collection/${collectionName}`],
-                Permission:   [
-                  "aoss:CreateCollectionItems",
-                  "aoss:DeleteCollectionItems",
-                  "aoss:UpdateCollectionItems",
-                  "aoss:DescribeCollectionItems",
-                ],
-                ResourceType: "collection",
-              },
-              {
-                Resource:     [`index/${collectionName}/*`],
-                Permission:   [
-                  "aoss:CreateIndex",
-                  "aoss:DeleteIndex",
-                  "aoss:UpdateIndex",
-                  "aoss:DescribeIndex",
-                  "aoss:ReadDocument",
-                  "aoss:WriteDocument",
-                ],
-                ResourceType: "index",
-              },
-            ],
-            // SafeRole-hanyang-pj-1 에게만 허용
-            Principal: [`arn:aws:iam::${this.account}:role/SafeRole-hanyang-pj-1`],
-          },
-        ]),
-      }
-    );
-
-    // ── 2. OpenSearch Serverless 컬렉션 (VECTORSEARCH) ───────────────────
-    const kbCollection = new opensearchserverless.CfnCollection(
-      this, "KbCollection",
-      {
-        name:        collectionName,
-        type:        "VECTORSEARCH",
-        description: "School Buddy Knowledge Base — 한국 교육 제도 공식 문서",
-        tags: [
-          { key: "Project",     value: "school-buddy" },
-          { key: "Environment", value: environment },
-        ],
-      }
-    );
-    // 암호화 정책이 먼저 존재해야 컬렉션 생성 가능
-    kbCollection.addDependency(kbEncryptionPolicy);
-
-    // ── 3. Bedrock Knowledge Base (L1 CfnKnowledgeBase) ─────────────────
-    const knowledgeBase = new bedrock.CfnKnowledgeBase(
-      this, "KnowledgeBase",
-      {
-        name:        `school-buddy-kb-${environment}`,
-        description: "한국 초등학교 교육 제도 Q&A용 Knowledge Base",
-        // ⚠️ 새 Role 생성 금지 → SafeRole 참조 (서비스 신뢰 정책은 별도 구성 필요)
-        roleArn: safeRole.roleArn,
-        knowledgeBaseConfiguration: {
-          type: "VECTOR",
-          vectorKnowledgeBaseConfiguration: {
-            // us-east-1 가용 임베딩 모델
-            embeddingModelArn:
-              `arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v2:0`,
-          },
-        },
-        storageConfiguration: {
-          type: "OPENSEARCH_SERVERLESS",
-          opensearchServerlessConfiguration: {
-            collectionArn:   kbCollection.attrArn,
-            vectorIndexName: "school-buddy-index",
-            fieldMapping: {
-              vectorField:   "embedding",
-              textField:     "text",
-              metadataField: "metadata",
-            },
-          },
-        },
-        tags: {
-          Project:     "school-buddy",
-          Environment: environment,
-        },
-      }
-    );
-    knowledgeBase.addDependency(kbCollection);
-
-    // ── 4. S3 데이터 소스 (FIXED_SIZE 청킹) ──────────────────────────────
-    const kbDataSource = new bedrock.CfnDataSource(
-      this, "KbDataSource",
-      {
-        knowledgeBaseId: knowledgeBase.ref,
-        name:            `school-buddy-kb-source-${environment}`,
-        dataSourceConfiguration: {
-          type: "S3",
-          s3Configuration: {
-            bucketArn: storage.kbSourceBucket.bucketArn,
-          },
-        },
-        vectorIngestionConfiguration: {
-          chunkingConfiguration: {
-            chunkingStrategy: "FIXED_SIZE",
-            fixedSizeChunkingConfiguration: {
-              maxTokens:         512,
-              overlapPercentage: 20,
-            },
-          },
-        },
-      }
-    );
-
-    // ── 5. Knowledge Base ID → SSM Parameter Store ───────────────────────
-    new ssm.StringParameter(this, "KbIdParam", {
-      parameterName: `/school-buddy/${environment}/kb-id`,
-      stringValue:   knowledgeBase.ref,
-      description:   "Bedrock Knowledge Base ID (rag-query-handler 참조용)",
-      tier:          ssm.ParameterTier.STANDARD,
-    });
-
-    // ── 6. kb-sync Lambda (S3 업로드 → Ingestion Job 트리거) ─────────────
+    // kb-sync Lambda (S3 업로드 → Ingestion Job 트리거)
     this.kbSyncFn = new lambda.Function(this, "KbSync", {
       functionName: `school-buddy-kb-sync-${environment}`,
       ...pythonLambdaDefaults,
@@ -668,14 +527,13 @@ export class ApplicationStack extends cdk.Stack {
       memorySize:  128,
       description: "S3 업로드 이벤트 → Bedrock Knowledge Base StartIngestionJob",
       environment: {
-        KNOWLEDGE_BASE_ID: knowledgeBase.ref,
-        DATA_SOURCE_ID:    kbDataSource.ref,
+        KNOWLEDGE_BASE_ID: kbId,
+        DATA_SOURCE_ID:    kbDataSourceId,
         REGION:            "us-east-1",
       },
     });
 
     // S3 ObjectCreated → EventBridge → kb-sync Lambda
-    // (직접 S3 addEventNotification은 StorageStack ↔ ApplicationStack 순환 참조 유발)
     const kbSyncRule = new events.Rule(this, "KbSyncRule", {
       ruleName:    `school-buddy-kb-sync-${environment}`,
       description: "S3 kb-source 업로드 이벤트 → Knowledge Base 동기화",
@@ -689,8 +547,8 @@ export class ApplicationStack extends cdk.Stack {
     });
     kbSyncRule.addTarget(new eventsTargets.LambdaFunction(this.kbSyncFn));
 
-    // 공개 참조용 속성 할당
-    this.knowledgeBaseId = knowledgeBase.ref;
+    // SSM 파라미터 이름을 공개 속성으로 노출
+    this.knowledgeBaseId = `/school-buddy/${environment}/kb-id`;
 
     // ──────────────────────────────────────────────────────
     // CloudFormation Outputs
@@ -721,15 +579,10 @@ export class ApplicationStack extends cdk.Stack {
       value:      noticeTopic.topicArn,
       exportName: `school-buddy-notice-topic-arn-${environment}`,
     });
-    new cdk.CfnOutput(this, "KnowledgeBaseId", {
-      value:       knowledgeBase.ref,
-      description: "Bedrock Knowledge Base ID",
-      exportName:  `school-buddy-kb-id-${environment}`,
-    });
-    new cdk.CfnOutput(this, "KbCollectionArn", {
-      value:       kbCollection.attrArn,
-      description: "OpenSearch Serverless Collection ARN",
-      exportName:  `school-buddy-kb-collection-arn-${environment}`,
+    new cdk.CfnOutput(this, "KbSsmParamName", {
+      value:       `/school-buddy/${environment}/kb-id`,
+      description: "SSM 파라미터 이름 — 담당자가 KB ID를 이 경로에 등록해야 함",
+      exportName:  `school-buddy-kb-ssm-param-${environment}`,
     });
   }
 }

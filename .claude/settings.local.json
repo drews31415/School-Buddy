@@ -37,7 +37,8 @@
       "Bash(cd \"C:/Users/dldls/Documents/School Buddy/infrastructure\" && npx cdk synth --quiet 2>&1)",
       "Bash(cd \"C:/Users/dldls/Documents/School Buddy/apps/mobile\" && npx tsc --noEmit 2>&1 | head -40)",
       "Bash(cd \"C:/Users/dldls/Documents/School Buddy/apps/mobile\" && npx tsc --noEmit 2>&1 | head -30)",
-      "Bash(cd:*)"
+      "Bash(cd:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }
