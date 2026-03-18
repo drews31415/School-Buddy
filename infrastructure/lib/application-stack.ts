@@ -207,19 +207,6 @@ export class ApplicationStack extends cdk.Stack {
     this.noticeDLQ   = noticeDLQ;
     this.noticeQueue = noticeQueue;
 
-    const notificationDLQ = new sqs.Queue(this, "NotificationDLQ", {
-      queueName:       `school-buddy-notification-dlq-${environment}`,
-      retentionPeriod: cdk.Duration.days(14),
-      encryption:      sqs.QueueEncryption.SQS_MANAGED,
-    });
-
-    const notificationQueue = new sqs.Queue(this, "NotificationQueue", {
-      queueName:        `school-buddy-notification-queue-${environment}`,
-      visibilityTimeout: cdk.Duration.seconds(60),
-      encryption:        sqs.QueueEncryption.SQS_MANAGED,
-      deadLetterQueue:   { queue: notificationDLQ, maxReceiveCount: 3 },
-    });
-
     // ──────────────────────────────────────────────────────
     // SNS Topic
     // ──────────────────────────────────────────────────────
@@ -241,15 +228,13 @@ export class ApplicationStack extends cdk.Stack {
       NOTICES_TABLE:            storage.noticesTable.tableName,
       NOTIFICATIONS_TABLE:      storage.notificationsTable.tableName,
       CHAT_HISTORY_TABLE:       storage.chatHistoryTable.tableName,
-      KB_DOCUMENTS_TABLE:       storage.kbDocumentsTable.tableName,
       TRANSLATION_CACHE_TABLE:  storage.translationCacheTable.tableName,
       // S3 Bucket Names
       DOCUMENTS_BUCKET: storage.documentsBucket.bucketName,
       KB_SOURCE_BUCKET: storage.kbSourceBucket.bucketName,
       // Messaging
-      NOTICE_QUEUE_URL:       noticeQueue.queueUrl,
-      NOTIFICATION_QUEUE_URL: notificationQueue.queueUrl,
-      NOTICE_TOPIC_ARN:       noticeTopic.topicArn,
+      NOTICE_QUEUE_URL: noticeQueue.queueUrl,
+      NOTICE_TOPIC_ARN: noticeTopic.topicArn,
       // Cognito (Lambda에서 토큰 검증 시 참조)
       USER_POOL_ID:        this.userPool.userPoolId,
       // Secrets Manager 키 이름
@@ -274,7 +259,7 @@ export class ApplicationStack extends cdk.Stack {
     // school-crawler — EventBridge 30분 스케줄 트리거
     // 환경변수:
     //   [commonEnv] ENVIRONMENT, REGION, *_TABLE, *_BUCKET, NOTICE_QUEUE_URL,
-    //               NOTIFICATION_QUEUE_URL, NOTICE_TOPIC_ARN, USER_POOL_ID, APP_SECRETS_NAME
+    //               NOTICE_TOPIC_ARN, USER_POOL_ID, APP_SECRETS_NAME
     //   SQS_QUEUE_URL        공지 메시지 발행 대상 SQS URL
     //   SNS_ALARM_TOPIC_ARN  연속 오류 3회 시 알람 SNS ARN
     this.crawlerFn = new lambda.Function(this, "SchoolCrawler", {
@@ -380,7 +365,7 @@ export class ApplicationStack extends cdk.Stack {
       environment: {
         ...commonEnv,
         KB_ID:            process.env.KB_ID ?? "",
-        BEDROCK_MODEL_ID: "anthropic.claude-sonnet-4-5",
+        BEDROCK_MODEL_ID: "anthropic.claude-sonnet-4-20250514-v1:0",
         MAX_TOKENS_QA:    "1000",
       },
     });

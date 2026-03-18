@@ -22,7 +22,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-us-east-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/4d50f0d3fd46664efdb88ec3a25e919244d97f1f73a0a9317c388275badfea58.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/0bb4432f8bacfd7147191fdbf04edbddfbbb52b1e432f48c9d6468c25e974d00.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -138,20 +138,6 @@
             "data": "ChatHistoryTableA22BA13C"
           }
         ],
-        "/SchoolBuddyStorage/KBDocumentsTable": [
-          {
-            "type": "aws:cdk:hasPhysicalName",
-            "data": {
-              "Ref": "KBDocumentsTable83946FE7"
-            }
-          }
-        ],
-        "/SchoolBuddyStorage/KBDocumentsTable/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "KBDocumentsTable83946FE7"
-          }
-        ],
         "/SchoolBuddyStorage/TranslationCacheTable": [
           {
             "type": "aws:cdk:hasPhysicalName",
@@ -250,12 +236,6 @@
             "data": "ChatHistoryTableName"
           }
         ],
-        "/SchoolBuddyStorage/KBDocumentsTableName": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "KBDocumentsTableName"
-          }
-        ],
         "/SchoolBuddyStorage/TranslationCacheTableName": [
           {
             "type": "aws:cdk:logicalId",
@@ -316,12 +296,6 @@
             "data": "ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
           }
         ],
-        "/SchoolBuddyStorage/Exports/Output{\"Ref\":\"KBDocumentsTable83946FE7\"}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ExportsOutputRefKBDocumentsTable83946FE724D9FE6B"
-          }
-        ],
         "/SchoolBuddyStorage/Exports/Output{\"Ref\":\"TranslationCacheTable12FAE693\"}": [
           {
             "type": "aws:cdk:logicalId",
@@ -376,7 +350,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-us-east-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/0b040a4283a715dc0c8feaf432bb1aa884346f0a656df0f75f697005b9b1568c.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/747c2be535564773f75ff4f9bf4470c5bf65f05f0f695ee3025e1eb09677433a.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -455,18 +429,6 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "NoticeQueue73F1DBE0"
-          }
-        ],
-        "/SchoolBuddyApplication/NotificationDLQ/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "NotificationDLQCDA15FAF"
-          }
-        ],
-        "/SchoolBuddyApplication/NotificationQueue/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "NotificationQueue36610CC1"
           }
         ],
         "/SchoolBuddyApplication/NoticeTopic/Resource": [

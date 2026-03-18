@@ -325,46 +325,6 @@
     "aws:cdk:path": "SchoolBuddyStorage/ChatHistoryTable/Resource"
    }
   },
-  "KBDocumentsTable83946FE7": {
-   "Type": "AWS::DynamoDB::Table",
-   "Properties": {
-    "AttributeDefinitions": [
-     {
-      "AttributeName": "docId",
-      "AttributeType": "S"
-     }
-    ],
-    "BillingMode": "PAY_PER_REQUEST",
-    "KeySchema": [
-     {
-      "AttributeName": "docId",
-      "KeyType": "HASH"
-     }
-    ],
-    "PointInTimeRecoverySpecification": {
-     "PointInTimeRecoveryEnabled": true
-    },
-    "SSESpecification": {
-     "SSEEnabled": true
-    },
-    "TableName": "school-buddy-kb-documents-dev",
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ]
-   },
-   "UpdateReplacePolicy": "Retain",
-   "DeletionPolicy": "Retain",
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyStorage/KBDocumentsTable/Resource"
-   }
-  },
   "TranslationCacheTable12FAE693": {
    "Type": "AWS::DynamoDB::Table",
    "Properties": {
@@ -786,14 +746,6 @@
     "Name": "school-buddy-chat-history-table-dev"
    }
   },
-  "KBDocumentsTableName": {
-   "Value": {
-    "Ref": "KBDocumentsTable83946FE7"
-   },
-   "Export": {
-    "Name": "school-buddy-kb-documents-table-dev"
-   }
-  },
   "TranslationCacheTableName": {
    "Value": {
     "Ref": "TranslationCacheTable12FAE693"
@@ -864,14 +816,6 @@
    },
    "Export": {
     "Name": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
-   }
-  },
-  "ExportsOutputRefKBDocumentsTable83946FE724D9FE6B": {
-   "Value": {
-    "Ref": "KBDocumentsTable83946FE7"
-   },
-   "Export": {
-    "Name": "school-buddy-storage-dev:ExportsOutputRefKBDocumentsTable83946FE724D9FE6B"
    }
   },
   "ExportsOutputRefTranslationCacheTable12FAE6937472A533": {

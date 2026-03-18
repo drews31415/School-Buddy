@@ -266,61 +266,6 @@
     "aws:cdk:path": "SchoolBuddyApplication/NoticeQueue/Resource"
    }
   },
-  "NotificationDLQCDA15FAF": {
-   "Type": "AWS::SQS::Queue",
-   "Properties": {
-    "MessageRetentionPeriod": 1209600,
-    "QueueName": "school-buddy-notification-dlq-dev",
-    "SqsManagedSseEnabled": true,
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ]
-   },
-   "UpdateReplacePolicy": "Delete",
-   "DeletionPolicy": "Delete",
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/NotificationDLQ/Resource"
-   }
-  },
-  "NotificationQueue36610CC1": {
-   "Type": "AWS::SQS::Queue",
-   "Properties": {
-    "QueueName": "school-buddy-notification-queue-dev",
-    "RedrivePolicy": {
-     "deadLetterTargetArn": {
-      "Fn::GetAtt": [
-       "NotificationDLQCDA15FAF",
-       "Arn"
-      ]
-     },
-     "maxReceiveCount": 3
-    },
-    "SqsManagedSseEnabled": true,
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ],
-    "VisibilityTimeout": 60
-   },
-   "UpdateReplacePolicy": "Delete",
-   "DeletionPolicy": "Delete",
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/NotificationQueue/Resource"
-   }
-  },
   "NoticeTopic73EA1121": {
    "Type": "AWS::SNS::Topic",
    "Properties": {
@@ -373,9 +318,6 @@
       "CHAT_HISTORY_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
       },
-      "KB_DOCUMENTS_TABLE": {
-       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKBDocumentsTable83946FE724D9FE6B"
-      },
       "TRANSLATION_CACHE_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
       },
@@ -387,9 +329,6 @@
       },
       "NOTICE_QUEUE_URL": {
        "Ref": "NoticeQueue73F1DBE0"
-      },
-      "NOTIFICATION_QUEUE_URL": {
-       "Ref": "NotificationQueue36610CC1"
       },
       "NOTICE_TOPIC_ARN": {
        "Ref": "NoticeTopic73EA1121"
@@ -483,9 +422,6 @@
       "CHAT_HISTORY_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
       },
-      "KB_DOCUMENTS_TABLE": {
-       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKBDocumentsTable83946FE724D9FE6B"
-      },
       "TRANSLATION_CACHE_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
       },
@@ -497,9 +433,6 @@
       },
       "NOTICE_QUEUE_URL": {
        "Ref": "NoticeQueue73F1DBE0"
-      },
-      "NOTIFICATION_QUEUE_URL": {
-       "Ref": "NotificationQueue36610CC1"
       },
       "NOTICE_TOPIC_ARN": {
        "Ref": "NoticeTopic73EA1121"
@@ -621,9 +554,6 @@
       "CHAT_HISTORY_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
       },
-      "KB_DOCUMENTS_TABLE": {
-       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKBDocumentsTable83946FE724D9FE6B"
-      },
       "TRANSLATION_CACHE_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
       },
@@ -635,9 +565,6 @@
       },
       "NOTICE_QUEUE_URL": {
        "Ref": "NoticeQueue73F1DBE0"
-      },
-      "NOTIFICATION_QUEUE_URL": {
-       "Ref": "NotificationQueue36610CC1"
       },
       "NOTICE_TOPIC_ARN": {
        "Ref": "NoticeTopic73EA1121"
@@ -763,9 +690,6 @@
       "CHAT_HISTORY_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
       },
-      "KB_DOCUMENTS_TABLE": {
-       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKBDocumentsTable83946FE724D9FE6B"
-      },
       "TRANSLATION_CACHE_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
       },
@@ -777,9 +701,6 @@
       },
       "NOTICE_QUEUE_URL": {
        "Ref": "NoticeQueue73F1DBE0"
-      },
-      "NOTIFICATION_QUEUE_URL": {
-       "Ref": "NotificationQueue36610CC1"
       },
       "NOTICE_TOPIC_ARN": {
        "Ref": "NoticeTopic73EA1121"
@@ -844,7 +765,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
      },
-     "S3Key": "5d77c6321e291abc1778c9c49bd39ea971a0681e92352d0394dbd25d87c8d994.zip"
+     "S3Key": "c5e8cb063ddfe09691beb0b4c9c2f6d684620a411cdd16e756e4d24b922fd607.zip"
     },
     "Description": "질문 임베딩 → Vector Search → Bedrock 답변 생성",
     "Environment": {
@@ -869,9 +790,6 @@
       "CHAT_HISTORY_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
       },
-      "KB_DOCUMENTS_TABLE": {
-       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKBDocumentsTable83946FE724D9FE6B"
-      },
       "TRANSLATION_CACHE_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
       },
@@ -884,9 +802,6 @@
       "NOTICE_QUEUE_URL": {
        "Ref": "NoticeQueue73F1DBE0"
       },
-      "NOTIFICATION_QUEUE_URL": {
-       "Ref": "NotificationQueue36610CC1"
-      },
       "NOTICE_TOPIC_ARN": {
        "Ref": "NoticeTopic73EA1121"
       },
@@ -895,7 +810,7 @@
       },
       "APP_SECRETS_NAME": "school-buddy/app-secrets",
       "KB_ID": "",
-      "BEDROCK_MODEL_ID": "anthropic.claude-sonnet-4-5",
+      "BEDROCK_MODEL_ID": "anthropic.claude-sonnet-4-20250514-v1:0",
       "MAX_TOKENS_QA": "1000"
      }
     },
@@ -939,7 +854,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "SchoolBuddyApplication/RagQueryHandler/Resource",
-    "aws:asset:path": "asset.5d77c6321e291abc1778c9c49bd39ea971a0681e92352d0394dbd25d87c8d994",
+    "aws:asset:path": "asset.c5e8cb063ddfe09691beb0b4c9c2f6d684620a411cdd16e756e4d24b922fd607",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -976,9 +891,6 @@
       "CHAT_HISTORY_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
       },
-      "KB_DOCUMENTS_TABLE": {
-       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKBDocumentsTable83946FE724D9FE6B"
-      },
       "TRANSLATION_CACHE_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
       },
@@ -990,9 +902,6 @@
       },
       "NOTICE_QUEUE_URL": {
        "Ref": "NoticeQueue73F1DBE0"
-      },
-      "NOTIFICATION_QUEUE_URL": {
-       "Ref": "NotificationQueue36610CC1"
       },
       "NOTICE_TOPIC_ARN": {
        "Ref": "NoticeTopic73EA1121"
@@ -1083,9 +992,6 @@
       "CHAT_HISTORY_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
       },
-      "KB_DOCUMENTS_TABLE": {
-       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKBDocumentsTable83946FE724D9FE6B"
-      },
       "TRANSLATION_CACHE_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
       },
@@ -1097,9 +1003,6 @@
       },
       "NOTICE_QUEUE_URL": {
        "Ref": "NoticeQueue73F1DBE0"
-      },
-      "NOTIFICATION_QUEUE_URL": {
-       "Ref": "NotificationQueue36610CC1"
       },
       "NOTICE_TOPIC_ARN": {
        "Ref": "NoticeTopic73EA1121"
