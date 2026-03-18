@@ -1,16 +1,16 @@
 {
   "version": "52.0.0",
   "files": {
-    "6efdcc5217697dd100baa960c2a9c9e64dc4db761d99ee5d46b38ff12f8fb9fa": {
+    "4d50f0d3fd46664efdb88ec3a25e919244d97f1f73a0a9317c388275badfea58": {
       "displayName": "school-buddy-storage-dev Template",
       "source": {
         "path": "SchoolBuddyStorage.template.json",
         "packaging": "file"
       },
       "destinations": {
-        "current_account-us-east-1-021b4366": {
+        "current_account-us-east-1-0fe510a8": {
           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1",
-          "objectKey": "6efdcc5217697dd100baa960c2a9c9e64dc4db761d99ee5d46b38ff12f8fb9fa.json",
+          "objectKey": "4d50f0d3fd46664efdb88ec3a25e919244d97f1f73a0a9317c388275badfea58.json",
           "region": "us-east-1",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-us-east-1"
         }

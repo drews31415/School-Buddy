@@ -348,7 +348,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
      },
-     "S3Key": "32c52487b180ccd83e064ea9b521ce8450f9512c760c74590d6eca93385a1c6e.zip"
+     "S3Key": "8e9f8330b00595845991a3620be374264abd41e5e4b32935dc83e311daddd167.zip"
     },
     "Description": "학교 홈페이지 크롤링 → notice-queue 발행",
     "Environment": {
@@ -446,7 +446,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "SchoolBuddyApplication/SchoolCrawler/Resource",
-    "aws:asset:path": "asset.32c52487b180ccd83e064ea9b521ce8450f9512c760c74590d6eca93385a1c6e",
+    "aws:asset:path": "asset.8e9f8330b00595845991a3620be374264abd41e5e4b32935dc83e311daddd167",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -458,7 +458,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
      },
-     "S3Key": "02742fbb53b22a8425929c7f789903a24d76ae89c6e0fc95710f235c47bf5779.zip"
+     "S3Key": "4b0e8b5321a3fc2c56873d0cd95284fa824b0bf1f9d90076545bea7d941af0ac.zip"
     },
     "Description": "공지 중복 제거 → DynamoDB 저장 → Bedrock 번역 → SNS 발행",
     "Environment": {
@@ -553,7 +553,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "SchoolBuddyApplication/NoticeProcessor/Resource",
-    "aws:asset:path": "asset.02742fbb53b22a8425929c7f789903a24d76ae89c6e0fc95710f235c47bf5779",
+    "aws:asset:path": "asset.4b0e8b5321a3fc2c56873d0cd95284fa824b0bf1f9d90076545bea7d941af0ac",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -596,7 +596,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
      },
-     "S3Key": "6b2fe82c0400184e6af5f4c59e65bc0153c63a8a8922fa543e5198948ee04975.zip"
+     "S3Key": "25a0c0c90f8f60de94ac00c8ff0e0396b51c987dc0faf09626f14244d4ed9cb1.zip"
     },
     "Description": "FCM / APNs 푸시 알림 발송",
     "Environment": {
@@ -689,7 +689,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "SchoolBuddyApplication/NotificationSender/Resource",
-    "aws:asset:path": "asset.6b2fe82c0400184e6af5f4c59e65bc0153c63a8a8922fa543e5198948ee04975",
+    "aws:asset:path": "asset.25a0c0c90f8f60de94ac00c8ff0e0396b51c987dc0faf09626f14244d4ed9cb1",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -738,7 +738,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
      },
-     "S3Key": "7258abc0bb8b847587bfd62ee146e8deb62d0fa341102137c4440fa3eccf61d8.zip"
+     "S3Key": "e1ef6a2712febd1fae05c9b3703a642eeca300f85eccb71eca99bd3cf3e84a97.zip"
     },
     "Description": "이미지/PDF OCR → Bedrock 분류·임베딩 → Vector Store 인덱싱",
     "Environment": {
@@ -832,7 +832,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "SchoolBuddyApplication/DocumentAnalyzer/Resource",
-    "aws:asset:path": "asset.7258abc0bb8b847587bfd62ee146e8deb62d0fa341102137c4440fa3eccf61d8",
+    "aws:asset:path": "asset.e1ef6a2712febd1fae05c9b3703a642eeca300f85eccb71eca99bd3cf3e84a97",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -844,7 +844,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
      },
-     "S3Key": "5f789ca25f8ab0a6b937c88fa6806018bd2669106d1482e1b32ee5f12d415c63.zip"
+     "S3Key": "5d77c6321e291abc1778c9c49bd39ea971a0681e92352d0394dbd25d87c8d994.zip"
     },
     "Description": "질문 임베딩 → Vector Search → Bedrock 답변 생성",
     "Environment": {
@@ -894,7 +894,8 @@
        "Ref": "UserPool6BA7E5F2"
       },
       "APP_SECRETS_NAME": "school-buddy/app-secrets",
-      "BEDROCK_MODEL_ID": "anthropic.claude-sonnet-4-20250514-v1:0",
+      "KB_ID": "",
+      "BEDROCK_MODEL_ID": "anthropic.claude-sonnet-4-5",
       "MAX_TOKENS_QA": "1000"
      }
     },
@@ -938,7 +939,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "SchoolBuddyApplication/RagQueryHandler/Resource",
-    "aws:asset:path": "asset.5f789ca25f8ab0a6b937c88fa6806018bd2669106d1482e1b32ee5f12d415c63",
+    "aws:asset:path": "asset.5d77c6321e291abc1778c9c49bd39ea971a0681e92352d0394dbd25d87c8d994",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -950,7 +951,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
      },
-     "S3Key": "bc6db7d1cf976a5a6897c947900d229be7596211d806c1af3918546a2b040e7b.zip"
+     "S3Key": "57bae9b198a607ae7078f70b829c611d16ba819878d9b9dbcf9f3ad73739726b.zip"
     },
     "Description": "사용자·자녀 정보 CRUD, 회원가입",
     "Environment": {
@@ -1045,7 +1046,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "SchoolBuddyApplication/UserManager/Resource",
-    "aws:asset:path": "asset.bc6db7d1cf976a5a6897c947900d229be7596211d806c1af3918546a2b040e7b",
+    "aws:asset:path": "asset.57bae9b198a607ae7078f70b829c611d16ba819878d9b9dbcf9f3ad73739726b",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1057,7 +1058,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
      },
-     "S3Key": "18d1c730d4959d2979f1a27dbed851d9371fe9b70b3475eb6d828ff0d25bab52.zip"
+     "S3Key": "7c4da82fdd0609bb5c164e548b6763fc51474bd33318b5b0d9f111835aae9068.zip"
     },
     "Description": "학교 검색·구독, 공지 목록 조회",
     "Environment": {
@@ -1149,7 +1150,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "SchoolBuddyApplication/SchoolRegistry/Resource",
-    "aws:asset:path": "asset.18d1c730d4959d2979f1a27dbed851d9371fe9b70b3475eb6d828ff0d25bab52",
+    "aws:asset:path": "asset.7c4da82fdd0609bb5c164e548b6763fc51474bd33318b5b0d9f111835aae9068",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -2149,178 +2150,6 @@
     "aws:cdk:path": "SchoolBuddyApplication/HttpApi/GET--chat--history/Resource"
    }
   },
-  "KbEncryptionPolicy": {
-   "Type": "AWS::OpenSearchServerless::SecurityPolicy",
-   "Properties": {
-    "Name": "sb-kb-enc-dev",
-    "Policy": "{\"Rules\":[{\"Resource\":[\"collection/school-buddy-kb-dev\"],\"ResourceType\":\"collection\"}],\"AWSOwnedKey\":true}",
-    "Type": "encryption"
-   },
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/KbEncryptionPolicy"
-   }
-  },
-  "KbNetworkPolicy": {
-   "Type": "AWS::OpenSearchServerless::SecurityPolicy",
-   "Properties": {
-    "Name": "sb-kb-net-dev",
-    "Policy": "[{\"Rules\":[{\"Resource\":[\"collection/school-buddy-kb-dev\"],\"ResourceType\":\"collection\"},{\"Resource\":[\"collection/school-buddy-kb-dev\"],\"ResourceType\":\"dashboard\"}],\"AllowFromPublic\":true}]",
-    "Type": "network"
-   },
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/KbNetworkPolicy"
-   }
-  },
-  "KbDataAccessPolicy": {
-   "Type": "AWS::OpenSearchServerless::AccessPolicy",
-   "Properties": {
-    "Name": "sb-kb-access-dev",
-    "Policy": {
-     "Fn::Join": [
-      "",
-      [
-       "[{\"Rules\":[{\"Resource\":[\"collection/school-buddy-kb-dev\"],\"Permission\":[\"aoss:CreateCollectionItems\",\"aoss:DeleteCollectionItems\",\"aoss:UpdateCollectionItems\",\"aoss:DescribeCollectionItems\"],\"ResourceType\":\"collection\"},{\"Resource\":[\"index/school-buddy-kb-dev/*\"],\"Permission\":[\"aoss:CreateIndex\",\"aoss:DeleteIndex\",\"aoss:UpdateIndex\",\"aoss:DescribeIndex\",\"aoss:ReadDocument\",\"aoss:WriteDocument\"],\"ResourceType\":\"index\"}],\"Principal\":[\"arn:aws:iam::",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":role/SafeRole-hanyang-pj-1\"]}]"
-      ]
-     ]
-    },
-    "Type": "data"
-   },
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/KbDataAccessPolicy"
-   }
-  },
-  "KbCollection": {
-   "Type": "AWS::OpenSearchServerless::Collection",
-   "Properties": {
-    "Description": "School Buddy Knowledge Base — 한국 교육 제도 공식 문서",
-    "Name": "school-buddy-kb-dev",
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ],
-    "Type": "VECTORSEARCH"
-   },
-   "DependsOn": [
-    "KbEncryptionPolicy"
-   ],
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/KbCollection"
-   }
-  },
-  "KnowledgeBase": {
-   "Type": "AWS::Bedrock::KnowledgeBase",
-   "Properties": {
-    "Description": "한국 초등학교 교육 제도 Q&A용 Knowledge Base",
-    "KnowledgeBaseConfiguration": {
-     "Type": "VECTOR",
-     "VectorKnowledgeBaseConfiguration": {
-      "EmbeddingModelArn": "arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v2:0"
-     }
-    },
-    "Name": "school-buddy-kb-dev",
-    "RoleArn": {
-     "Fn::Join": [
-      "",
-      [
-       "arn:",
-       {
-        "Ref": "AWS::Partition"
-       },
-       ":iam::",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":role/SafeRole-hanyang-pj-1"
-      ]
-     ]
-    },
-    "StorageConfiguration": {
-     "OpensearchServerlessConfiguration": {
-      "CollectionArn": {
-       "Fn::GetAtt": [
-        "KbCollection",
-        "Arn"
-       ]
-      },
-      "FieldMapping": {
-       "MetadataField": "metadata",
-       "TextField": "text",
-       "VectorField": "embedding"
-      },
-      "VectorIndexName": "school-buddy-index"
-     },
-     "Type": "OPENSEARCH_SERVERLESS"
-    },
-    "Tags": {
-     "Environment": "dev",
-     "Project": "school-buddy"
-    }
-   },
-   "DependsOn": [
-    "KbCollection"
-   ],
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/KnowledgeBase"
-   }
-  },
-  "KbDataSource": {
-   "Type": "AWS::Bedrock::DataSource",
-   "Properties": {
-    "DataSourceConfiguration": {
-     "S3Configuration": {
-      "BucketArn": {
-       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputFnGetAttKbSourceBucketF3D74AC4Arn585E0266"
-      }
-     },
-     "Type": "S3"
-    },
-    "KnowledgeBaseId": {
-     "Ref": "KnowledgeBase"
-    },
-    "Name": "school-buddy-kb-source-dev",
-    "VectorIngestionConfiguration": {
-     "ChunkingConfiguration": {
-      "ChunkingStrategy": "FIXED_SIZE",
-      "FixedSizeChunkingConfiguration": {
-       "MaxTokens": 512,
-       "OverlapPercentage": 20
-      }
-     }
-    }
-   },
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/KbDataSource"
-   }
-  },
-  "KbIdParam4D3A9394": {
-   "Type": "AWS::SSM::Parameter",
-   "Properties": {
-    "Description": "Bedrock Knowledge Base ID (rag-query-handler 참조용)",
-    "Name": "/school-buddy/dev/kb-id",
-    "Tags": {
-     "Environment": "dev",
-     "Project": "school-buddy"
-    },
-    "Tier": "Standard",
-    "Type": "String",
-    "Value": {
-     "Ref": "KnowledgeBase"
-    }
-   },
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/KbIdParam/Resource"
-   }
-  },
   "KbSyncAF0B0A4E": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
@@ -2333,12 +2162,8 @@
     "Description": "S3 업로드 이벤트 → Bedrock Knowledge Base StartIngestionJob",
     "Environment": {
      "Variables": {
-      "KNOWLEDGE_BASE_ID": {
-       "Ref": "KnowledgeBase"
-      },
-      "DATA_SOURCE_ID": {
-       "Ref": "KbDataSource"
-      },
+      "KNOWLEDGE_BASE_ID": "",
+      "DATA_SOURCE_ID": "",
       "REGION": "us-east-1"
      }
     },
@@ -2461,7 +2286,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/3VS224bIRD9lrxjmtj5gY3TplFb1bXb5wizE0LMMpQZ1nIR/16x691YUfs055y5wBxYyuXtjby+Ukda6PawcHYv846VPogtEKaoQagjPWWrOpk36Kw+ifWzH1ERGo23jDL/IogbRFeTM57APXbK+svUWZno2lnwfFlwVib62IJny6dNxN62EB8QjYPLhvcV/21tQnBQBP0mmX8kSMOUARRBnmT+icHqKo5gl/akow1scVjhkhfhVLdvlcyfktdTxYw/9uB5N7j4TYVgvanpf6sbiJ0lGobS6kkRAZNsahC0kndJH4DvFIGA2k8yb9PoQI1FODQk81c0DxFTqPqEi1DBGsVwVKd+KfNn5tAEW0tqqHTHygyzRlClLSYe0aNnMFFN272jb3VN4heM9g/EYfTMisAAnkBF/UIQe4gOiGSux4FOsb7N/LEarYHoja/ROdCj13toI+rD0PnF49FBa2CwZP3s7xWr0dQiiLr6i6P1ZqOi6oDHO82kFDE4W9c9+/89cUhchMcW5Ct96Je38mYlr69eydpFTJ5tB3I7xr9KLJsANwMAAA=="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/3VQ0W7bMAz8lr4rXJv0B9JuawtsWJZsz4Uicy4bW9REKkEm6N8H2XEaFNsT747HA45zmN/ewPWVPcjMNbtZR1vIG7VuZ9YonKJDYw/ynMn2kFfckTua+19+RMU4bj0pQ/4pGFfMXV2e8QQ+cm/JX65OykTvO0Kvl4aTMtGnBr2SHleR99RgfGBuO7w8eO/47+kyhA6Lkd8C+XvCNKQMoBjxAvkHB3JVHMEmbcVFCko8VLjkxXS23zYW8ufk3eQ440979LoZvvjVhkC+ret/qyuMPYkMobJ4tiKoAss6jCzgLrkd6p0VNFjvBfI6jR+os5iOW4H8hduHyClUfcLF2ECtVTzY434O+VE1LANVSx2VbtS2Q9YIqrTmpCN68opttFO7d/TNt0z6wpH+YByiz6wUM9So2aey35KGpMV4bhBe5cN+fgs3C7i+ehWiWUxeqUdYj/MvtcMDBaQCAAA="
    },
    "Metadata": {
     "aws:cdk:path": "SchoolBuddyApplication/CDKMetadata/Default"
@@ -2531,25 +2356,11 @@
     "Name": "school-buddy-notice-topic-arn-dev"
    }
   },
-  "KnowledgeBaseId": {
-   "Description": "Bedrock Knowledge Base ID",
-   "Value": {
-    "Ref": "KnowledgeBase"
-   },
+  "KbIdNote": {
+   "Description": "배포 시 주입된 Bedrock Knowledge Base ID",
+   "Value": "(not set — export KB_ID before deploy)",
    "Export": {
     "Name": "school-buddy-kb-id-dev"
-   }
-  },
-  "KbCollectionArn": {
-   "Description": "OpenSearch Serverless Collection ARN",
-   "Value": {
-    "Fn::GetAtt": [
-     "KbCollection",
-     "Arn"
-    ]
-   },
-   "Export": {
-    "Name": "school-buddy-kb-collection-arn-dev"
    }
   },
   "ExportsOutputRefSchoolCrawler991D93225E3BB50A": {

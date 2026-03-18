@@ -38,7 +38,9 @@
       "Bash(cd \"C:/Users/dldls/Documents/School Buddy/apps/mobile\" && npx tsc --noEmit 2>&1 | head -40)",
       "Bash(cd \"C:/Users/dldls/Documents/School Buddy/apps/mobile\" && npx tsc --noEmit 2>&1 | head -30)",
       "Bash(cd:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(AWS_DEFAULT_REGION=us-east-1 AWS_ACCESS_KEY_ID=dummy AWS_SECRET_ACCESS_KEY=dummy npx cdk synth --quiet)",
+      "Bash(AWS_DEFAULT_REGION=us-east-1 AWS_ACCESS_KEY_ID=dummy AWS_SECRET_ACCESS_KEY=dummy npx cdk synth)"
     ]
   }
 }

@@ -897,17 +897,6 @@
    "Export": {
     "Name": "school-buddy-storage-dev:ExportsOutputRefKbSourceBucketF3D74AC434DD4B50"
    }
-  },
-  "ExportsOutputFnGetAttKbSourceBucketF3D74AC4Arn585E0266": {
-   "Value": {
-    "Fn::GetAtt": [
-     "KbSourceBucketF3D74AC4",
-     "Arn"
-    ]
-   },
-   "Export": {
-    "Name": "school-buddy-storage-dev:ExportsOutputFnGetAttKbSourceBucketF3D74AC4Arn585E0266"
-   }
   }
  },
  "Parameters": {

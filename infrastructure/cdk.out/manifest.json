@@ -22,7 +22,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-us-east-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/6efdcc5217697dd100baa960c2a9c9e64dc4db761d99ee5d46b38ff12f8fb9fa.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/4d50f0d3fd46664efdb88ec3a25e919244d97f1f73a0a9317c388275badfea58.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -340,12 +340,6 @@
             "data": "ExportsOutputRefKbSourceBucketF3D74AC434DD4B50"
           }
         ],
-        "/SchoolBuddyStorage/Exports/Output{\"Fn::GetAtt\":[\"KbSourceBucketF3D74AC4\",\"Arn\"]}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ExportsOutputFnGetAttKbSourceBucketF3D74AC4Arn585E0266"
-          }
-        ],
         "/SchoolBuddyStorage/BootstrapVersion": [
           {
             "type": "aws:cdk:logicalId",
@@ -382,7 +376,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-us-east-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/32238f0165190e2378d809c496831a214fa0b49d53431464a69668f9e617e337.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/0b040a4283a715dc0c8feaf432bb1aa884346f0a656df0f75f697005b9b1568c.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -745,48 +739,6 @@
             "data": "HttpApiGETchathistoryCDF24518"
           }
         ],
-        "/SchoolBuddyApplication/KbEncryptionPolicy": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "KbEncryptionPolicy"
-          }
-        ],
-        "/SchoolBuddyApplication/KbNetworkPolicy": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "KbNetworkPolicy"
-          }
-        ],
-        "/SchoolBuddyApplication/KbDataAccessPolicy": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "KbDataAccessPolicy"
-          }
-        ],
-        "/SchoolBuddyApplication/KbCollection": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "KbCollection"
-          }
-        ],
-        "/SchoolBuddyApplication/KnowledgeBase": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "KnowledgeBase"
-          }
-        ],
-        "/SchoolBuddyApplication/KbDataSource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "KbDataSource"
-          }
-        ],
-        "/SchoolBuddyApplication/KbIdParam/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "KbIdParam4D3A9394"
-          }
-        ],
         "/SchoolBuddyApplication/KbSync/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -841,16 +793,10 @@
             "data": "NoticeTopicArn"
           }
         ],
-        "/SchoolBuddyApplication/KnowledgeBaseId": [
+        "/SchoolBuddyApplication/KbIdNote": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "KnowledgeBaseId"
-          }
-        ],
-        "/SchoolBuddyApplication/KbCollectionArn": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "KbCollectionArn"
+            "data": "KbIdNote"
           }
         ],
         "/SchoolBuddyApplication/CDKMetadata/Default": [
