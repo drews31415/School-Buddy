@@ -25,38 +25,18 @@ logger = logging.getLogger(__name__)
 # ── 상수 ──────────────────────────────────────────────────────────────────────
 _REGION           = os.environ.get("REGION", "us-east-1")
 _BEDROCK_MODEL_ID = os.environ.get("BEDROCK_MODEL_ID", "anthropic.claude-sonnet-4-5")
-_KB_ID_PARAM_NAME = os.environ.get(
-    "KB_ID_PARAM_NAME", f"/school-buddy/dev/kb-id"
-)
 
 _RETRIEVAL_RESULTS = 5      # 검색할 청크 수
 _MAX_TOKENS        = 1000   # Q&A 최대 토큰 (CLAUDE.md 규정)
 _MAX_RETRIES       = 3
 
 # ── AWS 클라이언트 (cold start 최적화) ───────────────────────────────────────
-_ssm              = boto3.client("ssm",                  region_name=_REGION)
 _bedrock_agent_rt = boto3.client("bedrock-agent-runtime", region_name=_REGION)
 _bedrock_rt       = boto3.client("bedrock-runtime",       region_name=_REGION)
 
 _PROMPT_PATH = os.path.join(os.path.dirname(__file__), "../prompts/rag_system.txt")
 
-
-# ── cold start: SSM에서 KB ID 조회 ────────────────────────────────────────────
-def _load_kb_id() -> str:
-    """
-    SSM Parameter Store에서 Knowledge Base ID를 조회.
-    환경변수 KNOWLEDGE_BASE_ID가 있으면 SSM 호출 생략 (로컬 테스트 편의).
-    """
-    direct = os.environ.get("KNOWLEDGE_BASE_ID", "")
-    if direct:
-        return direct
-    resp = _ssm.get_parameter(Name=_KB_ID_PARAM_NAME)
-    kb_id = resp["Parameter"]["Value"]
-    logger.info({"message": "KB ID loaded from SSM", "paramName": _KB_ID_PARAM_NAME})
-    return kb_id
-
-
-KNOWLEDGE_BASE_ID: str = _load_kb_id()
+KNOWLEDGE_BASE_ID: str = os.environ["KB_ID"]
 
 
 # ── 프롬프트 로더 ─────────────────────────────────────────────────────────────

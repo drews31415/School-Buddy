@@ -9,7 +9,7 @@ os.environ.update(
         "AWS_SECRET_ACCESS_KEY": "testing",
         "AWS_DEFAULT_REGION":    "us-east-1",
         "REGION":                "us-east-1",
-        "KNOWLEDGE_BASE_ID":     "test-kb-id",
+        "KB_ID":                 "test-kb-id",
         "CHAT_HISTORY_TABLE":    "school-buddy-chat-history-test",
         "NOTICES_TABLE":         "school-buddy-notices-test",
     }

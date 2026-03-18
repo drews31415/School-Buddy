@@ -358,8 +358,7 @@ export class ApplicationStack extends cdk.Stack {
         ...commonEnv,
         BEDROCK_MODEL_ID: "anthropic.claude-sonnet-4-5",
         MAX_TOKENS_QA:    "1000",
-        // SSM 파라미터 이름 — Lambda가 cold start 시 KB ID를 직접 조회
-        KB_ID_PARAM_NAME: `/school-buddy/${environment}/kb-id`,
+        KB_ID:            process.env.KB_ID ?? "",
       },
     });
 
