@@ -9,7 +9,7 @@ const app = new cdk.App();
 
 const env = {
   account: process.env.CDK_DEFAULT_ACCOUNT,
-  region: "us-east-1", // 한양 프로젝트 제약: us-east-1 고정
+  region: "ap-northeast-3", // 한양 프로젝트 제약: ap-northeast-3 (오사카) 고정
 };
 
 const environment = app.node.tryGetContext("environment") ?? "dev";

@@ -26,7 +26,7 @@ export interface ApplicationStackProps extends cdk.StackProps {
  * ApplicationStack
  * Lambda 7개, HTTP API Gateway (Cognito JWT 인증), SQS, SNS, EventBridge, Cognito.
  *
- * ⚠️  리전: us-east-1 고정 (bin/app.ts env 설정과 일치)
+ * ⚠️  리전: ap-northeast-3 (오사카) 고정 (bin/app.ts env 설정과 일치)
  * ⚠️  모든 Lambda는 기존 SafeRole-hanyang-pj-1 사용 (새 IAM Role 생성 금지)
  */
 export class ApplicationStack extends cdk.Stack {
@@ -458,8 +458,8 @@ export class ApplicationStack extends cdk.Stack {
     // ── JWT Authorizer (Cognito) ────────────────────────────
     const jwtAuthorizer = new apigwv2Auth.HttpJwtAuthorizer(
       "CognitoAuthorizer",
-      // Cognito JWKS 발급자 URL — us-east-1 고정
-      `https://cognito-idp.us-east-1.amazonaws.com/${this.userPool.userPoolId}`,
+      // Cognito JWKS 발급자 URL — 배포 리전 동적 참조
+      `https://cognito-idp.${this.region}.amazonaws.com/${this.userPool.userPoolId}`,
       {
         jwtAudience: [this.userPoolClient.userPoolClientId],
       }
@@ -523,7 +523,7 @@ export class ApplicationStack extends cdk.Stack {
     //                       → 배포 전: export KB_ID=<값>
     //   DATA_SOURCE_ID      Knowledge Base Data Source ID
     //                       → 배포 전: export KB_DATA_SOURCE_ID=<값>
-    //   REGION              AWS 리전 (us-east-1 고정)
+    //   REGION              AWS 리전 (ap-northeast-3 고정)
     this.kbSyncFn = new lambda.Function(this, "KbSync", {
       functionName: `school-buddy-kb-sync-${environment}`,
       ...pythonLambdaDefaults,
@@ -535,7 +535,7 @@ export class ApplicationStack extends cdk.Stack {
       environment: {
         KNOWLEDGE_BASE_ID: process.env.KB_ID ?? "",
         DATA_SOURCE_ID:    process.env.KB_DATA_SOURCE_ID ?? "",
-        REGION:            "us-east-1",
+        REGION:            this.region,
       },
     });
 
@@ -572,7 +572,7 @@ export class ApplicationStack extends cdk.Stack {
       exportName: `school-buddy-user-pool-client-id-${environment}`,
     });
     new cdk.CfnOutput(this, "CognitoDomain", {
-      value:       `https://${userPoolDomain.domainName}.auth.us-east-1.amazoncognito.com`,
+      value:       `https://${userPoolDomain.domainName}.auth.${this.region}.amazoncognito.com`,
       description: "Cognito Hosted UI 기본 도메인 (소셜 로그인 리다이렉트)",
       exportName:  `school-buddy-cognito-domain-${environment}`,
     });

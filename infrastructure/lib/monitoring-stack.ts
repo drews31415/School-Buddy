@@ -22,7 +22,7 @@ export interface MonitoringStackProps extends cdk.StackProps {
  * 알람 수신 이메일: CDK context "alarmEmail" (기본값: ops@school-buddy.example.com)
  *   예) npx cdk deploy -c alarmEmail=you@example.com
  *
- * 예상 비용 (us-east-1, 월):
+ * 예상 비용 (ap-northeast-3, 월):
  *   CloudWatch 알람 5개: $0.50
  *   대시보드 1개: $3.00
  *   X-Ray 샘플링 5%: ~$0.50/100만 트레이스
@@ -388,7 +388,7 @@ export class MonitoringStack extends cdk.Stack {
       exportName:  `school-buddy-alarm-topic-arn-${environment}`,
     });
     new cdk.CfnOutput(this, "DashboardUrl", {
-      value:       `https://us-east-1.console.aws.amazon.com/cloudwatch/home?region=us-east-1#dashboards:name=school-buddy-${environment}`,
+      value:       `https://${this.region}.console.aws.amazon.com/cloudwatch/home?region=${this.region}#dashboards:name=school-buddy-${environment}`,
       description: "CloudWatch 대시보드 URL",
     });
   }
