@@ -56,8 +56,7 @@ export class ApplicationStack extends cdk.Stack {
 
     const { environment, storage } = props;
 
-    cdk.Tags.of(this).add("Project", "school-buddy");
-    cdk.Tags.of(this).add("Environment", environment);
+    // Tags 제거: hanyang-pj-1 계정은 TagResource 권한 없음
 
     // ──────────────────────────────────────────────────────
     // IAM — 기존 Role 참조 (새 Role 생성 금지)

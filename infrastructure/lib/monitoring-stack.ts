@@ -33,8 +33,7 @@ export class MonitoringStack extends cdk.Stack {
 
     const { environment, application, storage } = props;
 
-    cdk.Tags.of(this).add("Project", "school-buddy");
-    cdk.Tags.of(this).add("Environment", environment);
+    // Tags 제거: hanyang-pj-1 계정은 TagResource 권한 없음
 
     // ──────────────────────────────────────────────────────
     // SNS 알람 토픽 (→ 운영팀 이메일)

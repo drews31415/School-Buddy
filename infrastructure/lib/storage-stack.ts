@@ -34,8 +34,7 @@ export class StorageStack extends cdk.Stack {
 
     const { environment } = props;
 
-    cdk.Tags.of(this).add("Project", "school-buddy");
-    cdk.Tags.of(this).add("Environment", environment);
+    // Tags 제거: hanyang-pj-1 계정은 TagResource 권한 없음
 
     // 공통 DynamoDB 설정
     const commonTableProps = {
