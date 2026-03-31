@@ -143,7 +143,7 @@ export class StorageStack extends cdk.Stack {
       bucketName: `hanyang-pj-1-documents-${environment}`,
       encryption: s3.BucketEncryption.S3_MANAGED,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-      enforceSSL: true,
+      // enforceSSL 제거: 버킷 정책 생성 권한 없음 (s3:PutBucketPolicy)
       removalPolicy: cdk.RemovalPolicy.RETAIN,
       lifecycleRules: [
         {
@@ -161,7 +161,7 @@ export class StorageStack extends cdk.Stack {
       bucketName: `hanyang-pj-1-kb-source-${environment}`,
       encryption: s3.BucketEncryption.S3_MANAGED,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-      enforceSSL: true,
+      // enforceSSL 제거: 버킷 정책 생성 권한 없음 (s3:PutBucketPolicy)
       removalPolicy: cdk.RemovalPolicy.RETAIN,
       versioned: true,
     });
