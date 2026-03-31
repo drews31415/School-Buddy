@@ -186,7 +186,7 @@ export class MonitoringStack extends cdk.Stack {
     const lambdaFunctions = [
       { fn: application.crawlerFn,   label: "crawler"   },
       { fn: application.processorFn, label: "processor" },
-      { fn: application.notifierFn,  label: "notifier"  },
+      // notifierFn 제거: SNS/Cognito 제거로 notification-sender Lambda 없음
       { fn: application.analyzerFn,  label: "analyzer"  },
       { fn: application.ragFn,       label: "rag"       },
       { fn: application.userFn,      label: "user"      },
