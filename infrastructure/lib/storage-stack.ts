@@ -175,7 +175,7 @@ export class StorageStack extends cdk.Stack {
       ["NoticesTableName",      this.noticesTable.tableName,         `school-buddy-notices-table-${environment}`],
       ["NotificationsTableName",this.notificationsTable.tableName,   `school-buddy-notifications-table-${environment}`],
       ["ChatHistoryTableName",  this.chatHistoryTable.tableName,     `school-buddy-chat-history-table-${environment}`],
-      ["TranslationCacheTableName", this.translationCacheTable.tableName, `school-buddy-translation-cache-table-${environment}`],
+      // ["TranslationCacheTableName", ...], // TODO: import 완료 후 복원
       ["DocumentsBucketName",   this.documentsBucket.bucketName,     `school-buddy-documents-bucket-${environment}`],
       ["KbSourceBucketName",    this.kbSourceBucket.bucketName,      `school-buddy-kb-source-bucket-${environment}`],
     ];
