@@ -162,11 +162,7 @@ export class MonitoringStack extends cdk.Stack {
             dimensionsMap: { TableName: storage.usersTable.tableName },
             statistic: "Sum", period: cdk.Duration.minutes(5),
           }),
-          e_cache: new cloudwatch.Metric({
-            namespace: "AWS/DynamoDB", metricName: "SystemErrors",
-            dimensionsMap: { TableName: storage.translationCacheTable.tableName },
-            statistic: "Sum", period: cdk.Duration.minutes(5),
-          }),
+          // e_cache: TODO import 완료 후 복원
         },
         period: cdk.Duration.minutes(5),
         label:  "DynamoDB SystemErrors (합산)",
@@ -342,16 +338,7 @@ export class MonitoringStack extends cdk.Stack {
             dimensionsMap: { TableName: storage.chatHistoryTable.tableName },
             statistic: "Sum", period: cdk.Duration.minutes(5), label: "chat-history 쓰기",
           }),
-          new cloudwatch.Metric({
-            namespace: "AWS/DynamoDB", metricName: "ConsumedReadCapacityUnits",
-            dimensionsMap: { TableName: storage.translationCacheTable.tableName },
-            statistic: "Sum", period: cdk.Duration.minutes(5), label: "translation-cache 읽기",
-          }),
-          new cloudwatch.Metric({
-            namespace: "AWS/DynamoDB", metricName: "ConsumedWriteCapacityUnits",
-            dimensionsMap: { TableName: storage.translationCacheTable.tableName },
-            statistic: "Sum", period: cdk.Duration.minutes(5), label: "translation-cache 쓰기",
-          }),
+          // translation-cache 메트릭: TODO import 완료 후 복원
         ],
         legendPosition: cloudwatch.LegendPosition.BOTTOM,
       })
