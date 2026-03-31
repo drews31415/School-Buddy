@@ -14,25 +14,11 @@ const env = {
 
 const environment = app.node.tryGetContext("environment") ?? "dev";
 
-const ACCOUNT_ID = "730335373015";
-const SAFE_ROLE_ARN = `arn:aws:iam::${ACCOUNT_ID}:role/SafeRole-hanyang-pj-1`;
-
-// StorageStack/MonitoringStack: bootstrap 없이 CLI 크레덴셜로 배포 (이미 배포된 리소스)
+// CDK bootstrap 없이 배포 (hanyang-pj-1 계정 ECR/SSM 권한 제한)
+// CFN 실행 역할은 cdk deploy --no-execute 후 aws cloudformation create-change-set --role-arn 으로 별도 지정
 const cliSynthesizer = new cdk.CliCredentialsStackSynthesizer({
   fileAssetsBucketName: "hanyang-pj-1-cdk-staging",
   bucketPrefix:         "cdk-assets/",
-});
-
-// ApplicationStack: CloudFormation 실행 역할을 SafeRole로 지정
-// → CFN 서비스가 SafeRole 권한으로 Lambda 등 리소스 생성 (ControlOnlyOwnResources 우회)
-// generateBootstrapVersionRule: false → SSM bootstrap 파라미터 체크 생략
-const appSynthesizer = new cdk.DefaultStackSynthesizer({
-  fileAssetsBucketName:         "hanyang-pj-1-cdk-staging",
-  bucketPrefix:                 "cdk-assets/",
-  cloudFormationExecutionRole:  SAFE_ROLE_ARN,
-  deployRoleArn:                SAFE_ROLE_ARN,
-  fileAssetPublishingRoleArn:   SAFE_ROLE_ARN,
-  generateBootstrapVersionRule: false,
 });
 
 // StorageStack → ApplicationStack → MonitoringStack 순서로 배포
@@ -47,7 +33,7 @@ const storageStack = new StorageStack(app, "SchoolBuddyStorage", {
 const applicationStack = new ApplicationStack(app, "SchoolBuddyApplication", {
   env,
   environment,
-  synthesizer: appSynthesizer,
+  synthesizer: cliSynthesizer,
   storage: storageStack,
   stackName: `school-buddy-app-${environment}`,
   description: "School Buddy — Lambda Functions, API Gateway, EventBridge",
