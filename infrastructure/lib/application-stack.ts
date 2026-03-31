@@ -539,19 +539,9 @@ export class ApplicationStack extends cdk.Stack {
       },
     });
 
-    // S3 ObjectCreated → EventBridge → kb-sync Lambda
-    const kbSyncRule = new events.Rule(this, "KbSyncRule", {
-      ruleName:    `school-buddy-kb-sync-${environment}`,
-      description: "S3 kb-source 업로드 이벤트 → Knowledge Base 동기화",
-      eventPattern: {
-        source:     ["aws.s3"],
-        detailType: ["Object Created"],
-        detail: {
-          bucket: { name: [storage.kbSourceBucket.bucketName] },
-        },
-      },
-    });
-    kbSyncRule.addTarget(new eventsTargets.LambdaFunction(this.kbSyncFn));
+    // ⚠️ S3 → EventBridge 자동 트리거 제거 (iam:CreateRole 권한 없음)
+    //    kb-sync Lambda는 AWS Console 또는 CLI에서 수동 호출:
+    //    aws lambda invoke --function-name school-buddy-kb-sync-dev /dev/null
 
     this.knowledgeBaseId = process.env.KB_ID ?? "";
 

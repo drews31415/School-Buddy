@@ -156,8 +156,8 @@ export class StorageStack extends cdk.Stack {
     });
 
     // Bedrock Knowledge Base 원본 교육 문서 (버전 관리 활성화)
-    // eventBridgeEnabled: EventBridge를 통해 ApplicationStack의 kb-sync Lambda 트리거
-    // (ApplicationStack에서 직접 addEventNotification 시 순환 참조 발생 → EventBridge 우회)
+    // ⚠️ eventBridgeEnabled 제거: hanyang-pj-1 계정은 iam:CreateRole 권한 없음
+    //    kb-sync Lambda는 수동 호출 또는 AWS Console에서 트리거
     this.kbSourceBucket = new s3.Bucket(this, "KbSourceBucket", {
       bucketName: `hanyang-pj-1-kb-source-${environment}`,
       encryption: s3.BucketEncryption.S3_MANAGED,
@@ -165,7 +165,6 @@ export class StorageStack extends cdk.Stack {
       enforceSSL: true,
       removalPolicy: cdk.RemovalPolicy.RETAIN,
       versioned: true,
-      eventBridgeEnabled: true,   // S3 → EventBridge → kb-sync Lambda
     });
 
     // ──────────────────────────────────────────────────────
