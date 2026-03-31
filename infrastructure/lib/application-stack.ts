@@ -227,7 +227,7 @@ export class ApplicationStack extends cdk.Stack {
       NOTICES_TABLE:            storage.noticesTable.tableName,
       NOTIFICATIONS_TABLE:      storage.notificationsTable.tableName,
       CHAT_HISTORY_TABLE:       storage.chatHistoryTable.tableName,
-      TRANSLATION_CACHE_TABLE:  storage.translationCacheTable.tableName,
+      // TRANSLATION_CACHE_TABLE: storage.translationCacheTable.tableName, // TODO: import 완료 후 복원
       // S3 Bucket Names
       DOCUMENTS_BUCKET: storage.documentsBucket.bucketName,
       KB_SOURCE_BUCKET: storage.kbSourceBucket.bucketName,

@@ -122,17 +122,16 @@ export class StorageStack extends cdk.Stack {
     });
 
     // ──────────────────────────────────────────────────────
-    // 7. TranslationCache — PK: cacheKey
-    //    ElastiCache(Redis) 대체. TTL: expiresAt (24시간)
-    //    RemovalPolicy: DESTROY (캐시는 재생성 가능)
-    // ──────────────────────────────────────────────────────
-    this.translationCacheTable = new dynamodb.Table(this, "TranslationCacheTable", {
-      ...commonTableProps,
-      tableName: `school-buddy-translation-cache-${environment}`,
-      partitionKey: { name: "cacheKey", type: dynamodb.AttributeType.STRING },
-      // timeToLiveAttribute 제거: hanyang-pj-1 계정은 dynamodb:UpdateTimeToLive 권한 없음
-      removalPolicy: cdk.RemovalPolicy.DESTROY, // 캐시 테이블만 DESTROY 허용
-    });
+    // 7. TranslationCache — import 완료 후 cdk deploy로 생성 예정
+    // TODO: import 완료 후 아래 주석 해제
+    // this.translationCacheTable = new dynamodb.Table(this, "TranslationCacheTable", {
+    //   ...commonTableProps,
+    //   tableName: `school-buddy-translation-cache-${environment}`,
+    //   partitionKey: { name: "cacheKey", type: dynamodb.AttributeType.STRING },
+    //   removalPolicy: cdk.RemovalPolicy.DESTROY,
+    // });
+    // 임시: 더미 할당 (컴파일 오류 방지)
+    this.translationCacheTable = null as unknown as dynamodb.Table;
 
     // ──────────────────────────────────────────────────────
     // S3 Buckets (버킷명: hanyang-pj-1- 접두사 필수)
