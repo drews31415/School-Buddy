@@ -60,7 +60,7 @@ export class ApplicationStack extends cdk.Stack {
     // SQS Queues (Dead Letter Queue 포함)
     // ──────────────────────────────────────────────────────
     const noticeDLQ = new sqs.Queue(this, "NoticeDLQ", {
-      queueName:       `school-buddy-notice-dlq-${environment}`,
+      queueName:       `school-buddy-notice-dlq2-${environment}`,
       retentionPeriod: cdk.Duration.days(14),
       encryption:      sqs.QueueEncryption.SQS_MANAGED,
     });
