@@ -2,8 +2,6 @@ import * as path from "path";
 import * as cdk from "aws-cdk-lib";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as iam from "aws-cdk-lib/aws-iam";
-import * as sqs from "aws-cdk-lib/aws-sqs";
-import * as lambdaEventSources from "aws-cdk-lib/aws-lambda-event-sources";
 import * as events from "aws-cdk-lib/aws-events";
 import * as eventsTargets from "aws-cdk-lib/aws-events-targets";
 import * as apigwv2 from "aws-cdk-lib/aws-apigatewayv2";
@@ -19,7 +17,8 @@ export interface ApplicationStackProps extends cdk.StackProps {
 
 /**
  * ApplicationStack
- * Lambda 6개, HTTP API Gateway (인증 없음 — 기능 집중 모드), SQS, EventBridge.
+ * Lambda 6개, HTTP API Gateway (인증 없음 — 기능 집중 모드), EventBridge.
+ * ℹ️  SQS 제거: ControlOnlyOwnResources 정책이 SQS 전체 explicit deny
  *
  * ⚠️  리전: ap-northeast-3 (오사카) 고정 (bin/app.ts env 설정과 일치)
  * ⚠️  모든 Lambda는 기존 SafeRole-hanyang-pj-1 사용 (새 IAM Role 생성 금지)
@@ -37,10 +36,6 @@ export class ApplicationStack extends cdk.Stack {
   public readonly schoolFn:    lambda.Function;
   public readonly kbSyncFn:    lambda.Function;
 
-  // SQS — MonitoringStack에서 메트릭 참조용
-  public readonly noticeQueue: sqs.Queue;
-  public readonly noticeDLQ:   sqs.Queue;
-
   // Knowledge Base
   public readonly knowledgeBaseId: string;
 
@@ -55,26 +50,6 @@ export class ApplicationStack extends cdk.Stack {
     // IAM — 기존 Role 참조 (새 Role 생성 금지)
     // ──────────────────────────────────────────────────────
     const safeRole = iam.Role.fromRoleName(this, "SafeRole", "SafeRole-hanyang-pj-1");
-
-    // ──────────────────────────────────────────────────────
-    // SQS Queues (Dead Letter Queue 포함)
-    // ──────────────────────────────────────────────────────
-    const noticeDLQ = new sqs.Queue(this, "NoticeDLQ", {
-      queueName:       `school-buddy-notice-dlq2-${environment}`,
-      retentionPeriod: cdk.Duration.days(14),
-      encryption:      sqs.QueueEncryption.SQS_MANAGED,
-    });
-
-    const noticeQueue = new sqs.Queue(this, "NoticeQueue", {
-      queueName:        `school-buddy-notice-queue-${environment}`,
-      visibilityTimeout: cdk.Duration.seconds(300),
-      retentionPeriod:   cdk.Duration.days(4),
-      encryption:        sqs.QueueEncryption.SQS_MANAGED,
-      deadLetterQueue:   { queue: noticeDLQ, maxReceiveCount: 3 },
-    });
-
-    this.noticeDLQ   = noticeDLQ;
-    this.noticeQueue = noticeQueue;
 
     // ──────────────────────────────────────────────────────
     // 공통 Lambda 환경 변수
@@ -93,8 +68,6 @@ export class ApplicationStack extends cdk.Stack {
       // S3 Bucket Names
       DOCUMENTS_BUCKET: storage.documentsBucket.bucketName,
       KB_SOURCE_BUCKET: storage.kbSourceBucket.bucketName,
-      // Messaging
-      NOTICE_QUEUE_URL: noticeQueue.queueUrl,
     };
 
     // ──────────────────────────────────────────────────────
@@ -115,7 +88,7 @@ export class ApplicationStack extends cdk.Stack {
     // school-crawler — EventBridge 30분 스케줄 트리거
     // 환경변수:
     //   [commonEnv]
-    //   SQS_QUEUE_URL  공지 메시지 발행 대상 SQS URL
+    // ℹ️  SQS 제거: 크롤러가 직접 DynamoDB에 저장 (SQS 권한 없음)
     this.crawlerFn = new lambda.Function(this, "SchoolCrawler", {
       functionName: `school-buddy-crawler-${environment}`,
       ...pythonLambdaDefaults,
@@ -123,11 +96,8 @@ export class ApplicationStack extends cdk.Stack {
       code:       lambda.Code.fromAsset(path.join(__dirname, "../../services/crawler")),
       timeout:    cdk.Duration.minutes(5),
       memorySize: 512,
-      description: "학교 홈페이지 크롤링 → notice-queue 발행",
-      environment: {
-        ...commonEnv,
-        SQS_QUEUE_URL: noticeQueue.queueUrl,
-      },
+      description: "학교 홈페이지 크롤링 → DynamoDB 직접 저장",
+      environment: commonEnv,
     });
 
     // notice-processor — SQS 트리거
@@ -151,12 +121,7 @@ export class ApplicationStack extends cdk.Stack {
         MAX_TOKENS_TRANSLATION: "800",
       },
     });
-    this.processorFn.addEventSource(
-      new lambdaEventSources.SqsEventSource(noticeQueue, {
-        batchSize:               10,
-        reportBatchItemFailures: true,
-      })
-    );
+    // ℹ️  processorFn SQS 트리거 제거: SQS 권한 없음. 수동 호출 또는 별도 트리거 필요
 
     // document-analyzer — API Gateway 트리거 (/documents/analyze)
     // 환경변수:
@@ -333,10 +298,6 @@ export class ApplicationStack extends cdk.Stack {
       value:       this.api.apiEndpoint,
       description: "HTTP API Base URL",
       exportName:  `school-buddy-api-endpoint-${environment}`,
-    });
-    new cdk.CfnOutput(this, "NoticeQueueUrl", {
-      value:      noticeQueue.queueUrl,
-      exportName: `school-buddy-notice-queue-url-${environment}`,
     });
     new cdk.CfnOutput(this, "KbIdNote", {
       value:       process.env.KB_ID ?? "(not set)",

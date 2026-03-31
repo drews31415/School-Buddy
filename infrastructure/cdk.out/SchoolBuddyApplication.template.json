@@ -13,22 +13,6 @@
        ],
        "Effect": "Allow",
        "Resource": "*"
-      },
-      {
-       "Action": [
-        "sqs:ChangeMessageVisibility",
-        "sqs:DeleteMessage",
-        "sqs:GetQueueAttributes",
-        "sqs:GetQueueUrl",
-        "sqs:ReceiveMessage"
-       ],
-       "Effect": "Allow",
-       "Resource": {
-        "Fn::GetAtt": [
-         "NoticeQueue73F1DBE0",
-         "Arn"
-        ]
-       }
       }
      ],
      "Version": "2012-10-17"
@@ -42,264 +26,18 @@
     "aws:cdk:path": "SchoolBuddyApplication/SafeRole/Policy/Resource"
    }
   },
-  "UserPool6BA7E5F2": {
-   "Type": "AWS::Cognito::UserPool",
-   "Properties": {
-    "AccountRecoverySetting": {
-     "RecoveryMechanisms": [
-      {
-       "Name": "verified_email",
-       "Priority": 1
-      }
-     ]
-    },
-    "AdminCreateUserConfig": {
-     "AllowAdminCreateUserOnly": false
-    },
-    "AutoVerifiedAttributes": [
-     "email"
-    ],
-    "EmailVerificationMessage": "The verification code to your new account is {####}",
-    "EmailVerificationSubject": "Verify your new account",
-    "Policies": {
-     "PasswordPolicy": {
-      "MinimumLength": 8,
-      "RequireLowercase": true,
-      "RequireNumbers": true,
-      "RequireSymbols": false,
-      "RequireUppercase": true
-     }
-    },
-    "Schema": [
-     {
-      "Mutable": true,
-      "Name": "email",
-      "Required": true
-     }
-    ],
-    "SmsVerificationMessage": "The verification code to your new account is {####}",
-    "UserPoolName": "school-buddy-user-pool-dev",
-    "UserPoolTags": {
-     "Environment": "dev",
-     "Project": "school-buddy"
-    },
-    "UsernameAttributes": [
-     "email"
-    ],
-    "VerificationMessageTemplate": {
-     "DefaultEmailOption": "CONFIRM_WITH_CODE",
-     "EmailMessage": "The verification code to your new account is {####}",
-     "EmailSubject": "Verify your new account",
-     "SmsMessage": "The verification code to your new account is {####}"
-    }
-   },
-   "UpdateReplacePolicy": "Retain",
-   "DeletionPolicy": "Retain",
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/UserPool/Resource"
-   }
-  },
-  "UserPoolDomainD0EA232A": {
-   "Type": "AWS::Cognito::UserPoolDomain",
-   "Properties": {
-    "Domain": "school-buddy-dev",
-    "UserPoolId": {
-     "Ref": "UserPool6BA7E5F2"
-    }
-   },
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/UserPool/Domain/Resource"
-   }
-  },
-  "UserPoolMobileClient046093C2": {
-   "Type": "AWS::Cognito::UserPoolClient",
-   "Properties": {
-    "AccessTokenValidity": 60,
-    "AllowedOAuthFlows": [
-     "code"
-    ],
-    "AllowedOAuthFlowsUserPoolClient": true,
-    "AllowedOAuthScopes": [
-     "email",
-     "openid",
-     "profile"
-    ],
-    "CallbackURLs": [
-     "schoolbuddy://auth/callback",
-     "http://localhost:3000/auth/callback"
-    ],
-    "ClientName": "school-buddy-mobile-dev",
-    "ExplicitAuthFlows": [
-     "ALLOW_USER_SRP_AUTH",
-     "ALLOW_REFRESH_TOKEN_AUTH"
-    ],
-    "IdTokenValidity": 60,
-    "LogoutURLs": [
-     "schoolbuddy://auth/logout",
-     "http://localhost:3000/auth/logout"
-    ],
-    "PreventUserExistenceErrors": "ENABLED",
-    "RefreshTokenValidity": 43200,
-    "SupportedIdentityProviders": [
-     "COGNITO",
-     "Google",
-     "SignInWithApple"
-    ],
-    "TokenValidityUnits": {
-     "AccessToken": "minutes",
-     "IdToken": "minutes",
-     "RefreshToken": "minutes"
-    },
-    "UserPoolId": {
-     "Ref": "UserPool6BA7E5F2"
-    }
-   },
-   "DependsOn": [
-    "AppleProviderC04D9F31",
-    "GoogleProvider566D8493"
-   ],
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/UserPool/MobileClient/Resource"
-   }
-  },
-  "GoogleProvider566D8493": {
-   "Type": "AWS::Cognito::UserPoolIdentityProvider",
-   "Properties": {
-    "AttributeMapping": {
-     "email": "email",
-     "given_name": "given_name",
-     "family_name": "family_name"
-    },
-    "ProviderDetails": {
-     "client_id": "{{resolve:secretsmanager:school-buddy/app-secrets:SecretString:googleClientId::}}",
-     "client_secret": "{{resolve:secretsmanager:school-buddy/app-secrets:SecretString:googleClientSecret::}}",
-     "authorize_scopes": "email profile openid"
-    },
-    "ProviderName": "Google",
-    "ProviderType": "Google",
-    "UserPoolId": {
-     "Ref": "UserPool6BA7E5F2"
-    }
-   },
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/GoogleProvider/Resource"
-   }
-  },
-  "AppleProviderC04D9F31": {
-   "Type": "AWS::Cognito::UserPoolIdentityProvider",
-   "Properties": {
-    "AttributeMapping": {
-     "email": "email",
-     "given_name": "firstName",
-     "family_name": "lastName"
-    },
-    "ProviderDetails": {
-     "client_id": "{{resolve:secretsmanager:school-buddy/app-secrets:SecretString:appleClientId::}}",
-     "team_id": "{{resolve:secretsmanager:school-buddy/app-secrets:SecretString:appleTeamId::}}",
-     "key_id": "{{resolve:secretsmanager:school-buddy/app-secrets:SecretString:appleKeyId::}}",
-     "private_key": "{{resolve:secretsmanager:school-buddy/app-secrets:SecretString:applePrivateKey::}}",
-     "authorize_scopes": "email name"
-    },
-    "ProviderName": "SignInWithApple",
-    "ProviderType": "SignInWithApple",
-    "UserPoolId": {
-     "Ref": "UserPool6BA7E5F2"
-    }
-   },
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/AppleProvider/Resource"
-   }
-  },
-  "NoticeDLQA7E8F4C0": {
-   "Type": "AWS::SQS::Queue",
-   "Properties": {
-    "MessageRetentionPeriod": 1209600,
-    "QueueName": "school-buddy-notice-dlq-dev",
-    "SqsManagedSseEnabled": true,
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ]
-   },
-   "UpdateReplacePolicy": "Delete",
-   "DeletionPolicy": "Delete",
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/NoticeDLQ/Resource"
-   }
-  },
-  "NoticeQueue73F1DBE0": {
-   "Type": "AWS::SQS::Queue",
-   "Properties": {
-    "MessageRetentionPeriod": 345600,
-    "QueueName": "school-buddy-notice-queue-dev",
-    "RedrivePolicy": {
-     "deadLetterTargetArn": {
-      "Fn::GetAtt": [
-       "NoticeDLQA7E8F4C0",
-       "Arn"
-      ]
-     },
-     "maxReceiveCount": 3
-    },
-    "SqsManagedSseEnabled": true,
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ],
-    "VisibilityTimeout": 300
-   },
-   "UpdateReplacePolicy": "Delete",
-   "DeletionPolicy": "Delete",
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/NoticeQueue/Resource"
-   }
-  },
-  "NoticeTopic73EA1121": {
-   "Type": "AWS::SNS::Topic",
-   "Properties": {
-    "DisplayName": "School Buddy — New Notice",
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ],
-    "TopicName": "school-buddy-notice-topic-dev"
-   },
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/NoticeTopic/Resource"
-   }
-  },
   "SchoolCrawler991D9322": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
-     "S3Bucket": {
-      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
-     },
-     "S3Key": "8e9f8330b00595845991a3620be374264abd41e5e4b32935dc83e311daddd167.zip"
+     "S3Bucket": "hanyang-pj-1-cdk-staging",
+     "S3Key": "cdk-assets/8e9f8330b00595845991a3620be374264abd41e5e4b32935dc83e311daddd167.zip"
     },
-    "Description": "학교 홈페이지 크롤링 → notice-queue 발행",
+    "Description": "학교 홈페이지 크롤링 → DynamoDB 직접 저장",
     "Environment": {
      "Variables": {
       "ENVIRONMENT": "dev",
-      "REGION": "us-east-1",
+      "REGION": "ap-northeast-3",
       "USERS_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefUsersTable9725E9C857961836"
       },
@@ -318,30 +56,11 @@
       "CHAT_HISTORY_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
       },
-      "TRANSLATION_CACHE_TABLE": {
-       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
-      },
       "DOCUMENTS_BUCKET": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefDocumentsBucket9EC9DEB9131399C0"
       },
       "KB_SOURCE_BUCKET": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKbSourceBucketF3D74AC434DD4B50"
-      },
-      "NOTICE_QUEUE_URL": {
-       "Ref": "NoticeQueue73F1DBE0"
-      },
-      "NOTICE_TOPIC_ARN": {
-       "Ref": "NoticeTopic73EA1121"
-      },
-      "USER_POOL_ID": {
-       "Ref": "UserPool6BA7E5F2"
-      },
-      "APP_SECRETS_NAME": "school-buddy/app-secrets",
-      "SQS_QUEUE_URL": {
-       "Ref": "NoticeQueue73F1DBE0"
-      },
-      "SNS_ALARM_TOPIC_ARN": {
-       "Ref": "NoticeTopic73EA1121"
       }
      }
     },
@@ -365,16 +84,6 @@
      ]
     },
     "Runtime": "python3.12",
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ],
     "Timeout": 300,
     "TracingConfig": {
      "Mode": "Active"
@@ -394,16 +103,14 @@
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
-     "S3Bucket": {
-      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
-     },
-     "S3Key": "4b0e8b5321a3fc2c56873d0cd95284fa824b0bf1f9d90076545bea7d941af0ac.zip"
+     "S3Bucket": "hanyang-pj-1-cdk-staging",
+     "S3Key": "cdk-assets/4b0e8b5321a3fc2c56873d0cd95284fa824b0bf1f9d90076545bea7d941af0ac.zip"
     },
-    "Description": "공지 중복 제거 → DynamoDB 저장 → Bedrock 번역 → SNS 발행",
+    "Description": "공지 중복 제거 → DynamoDB 저장 → Bedrock 번역",
     "Environment": {
      "Variables": {
       "ENVIRONMENT": "dev",
-      "REGION": "us-east-1",
+      "REGION": "ap-northeast-3",
       "USERS_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefUsersTable9725E9C857961836"
       },
@@ -422,25 +129,12 @@
       "CHAT_HISTORY_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
       },
-      "TRANSLATION_CACHE_TABLE": {
-       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
-      },
       "DOCUMENTS_BUCKET": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefDocumentsBucket9EC9DEB9131399C0"
       },
       "KB_SOURCE_BUCKET": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKbSourceBucketF3D74AC434DD4B50"
       },
-      "NOTICE_QUEUE_URL": {
-       "Ref": "NoticeQueue73F1DBE0"
-      },
-      "NOTICE_TOPIC_ARN": {
-       "Ref": "NoticeTopic73EA1121"
-      },
-      "USER_POOL_ID": {
-       "Ref": "UserPool6BA7E5F2"
-      },
-      "APP_SECRETS_NAME": "school-buddy/app-secrets",
       "BEDROCK_MODEL_ID": "anthropic.claude-sonnet-4-20250514-v1:0",
       "MAX_TOKENS_SUMMARY": "500",
       "MAX_TOKENS_TRANSLATION": "800"
@@ -466,16 +160,6 @@
      ]
     },
     "Runtime": "python3.12",
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ],
     "Timeout": 180,
     "TracingConfig": {
      "Mode": "Active"
@@ -491,187 +175,18 @@
     "aws:asset:property": "Code"
    }
   },
-  "NoticeProcessorSqsEventSourceSchoolBuddyApplicationNoticeQueue38ED482613ED1924": {
-   "Type": "AWS::Lambda::EventSourceMapping",
-   "Properties": {
-    "BatchSize": 10,
-    "EventSourceArn": {
-     "Fn::GetAtt": [
-      "NoticeQueue73F1DBE0",
-      "Arn"
-     ]
-    },
-    "FunctionName": {
-     "Ref": "NoticeProcessor9D7ED85C"
-    },
-    "FunctionResponseTypes": [
-     "ReportBatchItemFailures"
-    ],
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ]
-   },
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/NoticeProcessor/SqsEventSource:SchoolBuddyApplicationNoticeQueue38ED4826/Resource"
-   }
-  },
-  "NotificationSenderDDE68198": {
-   "Type": "AWS::Lambda::Function",
-   "Properties": {
-    "Code": {
-     "S3Bucket": {
-      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
-     },
-     "S3Key": "25a0c0c90f8f60de94ac00c8ff0e0396b51c987dc0faf09626f14244d4ed9cb1.zip"
-    },
-    "Description": "FCM / APNs 푸시 알림 발송",
-    "Environment": {
-     "Variables": {
-      "ENVIRONMENT": "dev",
-      "REGION": "us-east-1",
-      "USERS_TABLE": {
-       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefUsersTable9725E9C857961836"
-      },
-      "CHILDREN_TABLE": {
-       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChildrenTable379D0D63D900E6E9"
-      },
-      "SCHOOLS_TABLE": {
-       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefSchoolsTableCCE3029AD8045BD7"
-      },
-      "NOTICES_TABLE": {
-       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefNoticesTable095FDDACA4419C28"
-      },
-      "NOTIFICATIONS_TABLE": {
-       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefNotificationsTable76DCFC6C32DE73EE"
-      },
-      "CHAT_HISTORY_TABLE": {
-       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
-      },
-      "TRANSLATION_CACHE_TABLE": {
-       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
-      },
-      "DOCUMENTS_BUCKET": {
-       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefDocumentsBucket9EC9DEB9131399C0"
-      },
-      "KB_SOURCE_BUCKET": {
-       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKbSourceBucketF3D74AC434DD4B50"
-      },
-      "NOTICE_QUEUE_URL": {
-       "Ref": "NoticeQueue73F1DBE0"
-      },
-      "NOTICE_TOPIC_ARN": {
-       "Ref": "NoticeTopic73EA1121"
-      },
-      "USER_POOL_ID": {
-       "Ref": "UserPool6BA7E5F2"
-      },
-      "APP_SECRETS_NAME": "school-buddy/app-secrets",
-      "FCM_SECRETS_NAME": "school-buddy/fcm-service-account"
-     }
-    },
-    "FunctionName": "school-buddy-notifier-dev",
-    "Handler": "handler.handler",
-    "MemorySize": 128,
-    "Role": {
-     "Fn::Join": [
-      "",
-      [
-       "arn:",
-       {
-        "Ref": "AWS::Partition"
-       },
-       ":iam::",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":role/SafeRole-hanyang-pj-1"
-      ]
-     ]
-    },
-    "Runtime": "python3.12",
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ],
-    "Timeout": 60,
-    "TracingConfig": {
-     "Mode": "Active"
-    }
-   },
-   "DependsOn": [
-    "SafeRolePolicy68EAB430"
-   ],
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/NotificationSender/Resource",
-    "aws:asset:path": "asset.25a0c0c90f8f60de94ac00c8ff0e0396b51c987dc0faf09626f14244d4ed9cb1",
-    "aws:asset:is-bundled": false,
-    "aws:asset:property": "Code"
-   }
-  },
-  "NotificationSenderAllowInvokeSchoolBuddyApplicationNoticeTopicDEE583F4E45B239E": {
-   "Type": "AWS::Lambda::Permission",
-   "Properties": {
-    "Action": "lambda:InvokeFunction",
-    "FunctionName": {
-     "Fn::GetAtt": [
-      "NotificationSenderDDE68198",
-      "Arn"
-     ]
-    },
-    "Principal": "sns.amazonaws.com",
-    "SourceArn": {
-     "Ref": "NoticeTopic73EA1121"
-    }
-   },
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/NotificationSender/AllowInvoke:SchoolBuddyApplicationNoticeTopicDEE583F4"
-   }
-  },
-  "NotificationSenderNoticeTopic48F99C24": {
-   "Type": "AWS::SNS::Subscription",
-   "Properties": {
-    "Endpoint": {
-     "Fn::GetAtt": [
-      "NotificationSenderDDE68198",
-      "Arn"
-     ]
-    },
-    "Protocol": "lambda",
-    "TopicArn": {
-     "Ref": "NoticeTopic73EA1121"
-    }
-   },
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/NotificationSender/NoticeTopic/Resource"
-   }
-  },
   "DocumentAnalyzerE9442148": {
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
-     "S3Bucket": {
-      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
-     },
-     "S3Key": "e1ef6a2712febd1fae05c9b3703a642eeca300f85eccb71eca99bd3cf3e84a97.zip"
+     "S3Bucket": "hanyang-pj-1-cdk-staging",
+     "S3Key": "cdk-assets/e1ef6a2712febd1fae05c9b3703a642eeca300f85eccb71eca99bd3cf3e84a97.zip"
     },
-    "Description": "이미지/PDF OCR → Bedrock 분류·임베딩 → Vector Store 인덱싱",
+    "Description": "이미지/PDF OCR → Bedrock 분류·임베딩",
     "Environment": {
      "Variables": {
       "ENVIRONMENT": "dev",
-      "REGION": "us-east-1",
+      "REGION": "ap-northeast-3",
       "USERS_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefUsersTable9725E9C857961836"
       },
@@ -690,25 +205,12 @@
       "CHAT_HISTORY_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
       },
-      "TRANSLATION_CACHE_TABLE": {
-       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
-      },
       "DOCUMENTS_BUCKET": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefDocumentsBucket9EC9DEB9131399C0"
       },
       "KB_SOURCE_BUCKET": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKbSourceBucketF3D74AC434DD4B50"
       },
-      "NOTICE_QUEUE_URL": {
-       "Ref": "NoticeQueue73F1DBE0"
-      },
-      "NOTICE_TOPIC_ARN": {
-       "Ref": "NoticeTopic73EA1121"
-      },
-      "USER_POOL_ID": {
-       "Ref": "UserPool6BA7E5F2"
-      },
-      "APP_SECRETS_NAME": "school-buddy/app-secrets",
       "BEDROCK_MODEL_ID": "anthropic.claude-sonnet-4-20250514-v1:0",
       "MAX_TOKENS_SUMMARY": "500"
      }
@@ -733,16 +235,6 @@
      ]
     },
     "Runtime": "python3.12",
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ],
     "Timeout": 300,
     "TracingConfig": {
      "Mode": "Active"
@@ -762,16 +254,14 @@
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
-     "S3Bucket": {
-      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
-     },
-     "S3Key": "c5e8cb063ddfe09691beb0b4c9c2f6d684620a411cdd16e756e4d24b922fd607.zip"
+     "S3Bucket": "hanyang-pj-1-cdk-staging",
+     "S3Key": "cdk-assets/f81df2051eef2c0170a53e1f748e2f23df37fd2961422b25e9de231ac7eaaf6a.zip"
     },
     "Description": "질문 임베딩 → Vector Search → Bedrock 답변 생성",
     "Environment": {
      "Variables": {
       "ENVIRONMENT": "dev",
-      "REGION": "us-east-1",
+      "REGION": "ap-northeast-3",
       "USERS_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefUsersTable9725E9C857961836"
       },
@@ -790,25 +280,12 @@
       "CHAT_HISTORY_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
       },
-      "TRANSLATION_CACHE_TABLE": {
-       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
-      },
       "DOCUMENTS_BUCKET": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefDocumentsBucket9EC9DEB9131399C0"
       },
       "KB_SOURCE_BUCKET": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKbSourceBucketF3D74AC434DD4B50"
       },
-      "NOTICE_QUEUE_URL": {
-       "Ref": "NoticeQueue73F1DBE0"
-      },
-      "NOTICE_TOPIC_ARN": {
-       "Ref": "NoticeTopic73EA1121"
-      },
-      "USER_POOL_ID": {
-       "Ref": "UserPool6BA7E5F2"
-      },
-      "APP_SECRETS_NAME": "school-buddy/app-secrets",
       "KB_ID": "",
       "BEDROCK_MODEL_ID": "anthropic.claude-sonnet-4-20250514-v1:0",
       "MAX_TOKENS_QA": "1000"
@@ -834,16 +311,6 @@
      ]
     },
     "Runtime": "python3.12",
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ],
     "Timeout": 30,
     "TracingConfig": {
      "Mode": "Active"
@@ -854,7 +321,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "SchoolBuddyApplication/RagQueryHandler/Resource",
-    "aws:asset:path": "asset.c5e8cb063ddfe09691beb0b4c9c2f6d684620a411cdd16e756e4d24b922fd607",
+    "aws:asset:path": "asset.f81df2051eef2c0170a53e1f748e2f23df37fd2961422b25e9de231ac7eaaf6a",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -863,16 +330,14 @@
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
-     "S3Bucket": {
-      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
-     },
-     "S3Key": "57bae9b198a607ae7078f70b829c611d16ba819878d9b9dbcf9f3ad73739726b.zip"
+     "S3Bucket": "hanyang-pj-1-cdk-staging",
+     "S3Key": "cdk-assets/57bae9b198a607ae7078f70b829c611d16ba819878d9b9dbcf9f3ad73739726b.zip"
     },
-    "Description": "사용자·자녀 정보 CRUD, 회원가입",
+    "Description": "사용자·자녀 정보 CRUD",
     "Environment": {
      "Variables": {
       "ENVIRONMENT": "dev",
-      "REGION": "us-east-1",
+      "REGION": "ap-northeast-3",
       "USERS_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefUsersTable9725E9C857961836"
       },
@@ -891,27 +356,11 @@
       "CHAT_HISTORY_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
       },
-      "TRANSLATION_CACHE_TABLE": {
-       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
-      },
       "DOCUMENTS_BUCKET": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefDocumentsBucket9EC9DEB9131399C0"
       },
       "KB_SOURCE_BUCKET": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKbSourceBucketF3D74AC434DD4B50"
-      },
-      "NOTICE_QUEUE_URL": {
-       "Ref": "NoticeQueue73F1DBE0"
-      },
-      "NOTICE_TOPIC_ARN": {
-       "Ref": "NoticeTopic73EA1121"
-      },
-      "USER_POOL_ID": {
-       "Ref": "UserPool6BA7E5F2"
-      },
-      "APP_SECRETS_NAME": "school-buddy/app-secrets",
-      "USER_POOL_CLIENT_ID": {
-       "Ref": "UserPoolMobileClient046093C2"
       }
      }
     },
@@ -935,16 +384,6 @@
      ]
     },
     "Runtime": "nodejs20.x",
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ],
     "Timeout": 30,
     "TracingConfig": {
      "Mode": "Active"
@@ -964,16 +403,14 @@
    "Type": "AWS::Lambda::Function",
    "Properties": {
     "Code": {
-     "S3Bucket": {
-      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
-     },
-     "S3Key": "7c4da82fdd0609bb5c164e548b6763fc51474bd33318b5b0d9f111835aae9068.zip"
+     "S3Bucket": "hanyang-pj-1-cdk-staging",
+     "S3Key": "cdk-assets/7c4da82fdd0609bb5c164e548b6763fc51474bd33318b5b0d9f111835aae9068.zip"
     },
     "Description": "학교 검색·구독, 공지 목록 조회",
     "Environment": {
      "Variables": {
       "ENVIRONMENT": "dev",
-      "REGION": "us-east-1",
+      "REGION": "ap-northeast-3",
       "USERS_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefUsersTable9725E9C857961836"
       },
@@ -992,25 +429,12 @@
       "CHAT_HISTORY_TABLE": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
       },
-      "TRANSLATION_CACHE_TABLE": {
-       "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
-      },
       "DOCUMENTS_BUCKET": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefDocumentsBucket9EC9DEB9131399C0"
       },
       "KB_SOURCE_BUCKET": {
        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKbSourceBucketF3D74AC434DD4B50"
-      },
-      "NOTICE_QUEUE_URL": {
-       "Ref": "NoticeQueue73F1DBE0"
-      },
-      "NOTICE_TOPIC_ARN": {
-       "Ref": "NoticeTopic73EA1121"
-      },
-      "USER_POOL_ID": {
-       "Ref": "UserPool6BA7E5F2"
-      },
-      "APP_SECRETS_NAME": "school-buddy/app-secrets"
+      }
      }
     },
     "FunctionName": "school-buddy-school-dev",
@@ -1033,16 +457,6 @@
      ]
     },
     "Runtime": "nodejs20.x",
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ],
     "Timeout": 30,
     "TracingConfig": {
      "Mode": "Active"
@@ -1065,16 +479,6 @@
     "Name": "school-buddy-crawler-schedule-dev",
     "ScheduleExpression": "rate(30 minutes)",
     "State": "ENABLED",
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ],
     "Targets": [
      {
       "Arn": {
@@ -1113,21 +517,61 @@
     "aws:cdk:path": "SchoolBuddyApplication/CrawlerSchedule/AllowEventRuleSchoolBuddyApplicationSchoolCrawler155BE49D"
    }
   },
+  "KbSyncAF0B0A4E": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "hanyang-pj-1-cdk-staging",
+     "S3Key": "cdk-assets/34667470b4f333197396df5593b29f53542b012e746b27d6bc7d369f50428e37.zip"
+    },
+    "Description": "S3 업로드 → Bedrock Knowledge Base StartIngestionJob (수동 호출)",
+    "Environment": {
+     "Variables": {
+      "KNOWLEDGE_BASE_ID": "",
+      "DATA_SOURCE_ID": "",
+      "REGION": "ap-northeast-3"
+     }
+    },
+    "FunctionName": "school-buddy-kb-sync-dev",
+    "Handler": "handler.handler",
+    "MemorySize": 128,
+    "Role": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":iam::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":role/SafeRole-hanyang-pj-1"
+      ]
+     ]
+    },
+    "Runtime": "python3.12",
+    "Timeout": 120,
+    "TracingConfig": {
+     "Mode": "Active"
+    }
+   },
+   "DependsOn": [
+    "SafeRolePolicy68EAB430"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SchoolBuddyApplication/KbSync/Resource",
+    "aws:asset:path": "asset.34667470b4f333197396df5593b29f53542b012e746b27d6bc7d369f50428e37",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
   "ApiAccessLogsE9DF007D": {
    "Type": "AWS::Logs::LogGroup",
    "Properties": {
     "LogGroupName": "/school-buddy/api-access/dev",
-    "RetentionInDays": 30,
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ]
+    "RetentionInDays": 30
    },
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete",
@@ -1140,7 +584,6 @@
    "Properties": {
     "CorsConfiguration": {
      "AllowHeaders": [
-      "Authorization",
       "Content-Type",
       "X-Requested-With"
      ],
@@ -1152,13 +595,9 @@
      ],
      "MaxAge": 86400
     },
-    "Description": "School Buddy — Mobile / Web REST API",
+    "Description": "School Buddy — Mobile / Web REST API (No Auth)",
     "Name": "school-buddy-api-dev",
-    "ProtocolType": "HTTP",
-    "Tags": {
-     "Environment": "dev",
-     "Project": "school-buddy"
-    }
+    "ProtocolType": "HTTP"
    },
    "Metadata": {
     "aws:cdk:path": "SchoolBuddyApplication/HttpApi/Resource"
@@ -1174,23 +613,19 @@
        "Arn"
       ]
      },
-     "Format": "{\"requestId\":\"$context.requestId\",\"ip\":\"$context.identity.sourceIp\",\"method\":\"$context.httpMethod\",\"path\":\"$context.path\",\"routeKey\":\"$context.routeKey\",\"status\":\"$context.status\",\"responseTime\":\"$context.responseLatency\",\"userAgent\":\"$context.identity.userAgent\",\"integrationError\":\"$context.integrationErrorMessage\"}"
+     "Format": "{\"requestId\":\"$context.requestId\",\"ip\":\"$context.identity.sourceIp\",\"method\":\"$context.httpMethod\",\"path\":\"$context.path\",\"status\":\"$context.status\",\"responseTime\":\"$context.responseLatency\",\"integrationError\":\"$context.integrationErrorMessage\"}"
     },
     "ApiId": {
      "Ref": "HttpApiF5A9A8A7"
     },
     "AutoDeploy": true,
-    "StageName": "$default",
-    "Tags": {
-     "Environment": "dev",
-     "Project": "school-buddy"
-    }
+    "StageName": "$default"
    },
    "Metadata": {
     "aws:cdk:path": "SchoolBuddyApplication/HttpApi/DefaultStage/Resource"
    }
   },
-  "HttpApiPOSTauthregisterUserInt78049B47": {
+  "HttpApiGETusersmeUserIntB02824FB": {
    "Type": "AWS::ApiGatewayV2::Integration",
    "Properties": {
     "ApiId": {
@@ -1206,67 +641,7 @@
     "PayloadFormatVersion": "2.0"
    },
    "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/POST--auth--register/UserInt/Resource"
-   }
-  },
-  "HttpApiPOSTauthregisterUserIntPermissionD54BB315": {
-   "Type": "AWS::Lambda::Permission",
-   "Properties": {
-    "Action": "lambda:InvokeFunction",
-    "FunctionName": {
-     "Fn::GetAtt": [
-      "UserManager2108E726",
-      "Arn"
-     ]
-    },
-    "Principal": "apigateway.amazonaws.com",
-    "SourceArn": {
-     "Fn::Join": [
-      "",
-      [
-       "arn:",
-       {
-        "Ref": "AWS::Partition"
-       },
-       ":execute-api:us-east-1:",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":",
-       {
-        "Ref": "HttpApiF5A9A8A7"
-       },
-       "/*/*/auth/register"
-      ]
-     ]
-    }
-   },
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/POST--auth--register/UserInt-Permission"
-   }
-  },
-  "HttpApiPOSTauthregisterBB9BB35F": {
-   "Type": "AWS::ApiGatewayV2::Route",
-   "Properties": {
-    "ApiId": {
-     "Ref": "HttpApiF5A9A8A7"
-    },
-    "AuthorizationType": "NONE",
-    "RouteKey": "POST /auth/register",
-    "Target": {
-     "Fn::Join": [
-      "",
-      [
-       "integrations/",
-       {
-        "Ref": "HttpApiPOSTauthregisterUserInt78049B47"
-       }
-      ]
-     ]
-    }
-   },
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/POST--auth--register/Resource"
+    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/GET--users--me/UserInt/Resource"
    }
   },
   "HttpApiGETusersmeUserIntPermissionA07AAAF9": {
@@ -1288,7 +663,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
+       ":execute-api:ap-northeast-3:",
        {
         "Ref": "AWS::AccountId"
        },
@@ -1311,10 +686,7 @@
     "ApiId": {
      "Ref": "HttpApiF5A9A8A7"
     },
-    "AuthorizationType": "JWT",
-    "AuthorizerId": {
-     "Ref": "HttpApiCognitoAuthorizer935FA0F6"
-    },
+    "AuthorizationType": "NONE",
     "RouteKey": "GET /users/me",
     "Target": {
      "Fn::Join": [
@@ -1322,7 +694,7 @@
       [
        "integrations/",
        {
-        "Ref": "HttpApiPOSTauthregisterUserInt78049B47"
+        "Ref": "HttpApiGETusersmeUserIntB02824FB"
        }
       ]
      ]
@@ -1330,40 +702,6 @@
    },
    "Metadata": {
     "aws:cdk:path": "SchoolBuddyApplication/HttpApi/GET--users--me/Resource"
-   }
-  },
-  "HttpApiCognitoAuthorizer935FA0F6": {
-   "Type": "AWS::ApiGatewayV2::Authorizer",
-   "Properties": {
-    "ApiId": {
-     "Ref": "HttpApiF5A9A8A7"
-    },
-    "AuthorizerType": "JWT",
-    "IdentitySource": [
-     "$request.header.Authorization"
-    ],
-    "JwtConfiguration": {
-     "Audience": [
-      {
-       "Ref": "UserPoolMobileClient046093C2"
-      }
-     ],
-     "Issuer": {
-      "Fn::Join": [
-       "",
-       [
-        "https://cognito-idp.us-east-1.amazonaws.com/",
-        {
-         "Ref": "UserPool6BA7E5F2"
-        }
-       ]
-      ]
-     }
-    },
-    "Name": "CognitoAuthorizer"
-   },
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/HttpApi/CognitoAuthorizer/Resource"
    }
   },
   "HttpApiPUTusersmeUserIntPermissionC50FA462": {
@@ -1385,7 +723,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
+       ":execute-api:ap-northeast-3:",
        {
         "Ref": "AWS::AccountId"
        },
@@ -1408,10 +746,7 @@
     "ApiId": {
      "Ref": "HttpApiF5A9A8A7"
     },
-    "AuthorizationType": "JWT",
-    "AuthorizerId": {
-     "Ref": "HttpApiCognitoAuthorizer935FA0F6"
-    },
+    "AuthorizationType": "NONE",
     "RouteKey": "PUT /users/me",
     "Target": {
      "Fn::Join": [
@@ -1419,7 +754,7 @@
       [
        "integrations/",
        {
-        "Ref": "HttpApiPOSTauthregisterUserInt78049B47"
+        "Ref": "HttpApiGETusersmeUserIntB02824FB"
        }
       ]
      ]
@@ -1448,7 +783,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
+       ":execute-api:ap-northeast-3:",
        {
         "Ref": "AWS::AccountId"
        },
@@ -1471,10 +806,7 @@
     "ApiId": {
      "Ref": "HttpApiF5A9A8A7"
     },
-    "AuthorizationType": "JWT",
-    "AuthorizerId": {
-     "Ref": "HttpApiCognitoAuthorizer935FA0F6"
-    },
+    "AuthorizationType": "NONE",
     "RouteKey": "POST /children",
     "Target": {
      "Fn::Join": [
@@ -1482,7 +814,7 @@
       [
        "integrations/",
        {
-        "Ref": "HttpApiPOSTauthregisterUserInt78049B47"
+        "Ref": "HttpApiGETusersmeUserIntB02824FB"
        }
       ]
      ]
@@ -1511,7 +843,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
+       ":execute-api:ap-northeast-3:",
        {
         "Ref": "AWS::AccountId"
        },
@@ -1534,10 +866,7 @@
     "ApiId": {
      "Ref": "HttpApiF5A9A8A7"
     },
-    "AuthorizationType": "JWT",
-    "AuthorizerId": {
-     "Ref": "HttpApiCognitoAuthorizer935FA0F6"
-    },
+    "AuthorizationType": "NONE",
     "RouteKey": "GET /children",
     "Target": {
      "Fn::Join": [
@@ -1545,7 +874,7 @@
       [
        "integrations/",
        {
-        "Ref": "HttpApiPOSTauthregisterUserInt78049B47"
+        "Ref": "HttpApiGETusersmeUserIntB02824FB"
        }
       ]
      ]
@@ -1593,7 +922,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
+       ":execute-api:ap-northeast-3:",
        {
         "Ref": "AWS::AccountId"
        },
@@ -1616,10 +945,7 @@
     "ApiId": {
      "Ref": "HttpApiF5A9A8A7"
     },
-    "AuthorizationType": "JWT",
-    "AuthorizerId": {
-     "Ref": "HttpApiCognitoAuthorizer935FA0F6"
-    },
+    "AuthorizationType": "NONE",
     "RouteKey": "GET /schools/search",
     "Target": {
      "Fn::Join": [
@@ -1656,7 +982,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
+       ":execute-api:ap-northeast-3:",
        {
         "Ref": "AWS::AccountId"
        },
@@ -1679,10 +1005,7 @@
     "ApiId": {
      "Ref": "HttpApiF5A9A8A7"
     },
-    "AuthorizationType": "JWT",
-    "AuthorizerId": {
-     "Ref": "HttpApiCognitoAuthorizer935FA0F6"
-    },
+    "AuthorizationType": "NONE",
     "RouteKey": "POST /schools/subscribe",
     "Target": {
      "Fn::Join": [
@@ -1719,7 +1042,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
+       ":execute-api:ap-northeast-3:",
        {
         "Ref": "AWS::AccountId"
        },
@@ -1742,10 +1065,7 @@
     "ApiId": {
      "Ref": "HttpApiF5A9A8A7"
     },
-    "AuthorizationType": "JWT",
-    "AuthorizerId": {
-     "Ref": "HttpApiCognitoAuthorizer935FA0F6"
-    },
+    "AuthorizationType": "NONE",
     "RouteKey": "GET /notices",
     "Target": {
      "Fn::Join": [
@@ -1782,7 +1102,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
+       ":execute-api:ap-northeast-3:",
        {
         "Ref": "AWS::AccountId"
        },
@@ -1805,10 +1125,7 @@
     "ApiId": {
      "Ref": "HttpApiF5A9A8A7"
     },
-    "AuthorizationType": "JWT",
-    "AuthorizerId": {
-     "Ref": "HttpApiCognitoAuthorizer935FA0F6"
-    },
+    "AuthorizationType": "NONE",
     "RouteKey": "GET /notices/{noticeId}",
     "Target": {
      "Fn::Join": [
@@ -1864,7 +1181,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
+       ":execute-api:ap-northeast-3:",
        {
         "Ref": "AWS::AccountId"
        },
@@ -1887,10 +1204,7 @@
     "ApiId": {
      "Ref": "HttpApiF5A9A8A7"
     },
-    "AuthorizationType": "JWT",
-    "AuthorizerId": {
-     "Ref": "HttpApiCognitoAuthorizer935FA0F6"
-    },
+    "AuthorizationType": "NONE",
     "RouteKey": "POST /documents/analyze",
     "Target": {
      "Fn::Join": [
@@ -1946,7 +1260,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
+       ":execute-api:ap-northeast-3:",
        {
         "Ref": "AWS::AccountId"
        },
@@ -1969,10 +1283,7 @@
     "ApiId": {
      "Ref": "HttpApiF5A9A8A7"
     },
-    "AuthorizationType": "JWT",
-    "AuthorizerId": {
-     "Ref": "HttpApiCognitoAuthorizer935FA0F6"
-    },
+    "AuthorizationType": "NONE",
     "RouteKey": "POST /chat",
     "Target": {
      "Fn::Join": [
@@ -2009,7 +1320,7 @@
        {
         "Ref": "AWS::Partition"
        },
-       ":execute-api:us-east-1:",
+       ":execute-api:ap-northeast-3:",
        {
         "Ref": "AWS::AccountId"
        },
@@ -2032,10 +1343,7 @@
     "ApiId": {
      "Ref": "HttpApiF5A9A8A7"
     },
-    "AuthorizationType": "JWT",
-    "AuthorizerId": {
-     "Ref": "HttpApiCognitoAuthorizer935FA0F6"
-    },
+    "AuthorizationType": "NONE",
     "RouteKey": "GET /chat/history",
     "Target": {
      "Fn::Join": [
@@ -2053,143 +1361,10 @@
     "aws:cdk:path": "SchoolBuddyApplication/HttpApi/GET--chat--history/Resource"
    }
   },
-  "KbSyncAF0B0A4E": {
-   "Type": "AWS::Lambda::Function",
-   "Properties": {
-    "Code": {
-     "S3Bucket": {
-      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
-     },
-     "S3Key": "34667470b4f333197396df5593b29f53542b012e746b27d6bc7d369f50428e37.zip"
-    },
-    "Description": "S3 업로드 이벤트 → Bedrock Knowledge Base StartIngestionJob",
-    "Environment": {
-     "Variables": {
-      "KNOWLEDGE_BASE_ID": "",
-      "DATA_SOURCE_ID": "",
-      "REGION": "us-east-1"
-     }
-    },
-    "FunctionName": "school-buddy-kb-sync-dev",
-    "Handler": "handler.handler",
-    "MemorySize": 128,
-    "Role": {
-     "Fn::Join": [
-      "",
-      [
-       "arn:",
-       {
-        "Ref": "AWS::Partition"
-       },
-       ":iam::",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":role/SafeRole-hanyang-pj-1"
-      ]
-     ]
-    },
-    "Runtime": "python3.12",
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ],
-    "Timeout": 120,
-    "TracingConfig": {
-     "Mode": "Active"
-    }
-   },
-   "DependsOn": [
-    "SafeRolePolicy68EAB430"
-   ],
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/KbSync/Resource",
-    "aws:asset:path": "asset.34667470b4f333197396df5593b29f53542b012e746b27d6bc7d369f50428e37",
-    "aws:asset:is-bundled": false,
-    "aws:asset:property": "Code"
-   }
-  },
-  "KbSyncRule6676B8AD": {
-   "Type": "AWS::Events::Rule",
-   "Properties": {
-    "Description": "S3 kb-source 업로드 이벤트 → Knowledge Base 동기화",
-    "EventPattern": {
-     "source": [
-      "aws.s3"
-     ],
-     "detail-type": [
-      "Object Created"
-     ],
-     "detail": {
-      "bucket": {
-       "name": [
-        {
-         "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefKbSourceBucketF3D74AC434DD4B50"
-        }
-       ]
-      }
-     }
-    },
-    "Name": "school-buddy-kb-sync-dev",
-    "State": "ENABLED",
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ],
-    "Targets": [
-     {
-      "Arn": {
-       "Fn::GetAtt": [
-        "KbSyncAF0B0A4E",
-        "Arn"
-       ]
-      },
-      "Id": "Target0"
-     }
-    ]
-   },
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/KbSyncRule/Resource"
-   }
-  },
-  "KbSyncRuleAllowEventRuleSchoolBuddyApplicationKbSyncFDEFEB21A96AAE04": {
-   "Type": "AWS::Lambda::Permission",
-   "Properties": {
-    "Action": "lambda:InvokeFunction",
-    "FunctionName": {
-     "Fn::GetAtt": [
-      "KbSyncAF0B0A4E",
-      "Arn"
-     ]
-    },
-    "Principal": "events.amazonaws.com",
-    "SourceArn": {
-     "Fn::GetAtt": [
-      "KbSyncRule6676B8AD",
-      "Arn"
-     ]
-    }
-   },
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyApplication/KbSyncRule/AllowEventRuleSchoolBuddyApplicationKbSyncFDEFEB21"
-   }
-  },
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/3VQ0W7bMAz8lr4rXJv0B9JuawtsWJZsz4Uicy4bW9REKkEm6N8H2XEaFNsT747HA45zmN/ewPWVPcjMNbtZR1vIG7VuZ9YonKJDYw/ynMn2kFfckTua+19+RMU4bj0pQ/4pGFfMXV2e8QQ+cm/JX65OykTvO0Kvl4aTMtGnBr2SHleR99RgfGBuO7w8eO/47+kyhA6Lkd8C+XvCNKQMoBjxAvkHB3JVHMEmbcVFCko8VLjkxXS23zYW8ufk3eQ440979LoZvvjVhkC+ret/qyuMPYkMobJ4tiKoAss6jCzgLrkd6p0VNFjvBfI6jR+os5iOW4H8hduHyClUfcLF2ECtVTzY434O+VE1LANVSx2VbtS2Q9YIqrTmpCN68opttFO7d/TNt0z6wpH+YByiz6wUM9So2aey35KGpMV4bhBe5cN+fgs3C7i+ehWiWUxeqUdYj/MvtcMDBaQCAAA="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/12OXWrDQAyEz5L3tZrYuUBS6A8UGpwDBGWjGsX2rrG0NmHZu5e1CZQ+zTcjjVAJ5X4H2w3OUthbW3R8hXhWtK2pSXwYLRmc5RIZe4gn37F9mNcft1IyHfbXG0J8C84qe5dnf/lEY88i7F0yUl1QhFTgkMVIBcdgW9IjChmayKlArENHuZk1mc43AvHLN++jD0POn5wMDtyg0oyPqYT4oTocBs4rWbI9KzbLrRVyVPugK306pWbE56P/7LKXklk+zXV2Tc6/gw5Bk3H+RnCXl6ncw66C7eYuzMUYnHJPUK/6C9CL5fpdAQAA"
    },
    "Metadata": {
     "aws:cdk:path": "SchoolBuddyApplication/CDKMetadata/Default"
@@ -2198,7 +1373,7 @@
  },
  "Outputs": {
   "ApiEndpoint": {
-   "Description": "HTTP API Base URL (모바일 앱 REACT_APP_API_BASE_URL)",
+   "Description": "HTTP API Base URL",
    "Value": {
     "Fn::GetAtt": [
      "HttpApiF5A9A8A7",
@@ -2209,59 +1384,9 @@
     "Name": "school-buddy-api-endpoint-dev"
    }
   },
-  "UserPoolId": {
-   "Value": {
-    "Ref": "UserPool6BA7E5F2"
-   },
-   "Export": {
-    "Name": "school-buddy-user-pool-id-dev"
-   }
-  },
-  "UserPoolClientId": {
-   "Value": {
-    "Ref": "UserPoolMobileClient046093C2"
-   },
-   "Export": {
-    "Name": "school-buddy-user-pool-client-id-dev"
-   }
-  },
-  "CognitoDomain": {
-   "Description": "Cognito Hosted UI 기본 도메인 (소셜 로그인 리다이렉트)",
-   "Value": {
-    "Fn::Join": [
-     "",
-     [
-      "https://",
-      {
-       "Ref": "UserPoolDomainD0EA232A"
-      },
-      ".auth.us-east-1.amazoncognito.com"
-     ]
-    ]
-   },
-   "Export": {
-    "Name": "school-buddy-cognito-domain-dev"
-   }
-  },
-  "NoticeQueueUrl": {
-   "Value": {
-    "Ref": "NoticeQueue73F1DBE0"
-   },
-   "Export": {
-    "Name": "school-buddy-notice-queue-url-dev"
-   }
-  },
-  "NoticeTopicArn": {
-   "Value": {
-    "Ref": "NoticeTopic73EA1121"
-   },
-   "Export": {
-    "Name": "school-buddy-notice-topic-arn-dev"
-   }
-  },
   "KbIdNote": {
    "Description": "배포 시 주입된 Bedrock Knowledge Base ID",
-   "Value": "(not set — export KB_ID before deploy)",
+   "Value": "(not set)",
    "Export": {
     "Name": "school-buddy-kb-id-dev"
    }
@@ -2272,17 +1397,6 @@
    },
    "Export": {
     "Name": "school-buddy-app-dev:ExportsOutputRefSchoolCrawler991D93225E3BB50A"
-   }
-  },
-  "ExportsOutputFnGetAttNoticeDLQA7E8F4C0QueueNameBB203A35": {
-   "Value": {
-    "Fn::GetAtt": [
-     "NoticeDLQA7E8F4C0",
-     "QueueName"
-    ]
-   },
-   "Export": {
-    "Name": "school-buddy-app-dev:ExportsOutputFnGetAttNoticeDLQA7E8F4C0QueueNameBB203A35"
    }
   },
   "ExportsOutputRefHttpApiF5A9A8A7F70B5BDD": {
@@ -2299,14 +1413,6 @@
    },
    "Export": {
     "Name": "school-buddy-app-dev:ExportsOutputRefNoticeProcessor9D7ED85CF537707C"
-   }
-  },
-  "ExportsOutputRefNotificationSenderDDE681988DF19973": {
-   "Value": {
-    "Ref": "NotificationSenderDDE68198"
-   },
-   "Export": {
-    "Name": "school-buddy-app-dev:ExportsOutputRefNotificationSenderDDE681988DF19973"
    }
   },
   "ExportsOutputRefDocumentAnalyzerE944214827B5D6F8": {
@@ -2348,51 +1454,6 @@
    "Export": {
     "Name": "school-buddy-app-dev:ExportsOutputRefKbSyncAF0B0A4EDC366D76"
    }
-  },
-  "ExportsOutputFnGetAttNoticeQueue73F1DBE0QueueName81D42EAB": {
-   "Value": {
-    "Fn::GetAtt": [
-     "NoticeQueue73F1DBE0",
-     "QueueName"
-    ]
-   },
-   "Export": {
-    "Name": "school-buddy-app-dev:ExportsOutputFnGetAttNoticeQueue73F1DBE0QueueName81D42EAB"
-   }
-  }
- },
- "Parameters": {
-  "BootstrapVersion": {
-   "Type": "AWS::SSM::Parameter::Value<String>",
-   "Default": "/cdk-bootstrap/hnb659fds/version",
-   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
-  }
- },
- "Rules": {
-  "CheckBootstrapVersion": {
-   "Assertions": [
-    {
-     "Assert": {
-      "Fn::Not": [
-       {
-        "Fn::Contains": [
-         [
-          "1",
-          "2",
-          "3",
-          "4",
-          "5"
-         ],
-         {
-          "Ref": "BootstrapVersion"
-         }
-        ]
-       }
-      ]
-     },
-     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
-    }
-   ]
   }
  }
 }

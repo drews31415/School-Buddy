@@ -49,7 +49,6 @@ const apigwv2Integrations = __importStar(require("aws-cdk-lib/aws-apigatewayv2-i
 const apigwv2Auth = __importStar(require("aws-cdk-lib/aws-apigatewayv2-authorizers"));
 const cognito = __importStar(require("aws-cdk-lib/aws-cognito"));
 const logs = __importStar(require("aws-cdk-lib/aws-logs"));
-const ssm = __importStar(require("aws-cdk-lib/aws-ssm"));
 /**
  * ApplicationStack
  * Lambda 7개, HTTP API Gateway (Cognito JWT 인증), SQS, SNS, EventBridge, Cognito.
@@ -207,17 +206,6 @@ class ApplicationStack extends cdk.Stack {
         // 공개 속성 할당 (MonitoringStack에서 메트릭 참조)
         this.noticeDLQ = noticeDLQ;
         this.noticeQueue = noticeQueue;
-        const notificationDLQ = new sqs.Queue(this, "NotificationDLQ", {
-            queueName: `school-buddy-notification-dlq-${environment}`,
-            retentionPeriod: cdk.Duration.days(14),
-            encryption: sqs.QueueEncryption.SQS_MANAGED,
-        });
-        const notificationQueue = new sqs.Queue(this, "NotificationQueue", {
-            queueName: `school-buddy-notification-queue-${environment}`,
-            visibilityTimeout: cdk.Duration.seconds(60),
-            encryption: sqs.QueueEncryption.SQS_MANAGED,
-            deadLetterQueue: { queue: notificationDLQ, maxReceiveCount: 3 },
-        });
         // ──────────────────────────────────────────────────────
         // SNS Topic
         // ──────────────────────────────────────────────────────
@@ -238,14 +226,12 @@ class ApplicationStack extends cdk.Stack {
             NOTICES_TABLE: storage.noticesTable.tableName,
             NOTIFICATIONS_TABLE: storage.notificationsTable.tableName,
             CHAT_HISTORY_TABLE: storage.chatHistoryTable.tableName,
-            KB_DOCUMENTS_TABLE: storage.kbDocumentsTable.tableName,
             TRANSLATION_CACHE_TABLE: storage.translationCacheTable.tableName,
             // S3 Bucket Names
             DOCUMENTS_BUCKET: storage.documentsBucket.bucketName,
             KB_SOURCE_BUCKET: storage.kbSourceBucket.bucketName,
             // Messaging
             NOTICE_QUEUE_URL: noticeQueue.queueUrl,
-            NOTIFICATION_QUEUE_URL: notificationQueue.queueUrl,
             NOTICE_TOPIC_ARN: noticeTopic.topicArn,
             // Cognito (Lambda에서 토큰 검증 시 참조)
             USER_POOL_ID: this.userPool.userPoolId,
@@ -266,6 +252,11 @@ class ApplicationStack extends cdk.Stack {
             tracing: lambda.Tracing.ACTIVE,
         };
         // school-crawler — EventBridge 30분 스케줄 트리거
+        // 환경변수:
+        //   [commonEnv] ENVIRONMENT, REGION, *_TABLE, *_BUCKET, NOTICE_QUEUE_URL,
+        //               NOTICE_TOPIC_ARN, USER_POOL_ID, APP_SECRETS_NAME
+        //   SQS_QUEUE_URL        공지 메시지 발행 대상 SQS URL
+        //   SNS_ALARM_TOPIC_ARN  연속 오류 3회 시 알람 SNS ARN
         this.crawlerFn = new lambda.Function(this, "SchoolCrawler", {
             functionName: `school-buddy-crawler-${environment}`,
             ...pythonLambdaDefaults,
@@ -281,6 +272,11 @@ class ApplicationStack extends cdk.Stack {
             },
         });
         // notice-processor — SQS 트리거
+        // 환경변수:
+        //   [commonEnv]
+        //   BEDROCK_MODEL_ID      Bedrock 모델 ID (번역·요약)
+        //   MAX_TOKENS_SUMMARY    요약 최대 토큰 (500)
+        //   MAX_TOKENS_TRANSLATION 번역 최대 토큰 (800)
         this.processorFn = new lambda.Function(this, "NoticeProcessor", {
             functionName: `school-buddy-processor-${environment}`,
             ...pythonLambdaDefaults,
@@ -301,6 +297,9 @@ class ApplicationStack extends cdk.Stack {
             reportBatchItemFailures: true,
         }));
         // notification-sender — SNS 트리거
+        // 환경변수:
+        //   [commonEnv]
+        //   FCM_SECRETS_NAME  Secrets Manager 키 이름 (FCM 서비스 계정 JSON)
         this.notifierFn = new lambda.Function(this, "NotificationSender", {
             functionName: `school-buddy-notifier-${environment}`,
             ...pythonLambdaDefaults,
@@ -316,6 +315,10 @@ class ApplicationStack extends cdk.Stack {
         });
         noticeTopic.addSubscription(new snsSubscriptions.LambdaSubscription(this.notifierFn));
         // document-analyzer — API Gateway / SQS 트리거
+        // 환경변수:
+        //   [commonEnv]
+        //   BEDROCK_MODEL_ID      Bedrock 모델 ID (OCR·분류)
+        //   MAX_TOKENS_SUMMARY    분석 요약 최대 토큰 (500)
         this.analyzerFn = new lambda.Function(this, "DocumentAnalyzer", {
             functionName: `school-buddy-analyzer-${environment}`,
             ...pythonLambdaDefaults,
@@ -331,6 +334,13 @@ class ApplicationStack extends cdk.Stack {
             },
         });
         // rag-query-handler — API Gateway 트리거 (/chat, /chat/history)
+        // 환경변수:
+        //   [commonEnv]
+        //   KB_ID            Bedrock Knowledge Base ID
+        //                    → 배포 전 Cloud9에서: export KB_ID=<담당자_전달값>
+        //   BEDROCK_MODEL_ID Bedrock 모델 ID (Q&A 답변 생성)
+        //   MAX_TOKENS_QA    Q&A 최대 토큰 (1000)
+        //   REGION           AWS 리전 (commonEnv에 포함)
         this.ragFn = new lambda.Function(this, "RagQueryHandler", {
             functionName: `school-buddy-rag-${environment}`,
             ...pythonLambdaDefaults,
@@ -341,12 +351,15 @@ class ApplicationStack extends cdk.Stack {
             description: "질문 임베딩 → Vector Search → Bedrock 답변 생성",
             environment: {
                 ...commonEnv,
-                BEDROCK_MODEL_ID: "anthropic.claude-sonnet-4-5",
-                MAX_TOKENS_QA: "1000",
                 KB_ID: process.env.KB_ID ?? "",
+                BEDROCK_MODEL_ID: "anthropic.claude-sonnet-4-20250514-v1:0",
+                MAX_TOKENS_QA: "1000",
             },
         });
         // user-manager — API Gateway 트리거 (/users/me, /children, /auth/register)
+        // 환경변수:
+        //   [commonEnv]
+        //   USER_POOL_CLIENT_ID  Cognito 앱 클라이언트 ID (토큰 발급·검증)
         this.userFn = new lambda.Function(this, "UserManager", {
             functionName: `school-buddy-user-${environment}`,
             ...nodeLambdaDefaults,
@@ -361,6 +374,8 @@ class ApplicationStack extends cdk.Stack {
             },
         });
         // school-registry — API Gateway 트리거 (/schools/search, /schools/subscribe, /notices)
+        // 환경변수:
+        //   [commonEnv] — 추가 환경변수 없음
         this.schoolFn = new lambda.Function(this, "SchoolRegistry", {
             functionName: `school-buddy-school-${environment}`,
             ...nodeLambdaDefaults,
@@ -461,21 +476,20 @@ class ApplicationStack extends cdk.Stack {
             });
         }
         // ──────────────────────────────────────────────────────
-        // Knowledge Base — SSM Parameter Store에서 KB ID 조회
-        // (담당자가 외부에서 S3 Vectors KB를 직접 생성 후 SSM에 등록)
+        // Knowledge Base (S3 Vectors) — 담당자가 외부에서 직접 생성
         //
-        // ⚠️ 배포 전 SSM에 다음 값을 등록해야 함:
-        //   aws ssm put-parameter \
-        //     --name /school-buddy/{env}/kb-id \
-        //     --value <BEDROCK_KB_ID> --type String --region us-east-1
-        //   aws ssm put-parameter \
-        //     --name /school-buddy/{env}/kb-data-source-id \
-        //     --value <DATA_SOURCE_ID> --type String --region us-east-1
+        // ⚠️ 배포 전 Cloud9 터미널에서 환경변수 설정 필수:
+        //   export KB_ID=<담당자_전달_KB_ID>
+        //   export KB_DATA_SOURCE_ID=<담당자_전달_DataSource_ID>
+        //   npx cdk deploy ApplicationStack
         // ──────────────────────────────────────────────────────
-        // CDK CloudFormation 동적 참조 — deploy 시점에 SSM에서 값을 읽음
-        const kbId = ssm.StringParameter.valueForStringParameter(this, `/school-buddy/${environment}/kb-id`);
-        const kbDataSourceId = ssm.StringParameter.valueForStringParameter(this, `/school-buddy/${environment}/kb-data-source-id`);
         // kb-sync Lambda (S3 업로드 → Ingestion Job 트리거)
+        // 환경변수:
+        //   KNOWLEDGE_BASE_ID   Bedrock Knowledge Base ID
+        //                       → 배포 전: export KB_ID=<값>
+        //   DATA_SOURCE_ID      Knowledge Base Data Source ID
+        //                       → 배포 전: export KB_DATA_SOURCE_ID=<값>
+        //   REGION              AWS 리전 (us-east-1 고정)
         this.kbSyncFn = new lambda.Function(this, "KbSync", {
             functionName: `school-buddy-kb-sync-${environment}`,
             ...pythonLambdaDefaults,
@@ -485,8 +499,8 @@ class ApplicationStack extends cdk.Stack {
             memorySize: 128,
             description: "S3 업로드 이벤트 → Bedrock Knowledge Base StartIngestionJob",
             environment: {
-                KNOWLEDGE_BASE_ID: kbId,
-                DATA_SOURCE_ID: kbDataSourceId,
+                KNOWLEDGE_BASE_ID: process.env.KB_ID ?? "",
+                DATA_SOURCE_ID: process.env.KB_DATA_SOURCE_ID ?? "",
                 REGION: "us-east-1",
             },
         });
@@ -503,8 +517,7 @@ class ApplicationStack extends cdk.Stack {
             },
         });
         kbSyncRule.addTarget(new eventsTargets.LambdaFunction(this.kbSyncFn));
-        // SSM 파라미터 이름을 공개 속성으로 노출
-        this.knowledgeBaseId = `/school-buddy/${environment}/kb-id`;
+        this.knowledgeBaseId = process.env.KB_ID ?? "";
         // ──────────────────────────────────────────────────────
         // CloudFormation Outputs
         // ──────────────────────────────────────────────────────
@@ -534,10 +547,10 @@ class ApplicationStack extends cdk.Stack {
             value: noticeTopic.topicArn,
             exportName: `school-buddy-notice-topic-arn-${environment}`,
         });
-        new cdk.CfnOutput(this, "KbSsmParamName", {
-            value: `/school-buddy/${environment}/kb-id`,
-            description: "SSM 파라미터 이름 — 담당자가 KB ID를 이 경로에 등록해야 함",
-            exportName: `school-buddy-kb-ssm-param-${environment}`,
+        new cdk.CfnOutput(this, "KbIdNote", {
+            value: process.env.KB_ID ?? "(not set — export KB_ID before deploy)",
+            description: "배포 시 주입된 Bedrock Knowledge Base ID",
+            exportName: `school-buddy-kb-id-${environment}`,
         });
     }
 }

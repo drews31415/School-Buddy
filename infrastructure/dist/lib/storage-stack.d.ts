@@ -19,7 +19,6 @@ export declare class StorageStack extends cdk.Stack {
     readonly noticesTable: dynamodb.Table;
     readonly notificationsTable: dynamodb.Table;
     readonly chatHistoryTable: dynamodb.Table;
-    readonly kbDocumentsTable: dynamodb.Table;
     /** ElastiCache(Redis) 대체 캐시 테이블. cacheKey 형식: notice#{noticeId}#lang#{langCode} */
     readonly translationCacheTable: dynamodb.Table;
     readonly documentsBucket: s3.Bucket;

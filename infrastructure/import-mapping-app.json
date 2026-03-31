@@ -1,5 +1,2 @@
 {
-  "NoticeDLQA7E8F4C0": {
-    "QueueUrl": "https://sqs.ap-northeast-3.amazonaws.com/730335373015/school-buddy-notice-dlq-dev"
-  }
 }

@@ -1,18 +1,143 @@
 {
   "version": "52.0.0",
   "files": {
-    "1150184b465b536d8812f97ad35079df1b01498c1badb927c68af80e7a277073": {
+    "8e9f8330b00595845991a3620be374264abd41e5e4b32935dc83e311daddd167": {
+      "displayName": "SchoolCrawler/Code",
+      "source": {
+        "path": "asset.8e9f8330b00595845991a3620be374264abd41e5e4b32935dc83e311daddd167",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "current_account-ap-northeast-3-57056c61": {
+          "bucketName": "hanyang-pj-1-cdk-staging",
+          "objectKey": "cdk-assets/8e9f8330b00595845991a3620be374264abd41e5e4b32935dc83e311daddd167.zip",
+          "region": "ap-northeast-3"
+        }
+      }
+    },
+    "4b0e8b5321a3fc2c56873d0cd95284fa824b0bf1f9d90076545bea7d941af0ac": {
+      "displayName": "NoticeProcessor/Code",
+      "source": {
+        "path": "asset.4b0e8b5321a3fc2c56873d0cd95284fa824b0bf1f9d90076545bea7d941af0ac",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "current_account-ap-northeast-3-407708d7": {
+          "bucketName": "hanyang-pj-1-cdk-staging",
+          "objectKey": "cdk-assets/4b0e8b5321a3fc2c56873d0cd95284fa824b0bf1f9d90076545bea7d941af0ac.zip",
+          "region": "ap-northeast-3"
+        }
+      }
+    },
+    "e1ef6a2712febd1fae05c9b3703a642eeca300f85eccb71eca99bd3cf3e84a97": {
+      "displayName": "DocumentAnalyzer/Code",
+      "source": {
+        "path": "asset.e1ef6a2712febd1fae05c9b3703a642eeca300f85eccb71eca99bd3cf3e84a97",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "current_account-ap-northeast-3-3b38f6bf": {
+          "bucketName": "hanyang-pj-1-cdk-staging",
+          "objectKey": "cdk-assets/e1ef6a2712febd1fae05c9b3703a642eeca300f85eccb71eca99bd3cf3e84a97.zip",
+          "region": "ap-northeast-3"
+        }
+      }
+    },
+    "f81df2051eef2c0170a53e1f748e2f23df37fd2961422b25e9de231ac7eaaf6a": {
+      "displayName": "RagQueryHandler/Code",
+      "source": {
+        "path": "asset.f81df2051eef2c0170a53e1f748e2f23df37fd2961422b25e9de231ac7eaaf6a",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "current_account-ap-northeast-3-72d59161": {
+          "bucketName": "hanyang-pj-1-cdk-staging",
+          "objectKey": "cdk-assets/f81df2051eef2c0170a53e1f748e2f23df37fd2961422b25e9de231ac7eaaf6a.zip",
+          "region": "ap-northeast-3"
+        }
+      }
+    },
+    "57bae9b198a607ae7078f70b829c611d16ba819878d9b9dbcf9f3ad73739726b": {
+      "displayName": "UserManager/Code",
+      "source": {
+        "path": "asset.57bae9b198a607ae7078f70b829c611d16ba819878d9b9dbcf9f3ad73739726b",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "current_account-ap-northeast-3-9fac2302": {
+          "bucketName": "hanyang-pj-1-cdk-staging",
+          "objectKey": "cdk-assets/57bae9b198a607ae7078f70b829c611d16ba819878d9b9dbcf9f3ad73739726b.zip",
+          "region": "ap-northeast-3"
+        }
+      }
+    },
+    "7c4da82fdd0609bb5c164e548b6763fc51474bd33318b5b0d9f111835aae9068": {
+      "displayName": "SchoolRegistry/Code",
+      "source": {
+        "path": "asset.7c4da82fdd0609bb5c164e548b6763fc51474bd33318b5b0d9f111835aae9068",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "current_account-ap-northeast-3-325f2efd": {
+          "bucketName": "hanyang-pj-1-cdk-staging",
+          "objectKey": "cdk-assets/7c4da82fdd0609bb5c164e548b6763fc51474bd33318b5b0d9f111835aae9068.zip",
+          "region": "ap-northeast-3"
+        }
+      }
+    },
+    "34667470b4f333197396df5593b29f53542b012e746b27d6bc7d369f50428e37": {
+      "displayName": "KbSync/Code",
+      "source": {
+        "path": "asset.34667470b4f333197396df5593b29f53542b012e746b27d6bc7d369f50428e37",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "current_account-ap-northeast-3-eeef9c8b": {
+          "bucketName": "hanyang-pj-1-cdk-staging",
+          "objectKey": "cdk-assets/34667470b4f333197396df5593b29f53542b012e746b27d6bc7d369f50428e37.zip",
+          "region": "ap-northeast-3"
+        }
+      }
+    },
+    "c5aa351de5148ff78044e43e27c208cebefdfd45ea2408c5022b7165caad6efb": {
+      "displayName": "school-buddy-storage-dev Template",
+      "source": {
+        "path": "SchoolBuddyStorage.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-ap-northeast-3-02526cc7": {
+          "bucketName": "hanyang-pj-1-cdk-staging",
+          "objectKey": "cdk-assets/c5aa351de5148ff78044e43e27c208cebefdfd45ea2408c5022b7165caad6efb.json",
+          "region": "ap-northeast-3"
+        }
+      }
+    },
+    "d482876b883c73a1147a0920b43b8650589536e42490fe6cce7416f01ef0d92d": {
+      "displayName": "school-buddy-app-dev Template",
+      "source": {
+        "path": "SchoolBuddyApplication.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-ap-northeast-3-71a37c78": {
+          "bucketName": "hanyang-pj-1-cdk-staging",
+          "objectKey": "cdk-assets/d482876b883c73a1147a0920b43b8650589536e42490fe6cce7416f01ef0d92d.json",
+          "region": "ap-northeast-3"
+        }
+      }
+    },
+    "a03e4eae876c3cb2786e2d5200c45db94b1385049c268e9001bc623eb834f245": {
       "displayName": "school-buddy-monitoring-dev Template",
       "source": {
         "path": "SchoolBuddyMonitoring.template.json",
         "packaging": "file"
       },
       "destinations": {
-        "current_account-us-east-1-b47d5916": {
-          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1",
-          "objectKey": "1150184b465b536d8812f97ad35079df1b01498c1badb927c68af80e7a277073.json",
-          "region": "us-east-1",
-          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-us-east-1"
+        "current_account-ap-northeast-3-e091cd37": {
+          "bucketName": "hanyang-pj-1-cdk-staging",
+          "objectKey": "cdk-assets/a03e4eae876c3cb2786e2d5200c45db94b1385049c268e9001bc623eb834f245.json",
+          "region": "ap-northeast-3"
         }
       }
     }

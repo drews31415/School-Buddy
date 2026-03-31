@@ -5,16 +5,6 @@
    "Type": "AWS::SNS::Topic",
    "Properties": {
     "DisplayName": "School Buddy 운영 알람",
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ],
     "TopicName": "school-buddy-alarms-dev"
    },
    "Metadata": {
@@ -99,78 +89,11 @@
       "Ref": "AlarmTopicD01E77F9"
      }
     ],
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ],
     "Threshold": 10,
     "TreatMissingData": "notBreaching"
    },
    "Metadata": {
     "aws:cdk:path": "SchoolBuddyMonitoring/CrawlerErrorRateAlarm/Resource"
-   }
-  },
-  "ProcessorDLQDepthAlarm790F1EF7": {
-   "Type": "AWS::CloudWatch::Alarm",
-   "Properties": {
-    "AlarmActions": [
-     {
-      "Ref": "AlarmTopicD01E77F9"
-     }
-    ],
-    "AlarmDescription": "notice-dlq에 메시지가 쌓였습니다. 공지 처리 실패 — processor Lambda 로그 확인 필요.",
-    "AlarmName": "school-buddy-processor-dlq-depth-dev",
-    "ComparisonOperator": "GreaterThanThreshold",
-    "EvaluationPeriods": 1,
-    "Metrics": [
-     {
-      "Id": "m1",
-      "Label": "DLQ 메시지 수",
-      "MetricStat": {
-       "Metric": {
-        "Dimensions": [
-         {
-          "Name": "QueueName",
-          "Value": {
-           "Fn::ImportValue": "school-buddy-app-dev:ExportsOutputFnGetAttNoticeDLQA7E8F4C0QueueNameBB203A35"
-          }
-         }
-        ],
-        "MetricName": "ApproximateNumberOfMessagesVisible",
-        "Namespace": "AWS/SQS"
-       },
-       "Period": 60,
-       "Stat": "Maximum"
-      },
-      "ReturnData": true
-     }
-    ],
-    "OKActions": [
-     {
-      "Ref": "AlarmTopicD01E77F9"
-     }
-    ],
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ],
-    "Threshold": 0,
-    "TreatMissingData": "notBreaching"
-   },
-   "Metadata": {
-    "aws:cdk:path": "SchoolBuddyMonitoring/ProcessorDLQDepthAlarm/Resource"
    }
   },
   "APILatencyP99Alarm028F29DC": {
@@ -214,16 +137,6 @@
       "Ref": "AlarmTopicD01E77F9"
      }
     ],
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ],
     "Threshold": 3000,
     "TreatMissingData": "notBreaching"
    },
@@ -258,16 +171,6 @@
       "ReturnData": true
      }
     ],
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ],
     "Threshold": 0,
     "TreatMissingData": "notBreaching"
    },
@@ -289,7 +192,7 @@
     "EvaluationPeriods": 1,
     "Metrics": [
      {
-      "Expression": "e_notices + e_chat + e_users + e_cache",
+      "Expression": "e_notices + e_chat + e_users",
       "Id": "expr_1",
       "Label": "DynamoDB SystemErrors (합산)",
       "ReturnData": true
@@ -353,36 +256,6 @@
        "Stat": "Sum"
       },
       "ReturnData": false
-     },
-     {
-      "Id": "e_cache",
-      "MetricStat": {
-       "Metric": {
-        "Dimensions": [
-         {
-          "Name": "TableName",
-          "Value": {
-           "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
-          }
-         }
-        ],
-        "MetricName": "SystemErrors",
-        "Namespace": "AWS/DynamoDB"
-       },
-       "Period": 300,
-       "Stat": "Sum"
-      },
-      "ReturnData": false
-     }
-    ],
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
      }
     ],
     "Threshold": 0,
@@ -413,10 +286,6 @@
        },
        "\",{\"label\":\"processor 에러\",\"stat\":\"Sum\"}],[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"",
        {
-        "Fn::ImportValue": "school-buddy-app-dev:ExportsOutputRefNotificationSenderDDE681988DF19973"
-       },
-       "\",{\"label\":\"notifier 에러\",\"stat\":\"Sum\"}],[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"",
-       {
         "Fn::ImportValue": "school-buddy-app-dev:ExportsOutputRefDocumentAnalyzerE944214827B5D6F8"
        },
        "\",{\"label\":\"analyzer 에러\",\"stat\":\"Sum\"}],[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"",
@@ -445,10 +314,6 @@
        },
        "\",{\"label\":\"processor 호출\",\"stat\":\"Sum\",\"yAxis\":\"right\"}],[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"",
        {
-        "Fn::ImportValue": "school-buddy-app-dev:ExportsOutputRefNotificationSenderDDE681988DF19973"
-       },
-       "\",{\"label\":\"notifier 호출\",\"stat\":\"Sum\",\"yAxis\":\"right\"}],[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"",
-       {
         "Fn::ImportValue": "school-buddy-app-dev:ExportsOutputRefDocumentAnalyzerE944214827B5D6F8"
        },
        "\",{\"label\":\"analyzer 호출\",\"stat\":\"Sum\",\"yAxis\":\"right\"}],[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"",
@@ -467,27 +332,7 @@
        {
         "Fn::ImportValue": "school-buddy-app-dev:ExportsOutputRefKbSyncAF0B0A4EDC366D76"
        },
-       "\",{\"label\":\"kb-sync 호출\",\"stat\":\"Sum\",\"yAxis\":\"right\"}]],\"annotations\":{\"horizontal\":[{\"value\":5,\"label\":\"에러 임계치\",\"color\":\"#ff0000\",\"yAxis\":\"left\"}]},\"yAxis\":{},\"legend\":{\"position\":\"bottom\"}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":0,\"y\":6,\"properties\":{\"view\":\"timeSeries\",\"title\":\"② SQS notice-queue 메시지 수 & DLQ 깊이\",\"region\":\"",
-       {
-        "Ref": "AWS::Region"
-       },
-       "\",\"metrics\":[[\"AWS/SQS\",\"ApproximateNumberOfMessagesVisible\",\"QueueName\",\"",
-       {
-        "Fn::ImportValue": "school-buddy-app-dev:ExportsOutputFnGetAttNoticeQueue73F1DBE0QueueName81D42EAB"
-       },
-       "\",{\"label\":\"notice-queue 대기 수\",\"period\":60,\"stat\":\"Maximum\"}],[\"AWS/SQS\",\"NumberOfMessagesSent\",\"QueueName\",\"",
-       {
-        "Fn::ImportValue": "school-buddy-app-dev:ExportsOutputFnGetAttNoticeQueue73F1DBE0QueueName81D42EAB"
-       },
-       "\",{\"label\":\"notice-queue 수신\",\"period\":60,\"stat\":\"Sum\"}],[\"AWS/SQS\",\"NumberOfMessagesDeleted\",\"QueueName\",\"",
-       {
-        "Fn::ImportValue": "school-buddy-app-dev:ExportsOutputFnGetAttNoticeQueue73F1DBE0QueueName81D42EAB"
-       },
-       "\",{\"label\":\"notice-queue 처리완료\",\"period\":60,\"stat\":\"Sum\"}],[\"AWS/SQS\",\"ApproximateNumberOfMessagesVisible\",\"QueueName\",\"",
-       {
-        "Fn::ImportValue": "school-buddy-app-dev:ExportsOutputFnGetAttNoticeDLQA7E8F4C0QueueNameBB203A35"
-       },
-       "\",{\"label\":\"DLQ 깊이 ⚠️\",\"period\":60,\"stat\":\"Maximum\",\"yAxis\":\"right\"}]],\"annotations\":{\"horizontal\":[{\"value\":1,\"label\":\"DLQ 임계치\",\"color\":\"#ff6600\",\"yAxis\":\"right\"}]},\"yAxis\":{},\"legend\":{\"position\":\"bottom\"}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":12,\"y\":6,\"properties\":{\"view\":\"timeSeries\",\"title\":\"③ API Gateway 요청 수 & 레이턴시\",\"region\":\"",
+       "\",{\"label\":\"kb-sync 호출\",\"stat\":\"Sum\",\"yAxis\":\"right\"}]],\"annotations\":{\"horizontal\":[{\"value\":5,\"label\":\"에러 임계치\",\"color\":\"#ff0000\",\"yAxis\":\"left\"}]},\"yAxis\":{},\"legend\":{\"position\":\"bottom\"}}},{\"type\":\"metric\",\"width\":12,\"height\":6,\"x\":0,\"y\":6,\"properties\":{\"view\":\"timeSeries\",\"title\":\"③ API Gateway 요청 수 & 레이턴시\",\"region\":\"",
        {
         "Ref": "AWS::Region"
        },
@@ -531,15 +376,7 @@
        {
         "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
        },
-       "\",{\"label\":\"chat-history 쓰기\",\"stat\":\"Sum\"}],[\"AWS/DynamoDB\",\"ConsumedReadCapacityUnits\",\"TableName\",\"",
-       {
-        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
-       },
-       "\",{\"label\":\"translation-cache 읽기\",\"stat\":\"Sum\"}],[\"AWS/DynamoDB\",\"ConsumedWriteCapacityUnits\",\"TableName\",\"",
-       {
-        "Fn::ImportValue": "school-buddy-storage-dev:ExportsOutputRefTranslationCacheTable12FAE6937472A533"
-       },
-       "\",{\"label\":\"translation-cache 쓰기\",\"stat\":\"Sum\"}]],\"yAxis\":{},\"legend\":{\"position\":\"bottom\"}}}]}"
+       "\",{\"label\":\"chat-history 쓰기\",\"stat\":\"Sum\"}]],\"yAxis\":{},\"legend\":{\"position\":\"bottom\"}}}]}"
       ]
      ]
     },
@@ -564,17 +401,7 @@
      "ServiceType": "*",
      "URLPath": "*",
      "Version": 1
-    },
-    "Tags": [
-     {
-      "Key": "Environment",
-      "Value": "dev"
-     },
-     {
-      "Key": "Project",
-      "Value": "school-buddy"
-     }
-    ]
+    }
    },
    "Metadata": {
     "aws:cdk:path": "SchoolBuddyMonitoring/SamplingRule"
@@ -602,41 +429,7 @@
   },
   "DashboardUrl": {
    "Description": "CloudWatch 대시보드 URL",
-   "Value": "https://us-east-1.console.aws.amazon.com/cloudwatch/home?region=us-east-1#dashboards:name=school-buddy-dev"
-  }
- },
- "Parameters": {
-  "BootstrapVersion": {
-   "Type": "AWS::SSM::Parameter::Value<String>",
-   "Default": "/cdk-bootstrap/hnb659fds/version",
-   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
-  }
- },
- "Rules": {
-  "CheckBootstrapVersion": {
-   "Assertions": [
-    {
-     "Assert": {
-      "Fn::Not": [
-       {
-        "Fn::Contains": [
-         [
-          "1",
-          "2",
-          "3",
-          "4",
-          "5"
-         ],
-         {
-          "Ref": "BootstrapVersion"
-         }
-        ]
-       }
-      ]
-     },
-     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
-    }
-   ]
+   "Value": "https://ap-northeast-3.console.aws.amazon.com/cloudwatch/home?region=ap-northeast-3#dashboards:name=school-buddy-dev"
   }
  }
 }

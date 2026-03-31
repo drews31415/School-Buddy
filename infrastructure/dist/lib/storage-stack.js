@@ -52,7 +52,6 @@ class StorageStack extends cdk.Stack {
     noticesTable;
     notificationsTable;
     chatHistoryTable;
-    kbDocumentsTable;
     /** ElastiCache(Redis) 대체 캐시 테이블. cacheKey 형식: notice#{noticeId}#lang#{langCode} */
     translationCacheTable;
     // S3 Buckets
@@ -142,15 +141,7 @@ class StorageStack extends cdk.Stack {
             timeToLiveAttribute: "expiresAt",
         });
         // ──────────────────────────────────────────────────────
-        // 7. KBDocuments — PK: docId
-        // ──────────────────────────────────────────────────────
-        this.kbDocumentsTable = new dynamodb.Table(this, "KBDocumentsTable", {
-            ...commonTableProps,
-            tableName: `school-buddy-kb-documents-${environment}`,
-            partitionKey: { name: "docId", type: dynamodb.AttributeType.STRING },
-        });
-        // ──────────────────────────────────────────────────────
-        // 8. TranslationCache — PK: cacheKey
+        // 7. TranslationCache — PK: cacheKey
         //    ElastiCache(Redis) 대체. TTL: expiresAt (24시간)
         //    RemovalPolicy: DESTROY (캐시는 재생성 가능)
         // ──────────────────────────────────────────────────────
@@ -201,7 +192,6 @@ class StorageStack extends cdk.Stack {
             ["NoticesTableName", this.noticesTable.tableName, `school-buddy-notices-table-${environment}`],
             ["NotificationsTableName", this.notificationsTable.tableName, `school-buddy-notifications-table-${environment}`],
             ["ChatHistoryTableName", this.chatHistoryTable.tableName, `school-buddy-chat-history-table-${environment}`],
-            ["KBDocumentsTableName", this.kbDocumentsTable.tableName, `school-buddy-kb-documents-table-${environment}`],
             ["TranslationCacheTableName", this.translationCacheTable.tableName, `school-buddy-translation-cache-table-${environment}`],
             ["DocumentsBucketName", this.documentsBucket.bucketName, `school-buddy-documents-bucket-${environment}`],
             ["KbSourceBucketName", this.kbSourceBucket.bucketName, `school-buddy-kb-source-bucket-${environment}`],

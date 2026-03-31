@@ -4,56 +4,26 @@
     "SchoolBuddyStorage.assets": {
       "type": "cdk:asset-manifest",
       "properties": {
-        "file": "SchoolBuddyStorage.assets.json",
-        "requiresBootstrapStackVersion": 6,
-        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        "file": "SchoolBuddyStorage.assets.json"
       }
     },
     "SchoolBuddyStorage": {
       "type": "aws:cloudformation:stack",
-      "environment": "aws://unknown-account/us-east-1",
+      "environment": "aws://unknown-account/ap-northeast-3",
       "properties": {
         "templateFile": "SchoolBuddyStorage.template.json",
         "terminationProtection": false,
-        "tags": {
-          "Environment": "dev",
-          "Project": "school-buddy"
-        },
         "validateOnSynth": false,
-        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-us-east-1",
-        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/0bb4432f8bacfd7147191fdbf04edbddfbbb52b1e432f48c9d6468c25e974d00.json",
-        "requiresBootstrapStackVersion": 6,
-        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "stackTemplateAssetObjectUrl": "s3://hanyang-pj-1-cdk-staging/cdk-assets/c5aa351de5148ff78044e43e27c208cebefdfd45ea2408c5022b7165caad6efb.json",
         "additionalDependencies": [
           "SchoolBuddyStorage.assets"
         ],
-        "lookupRole": {
-          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-us-east-1",
-          "requiresBootstrapStackVersion": 8,
-          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
-        },
         "stackName": "school-buddy-storage-dev"
       },
       "dependencies": [
         "SchoolBuddyStorage.assets"
       ],
       "metadata": {
-        "/SchoolBuddyStorage": [
-          {
-            "type": "aws:cdk:stack-tags",
-            "data": [
-              {
-                "Key": "Environment",
-                "Value": "dev"
-              },
-              {
-                "Key": "Project",
-                "Value": "school-buddy"
-              }
-            ]
-          }
-        ],
         "/SchoolBuddyStorage/UsersTable": [
           {
             "type": "aws:cdk:hasPhysicalName",
@@ -138,66 +108,16 @@
             "data": "ChatHistoryTableA22BA13C"
           }
         ],
-        "/SchoolBuddyStorage/TranslationCacheTable": [
-          {
-            "type": "aws:cdk:hasPhysicalName",
-            "data": {
-              "Ref": "TranslationCacheTable12FAE693"
-            }
-          }
-        ],
-        "/SchoolBuddyStorage/TranslationCacheTable/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "TranslationCacheTable12FAE693"
-          }
-        ],
         "/SchoolBuddyStorage/DocumentsBucket/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "DocumentsBucket9EC9DEB9"
           }
         ],
-        "/SchoolBuddyStorage/DocumentsBucket/Policy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "DocumentsBucketPolicy1F991BD4"
-          }
-        ],
         "/SchoolBuddyStorage/KbSourceBucket/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "KbSourceBucketF3D74AC4"
-          }
-        ],
-        "/SchoolBuddyStorage/KbSourceBucket/Policy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "KbSourceBucketPolicy0D126654"
-          }
-        ],
-        "/SchoolBuddyStorage/KbSourceBucket/Notifications/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "KbSourceBucketNotifications77691FC0"
-          }
-        ],
-        "/SchoolBuddyStorage/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC"
-          }
-        ],
-        "/SchoolBuddyStorage/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36"
-          }
-        ],
-        "/SchoolBuddyStorage/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691"
           }
         ],
         "/SchoolBuddyStorage/UsersTableName": [
@@ -234,12 +154,6 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ChatHistoryTableName"
-          }
-        ],
-        "/SchoolBuddyStorage/TranslationCacheTableName": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "TranslationCacheTableName"
           }
         ],
         "/SchoolBuddyStorage/DocumentsBucketName": [
@@ -296,12 +210,6 @@
             "data": "ExportsOutputRefChatHistoryTableA22BA13C5B671E77"
           }
         ],
-        "/SchoolBuddyStorage/Exports/Output{\"Ref\":\"TranslationCacheTable12FAE693\"}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ExportsOutputRefTranslationCacheTable12FAE6937472A533"
-          }
-        ],
         "/SchoolBuddyStorage/Exports/Output{\"Ref\":\"DocumentsBucket9EC9DEB9\"}": [
           {
             "type": "aws:cdk:logicalId",
@@ -313,18 +221,6 @@
             "type": "aws:cdk:logicalId",
             "data": "ExportsOutputRefKbSourceBucketF3D74AC434DD4B50"
           }
-        ],
-        "/SchoolBuddyStorage/BootstrapVersion": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "BootstrapVersion"
-          }
-        ],
-        "/SchoolBuddyStorage/CheckBootstrapVersion": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "CheckBootstrapVersion"
-          }
         ]
       },
       "displayName": "SchoolBuddyStorage"
@@ -332,35 +228,20 @@
     "SchoolBuddyApplication.assets": {
       "type": "cdk:asset-manifest",
       "properties": {
-        "file": "SchoolBuddyApplication.assets.json",
-        "requiresBootstrapStackVersion": 6,
-        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        "file": "SchoolBuddyApplication.assets.json"
       }
     },
     "SchoolBuddyApplication": {
       "type": "aws:cloudformation:stack",
-      "environment": "aws://unknown-account/us-east-1",
+      "environment": "aws://unknown-account/ap-northeast-3",
       "properties": {
         "templateFile": "SchoolBuddyApplication.template.json",
         "terminationProtection": false,
-        "tags": {
-          "Environment": "dev",
-          "Project": "school-buddy"
-        },
         "validateOnSynth": false,
-        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-us-east-1",
-        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/747c2be535564773f75ff4f9bf4470c5bf65f05f0f695ee3025e1eb09677433a.json",
-        "requiresBootstrapStackVersion": 6,
-        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "stackTemplateAssetObjectUrl": "s3://hanyang-pj-1-cdk-staging/cdk-assets/d482876b883c73a1147a0920b43b8650589536e42490fe6cce7416f01ef0d92d.json",
         "additionalDependencies": [
           "SchoolBuddyApplication.assets"
         ],
-        "lookupRole": {
-          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-us-east-1",
-          "requiresBootstrapStackVersion": 8,
-          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
-        },
         "stackName": "school-buddy-app-dev"
       },
       "dependencies": [
@@ -368,73 +249,10 @@
         "SchoolBuddyApplication.assets"
       ],
       "metadata": {
-        "/SchoolBuddyApplication": [
-          {
-            "type": "aws:cdk:stack-tags",
-            "data": [
-              {
-                "Key": "Environment",
-                "Value": "dev"
-              },
-              {
-                "Key": "Project",
-                "Value": "school-buddy"
-              }
-            ]
-          }
-        ],
         "/SchoolBuddyApplication/SafeRole/Policy/Resource": [
           {
             "type": "aws:cdk:logicalId",
             "data": "SafeRolePolicy68EAB430"
-          }
-        ],
-        "/SchoolBuddyApplication/UserPool/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "UserPool6BA7E5F2"
-          }
-        ],
-        "/SchoolBuddyApplication/UserPool/Domain/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "UserPoolDomainD0EA232A"
-          }
-        ],
-        "/SchoolBuddyApplication/UserPool/MobileClient/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "UserPoolMobileClient046093C2"
-          }
-        ],
-        "/SchoolBuddyApplication/GoogleProvider/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "GoogleProvider566D8493"
-          }
-        ],
-        "/SchoolBuddyApplication/AppleProvider/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "AppleProviderC04D9F31"
-          }
-        ],
-        "/SchoolBuddyApplication/NoticeDLQ/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "NoticeDLQA7E8F4C0"
-          }
-        ],
-        "/SchoolBuddyApplication/NoticeQueue/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "NoticeQueue73F1DBE0"
-          }
-        ],
-        "/SchoolBuddyApplication/NoticeTopic/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "NoticeTopic73EA1121"
           }
         ],
         "/SchoolBuddyApplication/SchoolCrawler/Resource": [
@@ -447,30 +265,6 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "NoticeProcessor9D7ED85C"
-          }
-        ],
-        "/SchoolBuddyApplication/NoticeProcessor/SqsEventSource:SchoolBuddyApplicationNoticeQueue38ED4826/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "NoticeProcessorSqsEventSourceSchoolBuddyApplicationNoticeQueue38ED482613ED1924"
-          }
-        ],
-        "/SchoolBuddyApplication/NotificationSender/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "NotificationSenderDDE68198"
-          }
-        ],
-        "/SchoolBuddyApplication/NotificationSender/AllowInvoke:SchoolBuddyApplicationNoticeTopicDEE583F4": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "NotificationSenderAllowInvokeSchoolBuddyApplicationNoticeTopicDEE583F4E45B239E"
-          }
-        ],
-        "/SchoolBuddyApplication/NotificationSender/NoticeTopic/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "NotificationSenderNoticeTopic48F99C24"
           }
         ],
         "/SchoolBuddyApplication/DocumentAnalyzer/Resource": [
@@ -509,6 +303,12 @@
             "data": "CrawlerScheduleAllowEventRuleSchoolBuddyApplicationSchoolCrawler155BE49DAB3E3005"
           }
         ],
+        "/SchoolBuddyApplication/KbSync/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "KbSyncAF0B0A4E"
+          }
+        ],
         "/SchoolBuddyApplication/ApiAccessLogs/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -527,22 +327,10 @@
             "data": "HttpApiDefaultStage3EEB07D6"
           }
         ],
-        "/SchoolBuddyApplication/HttpApi/POST--auth--register/UserInt/Resource": [
+        "/SchoolBuddyApplication/HttpApi/GET--users--me/UserInt/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "HttpApiPOSTauthregisterUserInt78049B47"
-          }
-        ],
-        "/SchoolBuddyApplication/HttpApi/POST--auth--register/UserInt-Permission": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "HttpApiPOSTauthregisterUserIntPermissionD54BB315"
-          }
-        ],
-        "/SchoolBuddyApplication/HttpApi/POST--auth--register/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "HttpApiPOSTauthregisterBB9BB35F"
+            "data": "HttpApiGETusersmeUserIntB02824FB"
           }
         ],
         "/SchoolBuddyApplication/HttpApi/GET--users--me/UserInt-Permission": [
@@ -555,12 +343,6 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "HttpApiGETusersmeC3BF7291"
-          }
-        ],
-        "/SchoolBuddyApplication/HttpApi/CognitoAuthorizer/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "HttpApiCognitoAuthorizer935FA0F6"
           }
         ],
         "/SchoolBuddyApplication/HttpApi/PUT--users--me/UserInt-Permission": [
@@ -701,58 +483,10 @@
             "data": "HttpApiGETchathistoryCDF24518"
           }
         ],
-        "/SchoolBuddyApplication/KbSync/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "KbSyncAF0B0A4E"
-          }
-        ],
-        "/SchoolBuddyApplication/KbSyncRule/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "KbSyncRule6676B8AD"
-          }
-        ],
-        "/SchoolBuddyApplication/KbSyncRule/AllowEventRuleSchoolBuddyApplicationKbSyncFDEFEB21": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "KbSyncRuleAllowEventRuleSchoolBuddyApplicationKbSyncFDEFEB21A96AAE04"
-          }
-        ],
         "/SchoolBuddyApplication/ApiEndpoint": [
           {
             "type": "aws:cdk:logicalId",
             "data": "ApiEndpoint"
-          }
-        ],
-        "/SchoolBuddyApplication/UserPoolId": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "UserPoolId"
-          }
-        ],
-        "/SchoolBuddyApplication/UserPoolClientId": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "UserPoolClientId"
-          }
-        ],
-        "/SchoolBuddyApplication/CognitoDomain": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "CognitoDomain"
-          }
-        ],
-        "/SchoolBuddyApplication/NoticeQueueUrl": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "NoticeQueueUrl"
-          }
-        ],
-        "/SchoolBuddyApplication/NoticeTopicArn": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "NoticeTopicArn"
           }
         ],
         "/SchoolBuddyApplication/KbIdNote": [
@@ -773,12 +507,6 @@
             "data": "ExportsOutputRefSchoolCrawler991D93225E3BB50A"
           }
         ],
-        "/SchoolBuddyApplication/Exports/Output{\"Fn::GetAtt\":[\"NoticeDLQA7E8F4C0\",\"QueueName\"]}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ExportsOutputFnGetAttNoticeDLQA7E8F4C0QueueNameBB203A35"
-          }
-        ],
         "/SchoolBuddyApplication/Exports/Output{\"Ref\":\"HttpApiF5A9A8A7\"}": [
           {
             "type": "aws:cdk:logicalId",
@@ -789,12 +517,6 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "ExportsOutputRefNoticeProcessor9D7ED85CF537707C"
-          }
-        ],
-        "/SchoolBuddyApplication/Exports/Output{\"Ref\":\"NotificationSenderDDE68198\"}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ExportsOutputRefNotificationSenderDDE681988DF19973"
           }
         ],
         "/SchoolBuddyApplication/Exports/Output{\"Ref\":\"DocumentAnalyzerE9442148\"}": [
@@ -826,24 +548,6 @@
             "type": "aws:cdk:logicalId",
             "data": "ExportsOutputRefKbSyncAF0B0A4EDC366D76"
           }
-        ],
-        "/SchoolBuddyApplication/Exports/Output{\"Fn::GetAtt\":[\"NoticeQueue73F1DBE0\",\"QueueName\"]}": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ExportsOutputFnGetAttNoticeQueue73F1DBE0QueueName81D42EAB"
-          }
-        ],
-        "/SchoolBuddyApplication/BootstrapVersion": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "BootstrapVersion"
-          }
-        ],
-        "/SchoolBuddyApplication/CheckBootstrapVersion": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "CheckBootstrapVersion"
-          }
         ]
       },
       "displayName": "SchoolBuddyApplication"
@@ -851,35 +555,20 @@
     "SchoolBuddyMonitoring.assets": {
       "type": "cdk:asset-manifest",
       "properties": {
-        "file": "SchoolBuddyMonitoring.assets.json",
-        "requiresBootstrapStackVersion": 6,
-        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        "file": "SchoolBuddyMonitoring.assets.json"
       }
     },
     "SchoolBuddyMonitoring": {
       "type": "aws:cloudformation:stack",
-      "environment": "aws://unknown-account/us-east-1",
+      "environment": "aws://unknown-account/ap-northeast-3",
       "properties": {
         "templateFile": "SchoolBuddyMonitoring.template.json",
         "terminationProtection": false,
-        "tags": {
-          "Environment": "dev",
-          "Project": "school-buddy"
-        },
         "validateOnSynth": false,
-        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-us-east-1",
-        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-us-east-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1/1150184b465b536d8812f97ad35079df1b01498c1badb927c68af80e7a277073.json",
-        "requiresBootstrapStackVersion": 6,
-        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "stackTemplateAssetObjectUrl": "s3://hanyang-pj-1-cdk-staging/cdk-assets/a03e4eae876c3cb2786e2d5200c45db94b1385049c268e9001bc623eb834f245.json",
         "additionalDependencies": [
           "SchoolBuddyMonitoring.assets"
         ],
-        "lookupRole": {
-          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-us-east-1",
-          "requiresBootstrapStackVersion": 8,
-          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
-        },
         "stackName": "school-buddy-monitoring-dev"
       },
       "dependencies": [
@@ -888,21 +577,6 @@
         "SchoolBuddyMonitoring.assets"
       ],
       "metadata": {
-        "/SchoolBuddyMonitoring": [
-          {
-            "type": "aws:cdk:stack-tags",
-            "data": [
-              {
-                "Key": "Environment",
-                "Value": "dev"
-              },
-              {
-                "Key": "Project",
-                "Value": "school-buddy"
-              }
-            ]
-          }
-        ],
         "/SchoolBuddyMonitoring/AlarmTopic/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -919,12 +593,6 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "CrawlerErrorRateAlarm8CC3FEB1"
-          }
-        ],
-        "/SchoolBuddyMonitoring/ProcessorDLQDepthAlarm/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "ProcessorDLQDepthAlarm790F1EF7"
           }
         ],
         "/SchoolBuddyMonitoring/APILatencyP99Alarm/Resource": [
@@ -973,18 +641,6 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "CDKMetadata"
-          }
-        ],
-        "/SchoolBuddyMonitoring/BootstrapVersion": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "BootstrapVersion"
-          }
-        ],
-        "/SchoolBuddyMonitoring/CheckBootstrapVersion": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "CheckBootstrapVersion"
           }
         ]
       },

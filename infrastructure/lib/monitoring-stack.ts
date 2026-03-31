@@ -74,24 +74,7 @@ export class MonitoringStack extends cdk.Stack {
     crawlerErrorAlarm.addAlarmAction(alarmAction);
     crawlerErrorAlarm.addOkAction(alarmAction);
 
-    // ──────────────────────────────────────────────────────
-    // 알람 2. ProcessorDLQDepth — notice-dlq 메시지 > 0 (즉시)
-    // ──────────────────────────────────────────────────────
-    const dlqDepthAlarm = new cloudwatch.Alarm(this, "ProcessorDLQDepthAlarm", {
-      alarmName:          `school-buddy-processor-dlq-depth-${environment}`,
-      alarmDescription:   "notice-dlq에 메시지가 쌓였습니다. 공지 처리 실패 — processor Lambda 로그 확인 필요.",
-      metric:             application.noticeDLQ.metricApproximateNumberOfMessagesVisible({
-        period:    cdk.Duration.minutes(1),
-        statistic: "Maximum",
-        label:     "DLQ 메시지 수",
-      }),
-      threshold:          0,
-      evaluationPeriods:  1,
-      comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
-      treatMissingData:   cloudwatch.TreatMissingData.NOT_BREACHING,
-    });
-    dlqDepthAlarm.addAlarmAction(alarmAction);
-    dlqDepthAlarm.addOkAction(alarmAction);
+    // 알람 2 (ProcessorDLQDepth) 제거: SQS 권한 없어 SQS 제거됨
 
     // ──────────────────────────────────────────────────────
     // 알람 3. APILatencyP99 — API Gateway P99 > 3000ms
@@ -145,7 +128,7 @@ export class MonitoringStack extends cdk.Stack {
       alarmName:          `school-buddy-dynamodb-system-errors-${environment}`,
       alarmDescription:   "DynamoDB SystemError 발생. AWS 서비스 장애 가능성 — AWS Health Dashboard 확인.",
       metric: new cloudwatch.MathExpression({
-        expression:   "e_notices + e_chat + e_users + e_cache",
+        expression:   "e_notices + e_chat + e_users",
         usingMetrics: {
           e_notices: new cloudwatch.Metric({
             namespace: "AWS/DynamoDB", metricName: "SystemErrors",
@@ -214,32 +197,9 @@ export class MonitoringStack extends cdk.Stack {
       })
     );
 
-    // ── 위젯 2: SQS 메시지 수 & DLQ 깊이 ──────────────────
-    dashboard.addWidgets(
-      new cloudwatch.GraphWidget({
-        title:  "② SQS notice-queue 메시지 수 & DLQ 깊이",
-        width:  12,
-        height: 6,
-        left: [
-          application.noticeQueue.metricApproximateNumberOfMessagesVisible({
-            label: "notice-queue 대기 수", period: cdk.Duration.minutes(1),
-          }),
-          application.noticeQueue.metricNumberOfMessagesSent({
-            label: "notice-queue 수신", period: cdk.Duration.minutes(1),
-          }),
-          application.noticeQueue.metricNumberOfMessagesDeleted({
-            label: "notice-queue 처리완료", period: cdk.Duration.minutes(1),
-          }),
-        ],
-        right: [
-          application.noticeDLQ.metricApproximateNumberOfMessagesVisible({
-            label: "DLQ 깊이 ⚠️", period: cdk.Duration.minutes(1),
-          }),
-        ],
-        rightAnnotations: [{ value: 1, label: "DLQ 임계치", color: "#ff6600" }],
-        legendPosition: cloudwatch.LegendPosition.BOTTOM,
-      }),
+    // 위젯 2 (SQS) 제거: SQS 권한 없어 제거됨
 
+    dashboard.addWidgets(
       // ── 위젯 3: API Gateway 요청 수 & 레이턴시 ───────────
       new cloudwatch.GraphWidget({
         title:  "③ API Gateway 요청 수 & 레이턴시",
