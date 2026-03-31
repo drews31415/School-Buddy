@@ -14,10 +14,19 @@ const env = {
 
 const environment = app.node.tryGetContext("environment") ?? "dev";
 
+// CDK bootstrap 없이 배포하기 위한 synthesizer
+// (hanyang-pj-1 계정은 ECR/SSM 권한 제한으로 표준 bootstrap 불가)
+// 사전 요건: aws s3 mb s3://hanyang-pj-1-cdk-staging --region ap-northeast-3
+const synthesizer = new cdk.CliCredentialsStackSynthesizer({
+  fileAssetsBucketName: "hanyang-pj-1-cdk-staging",
+  bucketPrefix: "cdk-assets/",
+});
+
 // StorageStack → ApplicationStack → MonitoringStack 순서로 배포
 const storageStack = new StorageStack(app, "SchoolBuddyStorage", {
   env,
   environment,
+  synthesizer,
   stackName: `school-buddy-storage-${environment}`,
   description: "School Buddy — DynamoDB Tables & S3 Buckets",
 });
@@ -25,6 +34,7 @@ const storageStack = new StorageStack(app, "SchoolBuddyStorage", {
 const applicationStack = new ApplicationStack(app, "SchoolBuddyApplication", {
   env,
   environment,
+  synthesizer,
   storage: storageStack,
   stackName: `school-buddy-app-${environment}`,
   description: "School Buddy — Lambda Functions, API Gateway, SQS, SNS, Cognito",
@@ -34,6 +44,7 @@ applicationStack.addDependency(storageStack);
 const monitoringStack = new MonitoringStack(app, "SchoolBuddyMonitoring", {
   env,
   environment,
+  synthesizer,
   application: applicationStack,
   storage:     storageStack,
   stackName: `school-buddy-monitoring-${environment}`,
