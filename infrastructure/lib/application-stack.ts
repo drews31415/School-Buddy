@@ -49,7 +49,13 @@ export class ApplicationStack extends cdk.Stack {
     // ──────────────────────────────────────────────────────
     // IAM — 기존 Role 참조 (새 Role 생성 금지)
     // ──────────────────────────────────────────────────────
-    const safeRole = iam.Role.fromRoleName(this, "SafeRole", "SafeRole-hanyang-pj-1");
+    // mutable: false → CDK가 Role에 정책 추가 시도 안 함 (iam:GetRolePolicy 권한 없음)
+    const safeRole = iam.Role.fromRoleArn(
+      this,
+      "SafeRole",
+      `arn:aws:iam::730335373015:role/SafeRole-hanyang-pj-1`,
+      { mutable: false }
+    );
 
     // ──────────────────────────────────────────────────────
     // 공통 Lambda 환경 변수
