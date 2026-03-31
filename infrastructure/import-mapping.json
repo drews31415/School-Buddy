@@ -5,7 +5,6 @@
   "NoticesTable095FDDAC":           { "TableName": "school-buddy-notices-dev" },
   "NotificationsTable76DCFC6C":     { "TableName": "school-buddy-notifications-dev" },
   "ChatHistoryTableA22BA13C":       { "TableName": "school-buddy-chat-history-dev" },
-  "TranslationCacheTable12FAE693":  { "TableName": "school-buddy-translation-cache-dev" },
   "DocumentsBucket9EC9DEB9":        { "BucketName": "hanyang-pj-1-documents-dev" },
   "KbSourceBucketF3D74AC4":         { "BucketName": "hanyang-pj-1-kb-source-dev" }
 }
