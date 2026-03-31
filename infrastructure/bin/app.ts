@@ -14,12 +14,19 @@ const env = {
 
 const environment = app.node.tryGetContext("environment") ?? "dev";
 
-// CDK bootstrap 없이 배포하기 위한 synthesizer
-// (hanyang-pj-1 계정은 ECR/SSM 권한 제한으로 표준 bootstrap 불가)
-// 사전 요건: aws s3 mb s3://hanyang-pj-1-cdk-staging --region ap-northeast-3
-const synthesizer = new cdk.CliCredentialsStackSynthesizer({
-  fileAssetsBucketName: "hanyang-pj-1-cdk-staging",
-  bucketPrefix: "cdk-assets/",
+// CloudFormation 실행 역할을 SafeRole-hanyang-pj-1로 지정
+// → CFN이 Lambda/ApiGW 등 리소스 API를 SafeRole 권한으로 호출 (ControlOnlyOwnResources 우회)
+// generateBootstrapVersionRule: false → SSM bootstrap 파라미터 체크 생략
+const ACCOUNT_ID = "730335373015";
+const SAFE_ROLE_ARN = `arn:aws:iam::${ACCOUNT_ID}:role/SafeRole-hanyang-pj-1`;
+
+const synthesizer = new cdk.DefaultStackSynthesizer({
+  fileAssetsBucketName:       "hanyang-pj-1-cdk-staging",
+  bucketPrefix:               "cdk-assets/",
+  cloudFormationExecutionRole: SAFE_ROLE_ARN,
+  deployRoleArn:              SAFE_ROLE_ARN,
+  fileAssetPublishingRoleArn: SAFE_ROLE_ARN,
+  generateBootstrapVersionRule: false,
 });
 
 // StorageStack → ApplicationStack → MonitoringStack 순서로 배포
