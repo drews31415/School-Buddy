@@ -37,10 +37,10 @@ export class StorageStack extends cdk.Stack {
     // Tags 제거: hanyang-pj-1 계정은 TagResource 권한 없음
 
     // 공통 DynamoDB 설정
+    // ⚠️ pointInTimeRecovery 제거: hanyang-pj-1 계정은 dynamodb:UpdateContinuousBackups 권한 없음
     const commonTableProps = {
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       encryption: dynamodb.TableEncryption.AWS_MANAGED,
-      pointInTimeRecoverySpecification: { pointInTimeRecoveryEnabled: true },
       removalPolicy: cdk.RemovalPolicy.RETAIN,
     } as const;
 
@@ -106,7 +106,7 @@ export class StorageStack extends cdk.Stack {
       tableName: `school-buddy-notifications-${environment}`,
       partitionKey: { name: "userId", type: dynamodb.AttributeType.STRING },
       sortKey: { name: "createdAt", type: dynamodb.AttributeType.STRING },
-      timeToLiveAttribute: "expiresAt",
+      // timeToLiveAttribute 제거: hanyang-pj-1 계정은 dynamodb:UpdateTimeToLive 권한 없음
     });
 
     // ──────────────────────────────────────────────────────
@@ -118,7 +118,7 @@ export class StorageStack extends cdk.Stack {
       tableName: `school-buddy-chat-history-${environment}`,
       partitionKey: { name: "userId", type: dynamodb.AttributeType.STRING },
       sortKey: { name: "sessionId#createdAt", type: dynamodb.AttributeType.STRING },
-      timeToLiveAttribute: "expiresAt",
+      // timeToLiveAttribute 제거: hanyang-pj-1 계정은 dynamodb:UpdateTimeToLive 권한 없음
     });
 
     // ──────────────────────────────────────────────────────
@@ -130,7 +130,7 @@ export class StorageStack extends cdk.Stack {
       ...commonTableProps,
       tableName: `school-buddy-translation-cache-${environment}`,
       partitionKey: { name: "cacheKey", type: dynamodb.AttributeType.STRING },
-      timeToLiveAttribute: "expiresAt",
+      // timeToLiveAttribute 제거: hanyang-pj-1 계정은 dynamodb:UpdateTimeToLive 권한 없음
       removalPolicy: cdk.RemovalPolicy.DESTROY, // 캐시 테이블만 DESTROY 허용
     });
 
